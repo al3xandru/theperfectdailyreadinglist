@@ -1,0 +1,1953 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Reading list for Sun, Mar.12, 2023</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com"> 
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+	<link href="https://fonts.googleapis.com/css2?family=Josefin+Slab:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+	<link href="style.css" rel="stylesheet">
+	<script>
+function toggle(id) {
+	var el = document.getElementById(id);
+	el.style.display = (el.style.display == "none" || el.style.display == "") ? "block" : "none";
+}
+	</script>
+</head>
+<body>
+<h1>Reading list for Sun, Mar.12, 2023</h1>
+<header>
+<div>Total: 550 from which: 3 suggested today and 94 expired</div>
+<nav>
+Jump to: 
+
+	<a href="#today">Today&#39;s reading list</a> | 
+
+	<a href="#saveme">Random expired</a> | 
+
+	<a href="#expired">Expired</a> | 
+
+</nav>
+</header>
+
+<section>
+<h2 id="today">Today&#39;s reading list <a href="javascript:toggle('oltoday');">&#177;</a></h2>
+<div>3 links selected from 456 today Sun, Mar.12, 2023</div>
+<ol id="oltoday">
+
+<li>
+	<article>
+		<h3 id="7EDE36D6-F338-4D22-93F5-4452F3350A29"><a href="https://github.com/hwayne/awesome-cold-showers">Awesome Cold Showers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.com/hwayne/awesome-cold-showers">https://github.com/hwayne/awesome-cold-showers</a></span><br />
+			<span class="d">Added: 2022-06-20 11:14:41.089510917 &#43;0000 UTC</span>
+		</div>
+		<p class="p">For when people get too hyped up about things. Contribute to hwayne/awesome-cold-showers development by creating an account on GitHub.
+			
+				... (7368 chars. See <a href="javascript:toggle('b7EDE36D6-F338-4D22-93F5-4452F3350A29');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="b7EDE36D6-F338-4D22-93F5-4452F3350A29">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><div data-target="readme-toc.content">
+            <article itemprop="text">
+<p dir="auto">It&#39;s great when people get excited about things, but sometimes they get a little <em>too</em> excited. This an awesome (rigorous and respectful) and curated (I read every suggestion and make judgement calls) list of cold showers on overhyped topics. This does <strong>not</strong> mean the enthusiasm is bad or wrong: we&#39;re just reminding people to stay grounded. Feel free to submit your favorites!</p>
+<h4 tabindex="-1" dir="auto"><a href="https://web.archive.org/web/20170214231046/https://www.cypherpunks.to/~peter/04_verif_techniques.pdf" rel="nofollow">Verification Techniques</a> (PDF)</h4>
+<ul dir="auto">
+<li>
+<p dir="auto"><strong>Hype:</strong> &#34;Formal Verification is a great way to write software. We should prove all of our code correct.&#34;</p>
+</li>
+<li>
+<p dir="auto"><strong>Shower:</strong> Extensive literature review showing that formal methods are hard to learn, extremely expensive to apply, and often miss critical bugs.</p>
+</li>
+<li>
+<p dir="auto"><strong>Caveats:</strong> Written in 2000 and doesn&#39;t cover modern tools/techniques, such as TLA+ or dependent typing.</p>
+</li>
+<li>
+<p dir="auto"><strong>Notes:</strong> Part of <a href="https://www.cs.auckland.ac.nz/~pgut001/" rel="nofollow">Peter Gutmann</a>&#39;s thesis, &#34;The Design and Verification of a Cryptographic Security Architecture&#34;. The whole thesis can be found <a href="https://archive.org/details/springer_10.1007-b97264/mode/2up" rel="nofollow">here</a>.</p>
+</li>
+</ul>
+<h4 tabindex="-1" dir="auto"><a href="https://danluu.com/empirical-pl/" rel="nofollow">Static vs Dynamic Typing: a literature review</a></h4>
+<ul dir="auto">
+<li>
+<p dir="auto"><strong>Hype:</strong> &#34;Static Typing reduces bugs.&#34;</p>
+</li>
+<li>
+<p dir="auto"><strong>Shower:</strong> A review of all the available literature (up to 2014), showing that the solid research is inconclusive, while the conclusive research had methodological issues.</p>
+</li>
+<li>
+<p dir="auto"><strong>Caveats:</strong> Does not cover other possible benefits of static typing, like documentation. Does not address research on gradual type systems, like mypy or Typescript.</p>
+</li>
+</ul>
+<h4 tabindex="-1" dir="auto"><a href="http://www.frankmcsherry.org/graph/scalability/cost/2015/01/15/COST.html" rel="nofollow">Scalability! but at what COST?</a></h4>
+<ul dir="auto">
+<li>
+<p dir="auto"><strong>Hype:</strong> &#34;We need big data systems to handle big data.&#34;</p>
+</li>
+<li>
+<p dir="auto"><strong>Shower:</strong> Benchmarking cutting-edge graph-processing algorithms running on 128-core clusters against a single-threaded 2014 Macbook Pro. The laptop consistently wins, sometimes by an order of magnitude.</p>
+</li>
+<li>
+<p dir="auto"><strong>Caveats:</strong> McSherry is really good at optimizing his algorithms and has skills the average data scientist does not. Big data systems might be better if you have ad-hoc queries and don&#39;t want to take the time to optimize them.</p>
+</li>
+<li>
+<p dir="auto"><strong>Notes:</strong> &#34;If you are going to use a big data system for yourself, see if it is faster than your laptop. If you are going to build a big data system for others, see that it is faster than my laptop.&#34;</p>
+</li>
+</ul>
+<h4 tabindex="-1" dir="auto"><a href="https://www.techempower.com/benchmarks/" rel="nofollow">Web Framework Benchmarks</a></h4>
+<ul dir="auto">
+<li>
+<p dir="auto"><strong>Hype:</strong> Anything about performance or scalability of various languages/web frameworks/databases.</p>
+</li>
+<li>
+<p dir="auto"><strong>Shower:</strong> Actual hard data of various combinations of solutions under various tasks.</p>
+</li>
+<li>
+<p dir="auto"><strong>Caveats:</strong> Raw data you have to interpret yourself. <del>Does not provide a complete dump of the raw data for your own analysis.</del> Raw data can now be found <a href="http://tfb-logs.techempower.com/" rel="nofollow">here</a></p>
+</li>
+<li>
+<p dir="auto"><strong>Notes:</strong> <a href="https://tfb-status.techempower.com/" rel="nofollow">Continually updating</a> with new benchmarks. All implementations are public and you can improve them with a PR.</p>
+</li>
+</ul>
+<h4 tabindex="-1" dir="auto"><a href="https://www.youtube.com/watch?v=ffkIQrq-m34" rel="nofollow">Agile Methods: The Good, the Hype and the Ugly</a> (Video)</h4>
+<ul dir="auto">
+<li>
+<p dir="auto"><strong>Hype:</strong> &#34;We should develop software using Agile.&#34;</p>
+</li>
+<li>
+<p dir="auto"><strong>Shower:</strong> Review of all the different styles of Agile and how some of the practices (particularly replacing requirements with user stories and the lack of proper specification) are harmful in the long run.</p>
+</li>
+<li>
+<p dir="auto"><strong>Caveats:</strong> While Meyer calls out some problems, overall he&#39;s very positive about Agile and recommends it as a good (but imperfect) methodology.</p>
+</li>
+<li>
+<p dir="auto"><strong>Notes:</strong> Starts at <a href="https://youtu.be/ffkIQrq-m34?t=3m30s" rel="nofollow">3:30</a>. There&#39;s a <a href="https://www.youtube.com/watch?v=Q_9k6ym5BZU" rel="nofollow">followup video</a> where he answers audience questions.</p>
+</li>
+</ul>
+<h4 tabindex="-1" dir="auto"><a href="https://homes.cs.washington.edu/~pfonseca/papers/eurosys2017-dsbugs.pdf" rel="nofollow">An Empirical Study on the Correctness of Formally Verified Systems</a> (PDF)</h4>
+<ul dir="auto">
+<li>
+<p dir="auto"><strong>Hype:</strong> &#34;If I formally verify my code, I don&#39;t need to test it!&#34;</p>
+</li>
+<li>
+<p dir="auto"><strong>Shower:</strong> Researchers looked at three formally verified systems, and found critical correctness bugs in all three. The bugs were from &#34;a wide range of mismatched assumptions&#34; and caused servers to crash or produce wrong data.</p>
+</li>
+<li>
+<p dir="auto"><strong>Caveats:</strong> Most bugs were at the system boundaries; none were found in the implemented protocols. Formally verified systems, while not perfect, were considerably less buggy than unverified systems.</p>
+</li>
+<li>
+<p dir="auto"><strong>Notes:</strong>  Systems were verified with Coq and Z3. Further discussion at <a href="https://blog.acolyer.org/2017/05/29/an-empirical-study-on-the-correctness-of-formally-verified-distributed-systems/" rel="nofollow">The Morning Paper</a>.</p>
+</li>
+</ul>
+<h4 tabindex="-1" dir="auto"><a href="http://www2.unibas.it/gscanniello/Giuseppe_Scanniello%40unibas/Home_files/TOSEM.pdf" rel="nofollow">Fixing Faults in C and Java Source Code: Abbreviated vs. Full-word Identiﬁer Names</a> (PDF)</h4>
+<ul dir="auto">
+<li>
+<p dir="auto"><strong>Hype:</strong> &#34;Identifiers should be self-documenting! Use full names, not abbreviations.&#34;</p>
+</li>
+<li>
+<p dir="auto"><strong>Shower:</strong> Researchers had programmers fix bugs in a codebase, either with all of the identifiers were abbreviated, or where all of the identifiers were full-words. They found no difference in time taken or quality of debugging.</p>
+</li>
+<li>
+<p dir="auto"><strong>Caveats:</strong> Only applies to fixing bugs. Otherwise watertight. This is honestly one of the most rigorous and comprehensive papers I&#39;ve ever read.</p>
+</li>
+<li>
+<p dir="auto"><strong>Notes:</strong> Includes ethnography on how programmers debug abbreviated code. Link is to the author preprint.</p>
+</li>
+</ul>
+<h4 tabindex="-1" dir="auto"><a href="http://basho.com/posts/technical/microservices-please-dont/" rel="nofollow">Microservices - Please, don&#39;t</a></h4>
+<ul dir="auto">
+<li>
+<p dir="auto"><strong>Hype:</strong> &#34;Microservices! Microservices!&#34;</p>
+</li>
+<li>
+<p dir="auto"><strong>Shower:</strong> Presents five fallacies of &#34;why microservices solve problems monoliths have&#34; and shows how either monoliths don&#39;t actually have those problems or that microservices make the problem even worse.</p>
+</li>
+<li>
+<p dir="auto"><strong>Caveats:</strong> Abstract arguments and experience, no case studies or examples.</p>
+</li>
+</ul>
+<h4 tabindex="-1" dir="auto"><a href="https://arxiv.org/abs/1602.00602" rel="nofollow">VM Warmup Blows Hot and Cold</a></h4>
+<ul dir="auto">
+<li>
+<p dir="auto"><strong>Hype</strong>: Your favourite programming language has been updated. The new
+version makes impressive performance improvement claims.</p>
+</li>
+<li>
+<p dir="auto"><strong>Shower</strong>: Benchmarking modern programming languages under near-ideal
+circumstances, just for longer than before, suggests that we have not been
+benchmarking language implementations as accurately as we might wish. Many
+benchmarks slow down over time. Some never stabilise. Many benchmarking
+experiments will not be repeatable due to non-determinism. Warmup time is
+important, but is usually either ignored, or reported inaccurately.</p>
+</li>
+<li>
+<p dir="auto"><strong>Caveats</strong>: Only evaluates the x86_64 architecture, and for only two
+operating systems (Linux and OpenBSD). Experiment conducted in 2017 (prior to
+meltdown patching). Evaluates mainly JITted language implementations
+(although C benchmarks were included).</p>
+</li>
+<li>
+<p dir="auto"><strong>Notes</strong>: The experiment and the benchmark runner are published under an
+open source license. <a href="https://github.com/softdevteam/warmup_experiment">Start here</a>.</p>
+</li>
+</ul>
+<h4 tabindex="-1" dir="auto"><a href="https://blog.expensify.com/2018/01/08/scaling-sqlite-to-4m-qps-on-a-single-server/" rel="nofollow">Scaling SQLite to 4M QPS on a Single Server</a></h4>
+<ul dir="auto">
+<li>
+<p dir="auto"><strong>Hype:</strong> &#34;Scaling out is better than scaling up. Cloud is more scalable than bare metal.&#34;</p>
+</li>
+<li>
+<p dir="auto"><strong>Shower:</strong> Expensify found that running a single bare-metal server was both faster and cheaper than using a x1e.32xlarge EC2 instance. By using one server, they could avoid sharding their data.</p>
+</li>
+<li>
+<p dir="auto"><strong>Caveats:</strong> Does not cover if scaling out bare metal has the same advantages over scaling out EC2 (assuming you can afford sharding). Can&#39;t really compare how much cheaper the bare metal is because they don&#39;t list the cost. I&#39;m guessing their servers are 100k each? No basis for that guess though.</p>
+</li>
+</ul>
+<h4 tabindex="-1" dir="auto"><a href="https://songlh.github.io/paper/go-study.pdf" rel="nofollow">Understanding Real-World Concurrency Bugs in Go (PDF)</a></h4>
+<ul dir="auto">
+<li>
+<p dir="auto"><strong>Hype:</strong> Compared to other languages, Go&#39;s concurrency system of goroutines and channels is easier to understand, easier to use, and is less prone to bugs and memory leaks.</p>
+</li>
+<li>
+<p dir="auto"><strong>Shower:</strong> According to an empirical study by Tu, <em>et al</em>, there are plenty of concurrency-related bugs related to the difficulty in understanding and following the concurrency features and patterns provided by Go.</p>
+</li>
+<li>
+<p dir="auto"><strong>Caveats:</strong> This study is specific to Go. Though other languages provide similar facilities, they are not covered in this article. Also, the types of bugs seen with channels and shared memory are different. Channels lead to more blocking bugs (deadlocks, dangling channels) while shared-memory lead to more nonblocking bugs (race conditions, dirty reads).</p>
+</li>
+<li>
+<p dir="auto"><strong>Notes:</strong> &#34;We studied six popular Go software including Docker, Kubernetes, and gRPC. We analyzed 171 concurrency bugs in total, with more than half of them caused by non-traditional, Go-specific problems&#34;</p>
+</li>
+</ul>
+<h2 tabindex="-1" dir="auto">Plug</h2>
+<p dir="auto">You can find my general ravings on my <a href="https://hillelwayne.com" rel="nofollow">website</a> or <a href="https://twitter.com/Hillelogram" rel="nofollow">twitter</a>.</p>
+</article>
+          </div></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="CD7FD8FE-AD5A-4FC3-AB89-E03A0A06656C"><a href="https://lemire.me/blog/2022/04/21/an-overview-of-version-control-in-programming/">An overview of version control in programming</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://lemire.me/blog/2022/04/21/an-overview-of-version-control-in-programming/">https://lemire.me/blog/2022/04/21/an-overview-of-version-control-in-programming/</a></span><br />
+			<span class="d">Added: 2022-04-25 09:38:53.270142078 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In practice, computer code is constantly being transformed. At the beginning of a project, the computer code often takes the form of sketches that are gradually refined. Later, the code can be optimized or corrected, som
+			
+				... (20295 chars. See <a href="javascript:toggle('bCD7FD8FE-AD5A-4FC3-AB89-E03A0A06656C');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="bCD7FD8FE-AD5A-4FC3-AB89-E03A0A06656C">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><div>
+<p>In practice, computer code is constantly being transformed. At the beginning of a project, the computer code often takes the form of sketches that are gradually refined. Later, the code can be optimized or corrected, sometimes for many years.</p>
+<p>Soon enough, programmers realized that they needed to not only to store files, but also to keep track of the different versions of a given file. It is no accident that we are all familiar with the fact that software is often associated with versions. It is necessary to distinguish the different versions of the computer code in order to keep track of updates.</p>
+<p>We might think that after developing a new version of a software, the previous versions could be discarded. However, it is practical to keep a copy of each version of the computer code for several reasons:</p>
+<ol>
+<li>A change in the code that we thought was appropriate may cause problems: we need to be able to go back quickly.</li>
+<li>Sometimes different versions of the computer code are used at the same time and it is not possible for all users to switch to the latest version. If an error is found in a previous version of the computer code, it may be necessary for the programmer to go back and correct the error in an earlier version of the computer code without changing the current code. In this scenario, the evolution of the software is not strictly linear. It is therefore possible to release version 1.0, followed by version 2.0, and then release version 1.1.</li>
+<li>It is sometimes useful to be able to go back in time to study the evolution of the code in order to understand the motivation behind a section of code. For example, a section of code may have been added without much comment to quickly fix a new bug. The attentive programmer will be able to better understand the code by going back and reading the changes in context.</li>
+<li>Computer code is often modified by different programmers working at the same time. In such a social context, it is often useful to be able to quickly determine who made what change and when. For example, if a problem is caused by a segment of code, we may want to question the programmer who last worked on that segment.</li>
+</ol>
+<p>Programmers quickly realized that they needed version control systems. The basic functions that a version control system provides are rollback and a history of changes made. Over time, the concept version control has spread. There are even several variants intended for the general public such as DropBox where various files, not only computer code, are stored.</p>
+<p>The history of software version control tools dates back to the 1970s (<a href="https://doi.org/10.1109/TSE.1975.6312866">Rochkind, 1975</a>). In 1972, Rochkind developed the SCCS (Source Code Control System) at Bell Laboratories. This system made it possible to create, update and track changes in a software project. SCCS remained a reference from the end of the 1970s until the 1980s. One of the constraints of SCCS is that it does not allow collaborative work: only one person can modify a given file at a given time.</p>
+<p>In the early 1980s, Tichy proposed the RCS (Revision Control System), which innovated with respect to SCCS by storing only the differences between the different versions of a file in backward order, starting from the latest file. In contrast, SCCS stored differences in forward order starting from the first version. For typical use where we access the latest version, RCS is faster.</p>
+<p>In programming, we typically store computer code within text files. Text files most often use ASCII or Unicode (UTF-8 or UTF-16) encoding. Lines are separated by a sequence of special characters that identify the end of a line and the beginning of a new line. Two characters are often used for this purpose: “carriage return” (CR) and “line feed” (LF). In ASCII and UTF-8, these characters are represented with the byte having the value 13 and the byte having the value 10 respectively. In Windows, the sequence is composed of the CR character followed by the LF character, whereas in Linux and macOS, only the LF character is used. In most programming languages, we can represent these two characters with the escape sequences \r and \n respectively. So the string “a\nb\nc” has three lines in most programming languages under Linux or macOS: the lines “a”, “b” and “c”.</p>
+<p>When a text file is edited by a programmer, usually only a small fraction of all lines are changed. Some lines may also be inserted or deleted. It is convenient to describe the differences as succinctly as possible by identifying the new lines, the deleted lines and the modified lines.</p>
+<p>The calculation of differences between two text files is often done first by breaking the text files into lines. We then treat a text file as a list of lines. Given two versions of the same file, we want to associate as many lines in the first version as possible with an identical line in the second version. We also assume that the order of the lines is not reversed.</p>
+<p>We can formalize this problem by looking for the longest common subsequence. Given a list, a subsequence simply takes a part of the list, excluding some elements. For example, (a,b,d) is a subsequence of the list (a,b,c,d,e). Given two lists, we can find a common subsequence, e.g. (a,b,d) is a subsequence of the list (a,b,c,d,e) and the list (z,a,b,d). The longest common subsequence between two lists of text lines represents the list of lines that have not been changed between the two versions of a text file. It might be difficult to solve this program using brute force. Fortunately, we can compute the longest common subsequence by dynamic programming. Indeed, we can make the following observations.</p>
+<ol>
+<li>If we have two strings with a longest subsequence of length k, and we add at the end of each of the two strings the same character, the new strings will have a longer subsequence of length k+1.</li>
+<li>If we have two strings of lengths m and n, ending in distinct characters (for example, “abc” and “abd”), then the longest subsequence of the two strings is the longest subsequence of the two strings after removing the last character from one of the two strings. In other words, to determine the length of the longest subsequence between two strings, we can take the maximum of the length of the subsequence after amputating one character from the first string while keeping the second unchanged, and the length of the subsequence after amputating one character from the second string while keeping the first unchanged.<br/>
+These two observations are sufficient to allow an efficient calculation of the length of the longest common subsequence. It is sufficient to start with strings comprising only the first character and to add progressively the following characters. In this way, one can calculate all the longest common subsequences between the truncated strings. It is then possible to reverse this process to build the longest subsequence starting from the end. If two strings end with the same character, we know that the last character will be part of the longest subsequence. Otherwise, one of the two strings is cut off from its last character, making our choice in such a way as to maximize the length of the longest common subsequence.</li>
+</ol>
+<p>The following function illustrates a possible solution to this problem. Given two arrays of strings, the function returns the longest common subsequence. If the first string has length <code>m</code> and the second <code>n</code>, then the algorithm runs in <code>O(m*n)</code> time.</p>
+<pre>func longest_subsequence<span>(</span>file1<span>,</span> file2 <span>[</span><span>]</span>string<span>)</span> <span>[</span><span>]</span>string <span>{</span>
+	m<span>,</span> n <span>:</span><span>=</span> len<span>(</span>file1<span>)</span><span>,</span> len<span>(</span>file2<span>)</span>
+	P <span>:</span><span>=</span> make<span>(</span><span>[</span><span>]</span>uint<span>,</span> <span>(</span>m<span>+</span><span>1</span><span>)</span><span>*</span><span>(</span>n<span>+</span><span>1</span><span>)</span><span>)</span>
+	<span>for</span> i <span>:</span><span>=</span> <span>1</span><span>;</span> i <span>&lt;</span><span>=</span> m<span>;</span> i<span>+</span><span>+</span> <span>{</span>
+		<span>for</span> j <span>:</span><span>=</span> <span>1</span><span>;</span> j <span>&lt;</span><span>=</span> n<span>;</span> j<span>+</span><span>+</span> <span>{</span>
+			<span>if</span> file1<span>[</span>i<span>-</span><span>1</span><span>]</span> <span>=</span><span>=</span> file2<span>[</span>j<span>-</span><span>1</span><span>]</span> <span>{</span>
+				P<span>[</span>i<span>*</span><span>(</span>n<span>+</span><span>1</span><span>)</span><span>+</span>j<span>]</span> <span>=</span> <span>1</span> <span>+</span> P<span>[</span><span>(</span>i<span>-</span><span>1</span><span>)</span><span>*</span><span>(</span>n<span>+</span><span>1</span><span>)</span><span>+</span><span>(</span>j<span>-</span><span>1</span><span>)</span><span>]</span>
+			<span>}</span> <span>else</span> <span>{</span>
+				P<span>[</span>i<span>*</span><span>(</span>n<span>+</span><span>1</span><span>)</span><span>+</span>j<span>]</span> <span>=</span> <span>max</span><span>(</span>P<span>[</span>i<span>*</span><span>(</span>n<span>+</span><span>1</span><span>)</span><span>+</span><span>(</span>j<span>-</span><span>1</span><span>)</span><span>]</span><span>,</span> P<span>[</span><span>(</span>i<span>-</span><span>1</span><span>)</span><span>*</span><span>(</span>n<span>+</span><span>1</span><span>)</span><span>+</span>j<span>]</span><span>)</span>
+			<span>}</span>
+		<span>}</span>
+	<span>}</span>
+	longest <span>:</span><span>=</span> P<span>[</span>m<span>*</span><span>(</span>n<span>+</span><span>1</span><span>)</span><span>+</span>n<span>]</span>
+	i<span>,</span> j <span>:</span><span>=</span> m<span>,</span> n
+	subsequence <span>:</span><span>=</span> make<span>(</span><span>[</span><span>]</span>string<span>,</span> longest<span>)</span>
+	<span>for</span> k <span>:</span><span>=</span> longest<span>;</span> k <span>&gt;</span> <span>0</span><span>;</span> <span>{</span>
+		<span>if</span> P<span>[</span>i<span>*</span><span>(</span>n<span>+</span><span>1</span><span>)</span><span>+</span>j<span>]</span> <span>=</span><span>=</span> P<span>[</span>i<span>*</span><span>(</span>n<span>+</span><span>1</span><span>)</span><span>+</span><span>(</span>j<span>-</span><span>1</span><span>)</span><span>]</span> <span>{</span>
+			j<span>-</span><span>-</span> <span>// the two strings end with the same char</span>
+		<span>}</span> <span>else</span> <span>if</span> P<span>[</span>i<span>*</span><span>(</span>n<span>+</span><span>1</span><span>)</span><span>+</span>j<span>]</span> <span>=</span><span>=</span> P<span>[</span><span>(</span>i<span>-</span><span>1</span><span>)</span><span>*</span><span>(</span>n<span>+</span><span>1</span><span>)</span><span>+</span>j<span>]</span> <span>{</span>
+			i<span>-</span><span>-</span>
+		<span>}</span> <span>else</span> <span>if</span> P<span>[</span>i<span>*</span><span>(</span>n<span>+</span><span>1</span><span>)</span><span>+</span>j<span>]</span> <span>=</span><span>=</span> <span>1</span><span>+</span>P<span>[</span><span>(</span>i<span>-</span><span>1</span><span>)</span><span>*</span><span>(</span>n<span>+</span><span>1</span><span>)</span><span>+</span><span>(</span>j<span>-</span><span>1</span><span>)</span><span>]</span> <span>{</span>
+			subsequence<span>[</span>k<span>-</span><span>1</span><span>]</span> <span>=</span> file1<span>[</span>i<span>-</span><span>1</span><span>]</span>
+			k<span>-</span><span>-</span><span>;</span> i<span>-</span><span>-</span><span>;</span> j<span>-</span><span>-</span>
+		<span>}</span>
+	<span>}</span>
+	<span>return</span> subsequence
+<span>}</span>
+</pre>
+<p>Once the subsequence has been calculated, we can quickly calculate a description of the difference between the two text files. Simply move forward in each of the text files, line by line, stopping as soon as you reach a position corresponding to an element of the longest sub-sequence. The lines that do not correspond to the subsequence in the first file are considered as having been deleted, while the lines that do not correspond to the subsequence in the second file are considered as having been added. The following function illustrates a possible solution.</p>
+<pre>func difference<span>(</span>file1<span>,</span> file2 <span>[</span><span>]</span>string<span>)</span> <span>[</span><span>]</span>string <span>{</span>
+    subsequence <span>:</span><span>=</span> longest_subsequence<span>(</span>file1<span>,</span> file2<span>)</span>
+    i<span>,</span> j<span>,</span> k <span>:</span><span>=</span> <span>0</span><span>,</span> <span>0</span><span>,</span> <span>0</span>
+    answer <span>:</span><span>=</span> make<span>(</span><span>[</span><span>]</span>string<span>,</span> <span>0</span><span>)</span>
+    <span>for</span> i <span>&amp;</span>lt<span>;</span> len<span>(</span>file1<span>)</span> <span>&amp;</span>amp<span>;</span><span>&amp;</span>amp<span>;</span> k <span>&amp;</span>lt<span>;</span> len<span>(</span>file2<span>)</span> <span>{</span>
+        <span>if</span> file2<span>[</span>k<span>]</span> <span>=</span><span>=</span> subsequence<span>[</span>j<span>]</span> <span>&amp;</span>amp<span>;</span><span>&amp;</span>amp<span>;</span> file1<span>[</span>i<span>]</span> <span>=</span><span>=</span> subsequence<span>[</span>j<span>]</span> <span>{</span>
+            answer <span>=</span> append<span>(</span>answer<span>,</span> <span>&#34;</span><span>&#39;</span><span>&#34;</span><span>+</span>file2<span>[</span>k<span>]</span><span>+</span><span>&#34;</span><span>&#39;</span><span>\n</span><span>&#34;</span><span>)</span>
+            i<span>+</span><span>+</span><span>;</span> j<span>+</span><span>+</span><span>;</span> k<span>+</span><span>+</span>
+        <span>}</span> <span>else</span> <span>{</span>
+            <span>if</span> file1<span>[</span>i<span>]</span> <span>!</span><span>=</span> subsequence<span>[</span>j<span>]</span> <span>{</span>
+                answer <span>=</span> append<span>(</span>answer<span>,</span> <span>&#34;</span><span>deleted: &#39;</span><span>&#34;</span><span>+</span>file1<span>[</span>i<span>]</span><span>+</span><span>&#34;</span><span>&#39;</span><span>\n</span><span>&#34;</span><span>)</span>
+                i<span>+</span><span>+</span>
+            <span>}</span>
+            <span>if</span> file2<span>[</span>k<span>]</span> <span>!</span><span>=</span> subsequence<span>[</span>j<span>]</span> <span>{</span>
+                answer <span>=</span> append<span>(</span>answer<span>,</span> <span>&#34;</span><span>added: &#39;</span><span>&#34;</span><span>+</span>file2<span>[</span>k<span>]</span><span>+</span><span>&#34;</span><span>&#39;</span><span>\n</span><span>&#34;</span><span>)</span>
+                k<span>+</span><span>+</span>
+            <span>}</span>
+        <span>}</span>
+    <span>}</span>
+    <span>for</span> <span>;</span> i <span>&amp;</span>lt<span>;</span> len<span>(</span>file1<span>)</span><span>;</span> i<span>+</span><span>+</span> <span>{</span>
+        answer <span>=</span> append<span>(</span>answer<span>,</span> <span>&#34;</span><span>deleted: &#39;</span><span>&#34;</span><span>+</span>file1<span>[</span>i<span>]</span><span>+</span><span>&#34;</span><span>&#39;</span><span>\n</span><span>&#34;</span><span>)</span>
+    <span>}</span>
+    <span>for</span> <span>;</span> k <span>&amp;</span>lt<span>;</span> len<span>(</span>file2<span>)</span><span>;</span> k<span>+</span><span>+</span> <span>{</span>
+        answer <span>=</span> append<span>(</span>answer<span>,</span> <span>&#34;</span><span>added: &#39;</span><span>&#34;</span><span>+</span>file2<span>[</span>k<span>]</span><span>+</span><span>&#34;</span> <span>\n</span><span>&#34;</span><span>)</span>
+    <span>}</span>
+    <span>return</span> answer
+<span>}</span>
+</pre>
+<p><br/>
+The function we propose as an illustration for computing the longest subsequence uses <code>O(m*n)</code> memory elements. It is possible to reduce the memory usage of this function and simplify it (<a href="https://doi.org/10.1145/360825.360861">Hirschberg, 1975</a>). Several other improvements are possible in practice (<a href="https://doi.org/10.1002/spe.4380151102">Miller and Myers, 1985</a>). We can then represent the changes between the two files in a concise way.</p>
+<p>Suggested reading: <a href="https://en.wikipedia.org/wiki/Diff">article Diff (wikipedia)</a></p>
+<p>Like SCCS, RCS does not allow multiple programmers to work on the same file at the same time. The need to own a file to the exclusion of all other programmers while working on it may have seemed a reasonable constraint at the time, but it can make the work of a team of programmers much more cumbersome.</p>
+<p>In 1986 Grune developed the Concurrent Versions System (CVS). Unlike previous systems, CVS allows multiple programmers to work on the same file simultaneously. It also adopts a client-server model that allows a single directory to be present on a network, accessible by multiple programmers simultaneously. The programmer can work on a file locally, but as long as he has not transmitted his version to the server, it remains invisible to the other developers.</p>
+<p>The remote server also serves as a de facto backup for the programmers. Even if all the programmers’ computers are destroyed, it is possible to start over with the code on the remote server.</p>
+<p>In a version control system, there is usually always a single latest version. All programmers make changes to this latest version. However, such a linear approach has its limits. An important innovation that CVS has updated is the concept of a branch. A branch allows to organize sets of versions that can evolve in parallel. In this model, the same file is virtually duplicated. There are then two versions of the file (or more than two) capable of evolving in parallel. By convention, there is usually one main branch that is used by default, accompanied by several secondary branches. Programmers can create new branches whenever they want. Branches can then be merged: if a branch A is divided into two branches (A and B) which are modified, it is then possible to bring all the modifications into a single branch (merging A and B). The branch concept is useful in several contexts:</p>
+<ol>
+<li>Some software development is speculative. For example, a programmer may explore a new approach without being sure that it is viable. In such a case, it may be better to work in a separate branch and merge with the main branch only if successful.</li>
+<li>The main branch may be restricted to certain programmers for security reasons. In such a case, programmers with reduced access may be restricted to separate branches. A programmer with privileged access may then merge the secondary branch after a code inspection.</li>
+<li>A branch can be used to explore a particular bug and its fix.</li>
+<li>A branch can be used to update a previous version of the code. Such a version may be kept up to date because some users depend on that earlier version and want to receive certain fixes. In such a case, the secondary branch may never be integrated with the main branch.</li>
+</ol>
+<p>One of the drawbacks of CVS is poor performance when projects include multiple files and multiple versions. In 2000, Subversion (SVN) was proposed as an alternative to CVS that meets the same needs, but with better performance.</p>
+<p>CVS and Subversion benefit from a client-server approach, which allows multiple programmers to work simultaneously with the same version directory. Yet programmers often want to be able to use several separate remote directories.</p>
+<p>To meet these needs, various “distributed version control systems” (DVCS) have been developed. The most popular one is probably the Git system developed by Torvalds (2005). Torvalds was trying to solve a problem of managing Linux source code. Git became the dominant version management tool.<br/>
+tool. It has been adopted by Google, Microsoft, etc. It is free software.</p>
+<p>In a distributed model, a programmer who has a local copy of the code can synchronize it with either one directory or another. They can easily create a new copy of the remote directory on a new server. Such flexibility is considered essential in many complex projects such as the Linux operating system kernel.</p>
+<p>Several companies offer Git-based services including GitHub. Founded in 2008, GitHub has tens of millions of users. In 2018, Microsoft acquired GitHub for $7.5 billion.</p>
+<p>For CVS and Subversion, there is only one set of software versions. With a distributed approach, multiple sets can coexist on separate servers. The net result is that a software project can evolve differently, under the responsibility of different teams, with possible future reconciliation.</p>
+<p>In this sense, Git is distributed. Although many users rely on GitHub (for example), your local copy can be attached to any remote directory, and it can even be attached to multiple remote directories. The verb “clone” is sometimes used to describe the recovery of a Git project locally, since it is a complete copy of all files, changes, and branches.</p>
+<p>If a copy of the project is attached to another remote directory, it is called a fork. We often distinguish between branches and forks. A branch always belongs to the main project. A fork is originally a complete copy of the project, including all branches. It is possible for a fork to rejoin the main project, but it is not essential.</p>
+<p>Given a publicly available Git directory, anyone can clone it and start working on it and contributing to it. We can create a new fork. From a fork, we can submit a pull request that invites people to integrate our changes. This allows a form of permissionless innovation. Indeed, it becomes possible to retrieve the code, modify it and propose a new version without ever having to interact directly with the authors.</p>
+<p>Systems like CVS and subversion could become inefficient and take several minutes to perform certain operations. Git, in contrast, is generally efficient and fast, even for huge projects. Git is robust and does not get “corrupted” easily. However, it is not recommended to use Git for huge files such as multimedia content: Git’s strength lies in text files. It should be noted that the implementation of Git has improved over time and includes sophisticated indexing techniques.</p>
+<p>Git is often used on the command line. It is possible to use graphical clients. Services like GitHub make Git a little easier.</p>
+<p>The basic logical unit of Git is the <code>commit</code>, which is a set of changes to multiple files. A <code>commit</code> includes a reference to at least one parent, except for the first <code>commit</code> which has no parent. A single <code>commit</code> can be the parent of several children: several branches can be created from a <code>commit</code> and each subsequent <code>commit</code> becomes a <code>child</code> of the initial <code>commit</code>. Furthermore, when several branches are merged, the resulting <code>commit</code> will have several parents. In this sense, the <code>commits</code> form an “acyclic directed graph”.</p>
+<p>With Git, we want to be able to refer to a <code>commit</code> in an easy way, using a unique identifier. That is, we want to have a short numeric value that corresponds to one <code>commit</code> and one <code>commit</code> only. We could assign each <code>commit</code> a version number (1.0, 2.0, etc.). Unfortunately, such an approach is difficult to reconcile with the fact that <code>commits</code> do not form a linear chain where a <code>commit</code> has one and only one parent. As an alternative, we use a hash function to compute the unique identifier. A hash function takes elements as parameters and calculates a numerical value (hash value). There are several simple hash functions. For example, we can iterate over the bytes contained in a message from a starting value <code>h</code>, by computing <code>h = 31 * h + b</code> where <code>b</code> is the byte value. For example, a message containing bytes 3 and 4 might have a hash value of <code>31 * (31 * 3) + 4</code> if we start <code>h = 0</code>. Such a simple approach is effective in some cases, but it allows malicious users to create collisions: it would be possible to create a fake <code>commit</code> that has the same hash value and thus create security holes. For this reason, Git uses more sophisticated hashing techniques (SHA-1, SHA-256) developed by cryptographic specialists. Commits are identified using a hash value (for example, the hexadecimal numeric value 921103db8259eb9de72f42db8b939895f5651489) which is calculated from the date and time, the comment left by the programmer, the user’s name, the parents and the nature of the change. In theory, two <code>commits</code> could have the same hash value, but this is an unlikely event given the hash functions used by Git. It’s not always practical to reference a hexadecimal code. To make things easier, Git allows you to identify a commit with a label (e.g., v1.0.0). The following command will do: <code>git tag -a v1.0.0 -m &#34;version 1.0.0&#34;</code>.</p>
+<p>Though tags can be any string, tags often contain sequences of numbers indicating a version. There is no general agreement among programmers on how  to attribute version numbers to a version. However, tags sometimes take the form of three numbers separated by dots: MAJOR.MINOR.PATCH (for example, 1.2.3). With each new version, 1 is added to at least one of the three numbers. The first number often starts at 1 while the next two start at 0.</p>
+<ul>
+<li>The first number (MAJOR) must be increased when you make major changes to the code. The other two numbers (MINOR and PATCH) are often reset to zero. For example, you can go from version 1.2.3 to version 2.0.0.</li>
+<li>The second number (MINOR) is increased for minor changes (for example, adding a function). When increasing the second number, the first number (MAJOR) is usually kept unchanged and the last number (PATCH) is reset to zero.</li>
+<li>The last number (PATCH) is increased when fixing bugs. The other two numbers are not increased.<br/>
+There are finer versions of this convention like “<a href="https://semver.org">semantic versioning</a>“.</li>
+</ul>
+<p>With Git, the programmer can have a local copy of the commit graph. They can add new <code>commits</code>. In a subsequent step, the programmer must “push” his changes to a remote directory so that the changes become visible to other programmers. The other programmers can fetch the changes using a `pull’.</p>
+<p>Git has advanced collaborative features. For example, the <code>git blame</code> command lets you know who last modified a given piece of code.</p>
+<h2>Conclusion</h2>
+<p>Version control in computing is a sophisticated approach that has benefited from many years of work. It is possible to store multiple versions of the same file at low cost and navigate from one version to another quickly.</p>
+<p>If you develop code without using a version control tool like Git or the equivalent, you are bypassing proven practices. It’s likely that if you want to work on complex projects with multiple programmers, your productivity will be much lower without version control.</p>
+</div></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="FF1A3311-D258-48FF-9B4C-CBA4961F37F0"><a href="https://www.theatlantic.com/magazine/archive/2023/04/subjective-age-how-old-you-feel-difference/673086/">The Puzzling Gap Between How Old You Are and How Old You Think You Are</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theatlantic.com/magazine/archive/2023/04/subjective-age-how-old-you-feel-difference/673086/">https://www.theatlantic.com/magazine/archive/2023/04/subjective-age-how-old-you-feel-difference/673086/</a></span><br />
+			<span class="d">Added: 2023-03-10 14:19:40.019731998 &#43;0000 UTC</span>
+		</div>
+		<p class="p">There are good reasons you always feel 20 percent younger than your actual age.
+			
+				... (13728 chars. See <a href="javascript:toggle('bFF1A3311-D258-48FF-9B4C-CBA4961F37F0');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="bFF1A3311-D258-48FF-9B4C-CBA4961F37F0">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><article><header><div><div><p>There are good reasons you always feel 20 percent younger than your actual age.</p></div><div><figure><div><picture><img alt="an illustration of an older woman in a yellow bathing suit leaping with abandon from a diving board into a pool while a younger woman in a floating flamingo shields herself with her arms" sizes="(min-width: 1440px) 656px, (min-width:1024px) calc(50vw - 64px), (min-width: 768px) calc(50vw - 48px), (min-width: 375px) calc(100vw - 103px), (min-width: 320px) calc(100vw - 64px), calc(100vw - 48px)" srcset="https://cdn.theatlantic.com/thumbor/PjFbi0hY5YBexOSKLQZ5UTQUQa8=/0x0:1400x1750/296x370/media/img/2023/02/21/DIS_Senior_Age_Vert_Opener/original.jpg 296w, https://cdn.theatlantic.com/thumbor/BeLJeZfIo8ywMc3r7n8AZbJx9o8=/0x0:1400x1750/311x389/media/img/2023/02/21/DIS_Senior_Age_Vert_Opener/original.jpg 311w, https://cdn.theatlantic.com/thumbor/khaHBkIrHRt3eT_BltAwuMgWXn0=/0x0:1400x1750/592x740/media/img/2023/02/21/DIS_Senior_Age_Vert_Opener/original.jpg 592w, https://cdn.theatlantic.com/thumbor/h9Rcw1VH9-ThCntmTfT3-u56AUM=/0x0:1400x1750/622x778/media/img/2023/02/21/DIS_Senior_Age_Vert_Opener/original.jpg 622w, https://cdn.theatlantic.com/thumbor/8toewKqwIaya7NPFcJY8RKjGXuc=/0x0:1400x1750/665x831/media/img/2023/02/21/DIS_Senior_Age_Vert_Opener/original.jpg 665w, https://cdn.theatlantic.com/thumbor/f7_jKyJe-di21sGBlHrdcdF8ikk=/0x0:1400x1750/960x1200/media/img/2023/02/21/DIS_Senior_Age_Vert_Opener/original.jpg 960w, https://cdn.theatlantic.com/thumbor/d5Nb6qD3vDTP-TwZdvgMtStFKUQ=/0x0:1400x1750/1330x1663/media/img/2023/02/21/DIS_Senior_Age_Vert_Opener/original.jpg 1330w" src="https://cdn.theatlantic.com/thumbor/lZ4JGmZRb7802A_KqCPW0s1ryDw=/0x0:1400x1750/648x810/media/img/2023/02/21/DIS_Senior_Age_Vert_Opener/original.jpg" width="648" height="810"/></picture></div><figcaption>Illustration by Klaus Kremmerz</figcaption></figure></div></div></header><section><p><small><i>This article was featured in One Story to Read Today, a newsletter in which our editors recommend a single must-read from </i>The Atlantic<i>, Monday through Friday. </i><a data-saferedirecturl="https://www.google.com/url?q=https://www.theatlantic.com/newsletters/sign-up/one-story-to-read-today/&amp;source=gmail&amp;ust=1677256020185000&amp;usg=AOvVaw0sctOnTQr2GmhD60TxeDcb" href="https://www.theatlantic.com/newsletters/sign-up/one-story-to-read-today/" target="_blank"><i>Sign up for it here.</i></a><i>      </i></small></p><p>T<span>his past Thanksgiving</span>, I asked my mother how old she was in her head. She didn’t pause, didn’t look up, didn’t even ask me to repeat the question, which would have been natural, given that it was both syntactically awkward and a little odd. We were in my brother’s dining room, setting the table. My mother folded another napkin. “Forty-five,” she said.</p><p>She is 76.</p><section><div><h2>Explore the April 2023 Issue</h2><p>Check out more from this issue and find your next story to read.</p></div><a href="https://www.theatlantic.com/magazine/toc/2023/04/" target="_blank" data-action="click button - magazine promo" data-label="https://www.theatlantic.com/magazine/toc/2023/04/">View More</a></section><p>Why do so many people have an immediate, intuitive grasp of this <a href="https://www.bbc.com/future/article/20180712-the-age-you-feel-means-more-than-your-actual-birthdate">highly abstract concept</a>—“subjective age,” it’s called—when randomly presented with it? It’s bizarre, if you think about it. Certainly most of us don’t believe ourselves to be shorter or taller than we actually are. We don’t think of ourselves as having smaller ears or longer noses or curlier hair. Most of us also know where our bodies are in space, what physiologists call “proprioception.”</p><p>Yet we seem to have an awfully rough go of locating ourselves in time. A friend, nearing 60, recently told me that whenever he looks in the mirror, he’s not so much unhappy with his appearance as startled by it—“as if there’s been some sort of error” were his exact words. (High-school reunions can have this same confusing effect. You look around at your lined and thickened classmates, wondering how they could have so violently capitulated to age; then you see photographs of yourself from that same event and realize: <i>Oh</i>.) The gulf between how old we are and how old we believe ourselves to be can often be measured in light-years—or at least a goodly number of old-fashioned Earth ones.</p><p>As one might suspect, there are studies that examine this phenomenon. (There’s a study for everything.) As one might also suspect, most of them are pretty unimaginative. Many have their origins in the field of gerontology, <a href="https://www.wsj.com/articles/can-feeling-younger-improve-health-subjective-age-11670009137">designed primarily with an eye toward health outcomes</a>, which means they ask participants how old they feel, which those participants generally take to mean how old do you feel <i>physically</i>, which then leads to the rather unsurprising conclusion that if you feel older, you probably are, in the sense that you’re aging faster.</p><p>But “How old do you feel?” is an altogether different question from “How old are you in your head?” The most inspired paper I read about subjective age, from 2006, asked this of its 1,470 participants—in a Danish population (Denmark being the kind of place where studies like these would happen)—and what the two authors discovered is that adults over 40 perceive themselves to be, on average, <a href="https://link.springer.com/content/pdf/10.3758/BF03193996.pdf">about 20 percent younger than their actual age</a>. “We ran this thing, and the data were gorgeous,” says David C. Rubin (75 in real life, 60 in his head), one of the paper’s authors and a psychology and neuroscience professor at Duke University. “It was just all these beautiful, smooth curves.”</p><p>Why we’re possessed of this urge to subtract is another matter. Rubin and his co-author, Dorthe Berntsen, didn’t make it the focus of this particular paper, and the researchers who do often propose a crude, predictable answer—namely, that lots of people consider aging a catastrophe, which, while true, seems to tell only a fraction of the story. You could just as well make a different case: that viewing yourself as younger is a form of optimism, rather than denialism. It says that you envision many generative years ahead of you, that you will not be written off, that your future is not one long, dreary corridor of locked doors.</p><p>I think of my own numbers, for instance—which, though a slight departure from the Rubin-Berntsen rule, are still within a reasonable range (or so Rubin assures me). I’m 53 in real life but suspended at 36 in my head, and if I stop my brain from doing its usual Tilt-A-Whirl for long enough, I land on the same explanation: At 36, I knew the broad contours of my life, but hadn’t yet filled them in. I was professionally established, but still brimmed with potential. I was paired off with my husband, but not yet lost in the marshes of a long marriage (and, okay, not yet a tiresome fishwife). I was soon to be pregnant, but not yet a mother fretting about eating habits, screen habits, study habits, the brutal folkways of adolescents, the porn merchants of the internet.</p><p>I was not yet on the gray turnpike of middle age, in other words.</p><p>“I’m 35,” wrote my friend Richard Primus, 53 in real life and a constitutional-law professor at the University of Michigan Law School. “I think it’s because that’s the age I was when my major life questions/statuses reached the resolutions/conditions in which they’ve since remained.” So: kind of like my answer, but more optimistically rendered. He continued: “Medieval Christian theologians asked the intriguing question ‘How old are people in heaven?’ The dominant answer: 33. Partly bc age of Jesus at crucifixion. But I think partly bc it feels like a kind of peak for the combined vigor-maturity index.”</p><p>The combined vigor-maturity index: Yes!</p><p>Richard was replying to me on Twitter, where I’d tossed out my query to the crowd: “How old are you in your head?” (Turns out I’m not the only one with this impulse; Sari Botton, the founder of <i>Oldster Magazine</i>, regularly publishes <a href="https://oldster.substack.com/s/oldster-magazine-questionnaires">questionnaires she has issued to novelists, artists, and activists of a certain age, and this is the second question</a>.) Ian Leslie, the author of <a href="https://bookshop.org/a/12476/9780062878564"><i>Conflicted</i></a> and two other social-science books (32 in his head, 51 in “boring old reality”), took a similar view to mine and Richard’s, but added an astute and humbling observation: Internally viewing yourself as substantially younger than you are can make for some serious social weirdness.</p><p>“30 year olds should be aware that for better or for worse, the 50 year old they’re talking to thinks they’re roughly the same age!” he wrote. “Was at a party over the summer where average was about 28 and I had to make a conscious effort to remember I wasn’t the same—they can tell of course, so it’s asymmetrical.”</p><p>Yes. They can tell. I’ve had this unsettling experience, seeing little difference between the 30-something before me and my 50-something self, when suddenly the 30-something will make a comment that betrays just how aware she is of the age gap between us, that this gap seems enormous, that in her eyes I may as well be Dame Judi Dench.</p><p>Although many hewed close to the Rubin-Berntsen rule, the replies I got on Twitter were not always about potential. Many carried with them a whiff of unexpected poignancy. Trauma sometimes played a role: One person was stuck at 32, unable to see themselves as any older than a sibling who’d died; another was stuck for a long time at age 12, the year her father joined a cult. (Rubin has written about this phenomenon too—the centrality of certain events to our memories, especially calamitous ones. Sometimes we freeze at the age of our traumas.)</p><p>My friend Alan, who is in his 50s, told me he thinks of himself as 38 because he still thinks of his 98-year-old father as 80. The writer Molly Jong-Fast replied that she’s 19 because that’s the age she got sober. One 36-year-old woman told me she thought the pandemic was a time thief—she simply hadn’t accumulated enough new experiences to justify the addition of more chronological years—which made her younger in her head sometimes, as if she were willing back the clock.</p><p>When I mentioned to a colleague that I was writing this piece, he told me he was 12 in his head, not because he thinks of himself as a child, but because his inner self has remained unchanged as he’s aged; it’s “the same consciousness as always since I became conscious.” His words instantly brought to mind a line from the opening pages of Milan Kundera’s <a href="https://bookshop.org/a/12476/9780060932381"><i>Immortality</i></a>: “There is a certain part of all of us that lives outside of time.”</p><p>Of course, not everyone I spoke with viewed themselves as younger. There were a few old souls, something I would have once said about myself. I felt 40 at 10, when the gossip and cliquishness of other little girls seemed not just cruel but dull; I felt 40 at 22, when I barely went to bars; I felt 40 at 25, when I started accumulating noncollege friends and realized I was partial to older people’s company. And when I turned 40, I was genuinely relieved, as if I’d finally achieved some kind of cosmic internal-external temporal alignment.</p><p id="injected-recirculation-link-0" data-view-action="view link - injected link - item 1"><a href="https://www.theatlantic.com/magazine/archive/2022/03/why-we-lose-friends-aging-happiness/621305/">From the March 2022 issue: It’s your friends who break your heart</a></p><p>But over time, I rolled backwards. Other people do this too, just starting at a younger age—25—and Rubin has a theory about why this might be. Adolescence and emerging adulthood are times dense with firsts (first kiss, first time having sex, first love, first foray into the world without your parents’ watchful gaze); they are also times when our brains, for a variety of neurodevelopmental reasons, are inclined to feel things more intensely, especially the devil’s buzz of a good, foolhardy risk. The uniqueness and density of these periods have manifested themselves in other areas of Rubin’s research. Years ago, he and other researchers showed that adults have an outsize number of memories from the ages of about 15 to 25. They called this phenomenon “the reminiscence bump.” (This is generally used to explain why we’re so responsive to the music of our adolescence—which in my case means my iPhone is loaded with a lot more Duran Duran songs than any dignified person should admit.)</p><p>Rubin and Berntsen made a second intriguing discovery in their work on subjective age: People younger than 25 mainly said they felt older than they are, not younger—which, again, makes sense if you’ve had even a passing acquaintance with a 10-year-old, a teenager, a 21-year-old. They’re eager for more independence and to be taken more seriously; in their head, they’re ready for both, though their prefrontal cortex is basically a bunch of unripe bananas.</p><p>In Rubin and Berntsen’s 2006 study, socioeconomic status, gender, and education did not significantly affect their data. One wonders if this has something to do with the fact that they conducted their research in Denmark, a country with substantially less income inequality and racial heterogeneity than our own.</p><p>The picture changes when there’s more variety: A 2021 meta-analysis of 294 papers examining subjective-age data from across the globe <a href="https://psycnet.apa.org/record/2021-34369-001">found that the discrepancy between chronological age and internal age was greatest in the United States, Western Europe, and Australia/Oceania</a>. Asia had a smaller gap. Africa had the smallest, which could be read as an economic sign (poverty might play a role) but also a cultural one: Elders in collectivist societies are accorded more respect and have more extended-family support.</p><p>“Could it be that feeling younger is actually dysfunctional and no longer helping you focus on what’s going on? That’s the more complicated question,” says Hans-Werner Wahl (69 in real life, 55 in his head), a co-author of the meta-analysis. “A lower subjective age may be predictive of better health. But there are other populations around the globe for whom it is not necessary to feel younger. And they’re not less healthy.”</p><p>This seems to be the conclusion of Becca Levy, a professor of epidemiology and psychology at the Yale School of Public Health. As a young graduate student, she went to Japan and couldn’t help noticing not just that people lived longer, but that their attitude toward aging was more positive—and her decades of research since have shown a very persuasive connection between the two. In the introduction to her book, <a href="https://bookshop.org/a/12476/9780063053199"><i>Breaking the Age Code</i></a>, she describes newsstands in Tokyo lined with manga books filled with story lines about older people falling in love. She reports wandering Tokyo on Keiro No Hi, or “Respect for the Aged Day,” and seeing people in their 70s and 80s lifting weights in the park. She talks about music classes filled with 75-year-olds learning how to play electric slide guitar.</p><p>At first blush, Levy’s scholarship may seem to quarrel with the literature of subjective age. But maybe it’s a complement. What underpins them both is an enduring sense of agency: If you mentally view yourself as younger—if you believe you have a few pivots left—you still see yourself as useful; if you believe that aging itself is valuable, an added good, then you also see yourself as useful. In a better world, older people would feel more treasured, certainly. But even now, a good many of us seem capable of combining the two ideas, merging acceptance of our age with a sense of hope. When reading over the many <i>Oldster</i> questionnaires, I was struck by how many people said that their present age was their favorite one. A reassuring number of respondents didn’t want to trade their hard-earned wisdom—or humility, or self-acceptance, whatever they had accrued along the way—for some earlier moment.</p><p>Recently, I wrote to Margaret Atwood, asking her how old she is in <i>her</i> head. In the few interactions I’ve had with her, she <a href="https://www.theatlantic.com/culture/archive/2022/02/conversation-with-margaret-atwood/622845/">seems quite sanguine about aging</a>. Her reply:</p><div><blockquote><p>At 53 you worry about being old compared to younger people. At 83 you enjoy the moment, and time travel here and there in the past 8 decades. You don’t fret about seeming old, because hey, you really are old! You and your friends make Old jokes. You have more fun than at 53, in some ways. Wait, you’ll see! :)</p></blockquote></div><hr/><p><small><em>This article appears in the April 2023 print edition with the headline “The Age in Your Head.” </em><i>When you buy a book using a link on this page, we receive a commission. Thank you for supporting </i>The Atlantic.</small></p></section><gpt-ad format="injector" sizes-at-0="mobile-wide,native,house" targeting-pos="injector-most-popular" sizes-at-976="desktop-wide,native,house"></gpt-ad></article></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+<section>
+<h2 id="saveme">Random expired <a href="javascript:toggle('olsaveme');">&#177;</a></h2>
+<div>2 links selected from 94 expired links</div>
+<ol id="olsaveme">
+
+<li>
+	<article>
+		<h3 id="22C9D369-7D87-417E-8241-0FF77B96719B"><a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c">Health, Availability, Debuggability - Observability&#43; - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c">https://medium.com/observability/health-availability-debuggability-5b0ab300b35c</a></span><br />
+			<span class="d">Added: 2020-01-19 20:02:51.116274833 &#43;0000 UTC</span>
+		</div>
+		<p class="p">As we collect various observability signals from systems, it fosters a new conversation around the classification of the signals. There is a significant discussion on observability signals and even…
+			
+				(Open <a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5BE3BDE4-6B27-4A2A-8384-233AC1C72BCF"><a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/">Reddit - Dive into anything</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/">https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/</a></span><br />
+			<span class="d">Added: 2022-03-06 18:19:36.222723007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">3.9m members in the programming community. Computer Programming
+			
+				(Open <a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+<section>
+<h2 id="expired">Expired <a href="javascript:toggle('olexpired');">&#177;</a></h2>
+<div>94 links expired today Sun, Mar.12, 2023</div>
+<ol id="olexpired">
+
+<li>
+	<article>
+		<h3 id="35BF825E-8A1E-4AFD-8277-ECAE794900FC"><a href="https://danluu.com/cache-incidents/">A decade of major cache incidents at Twitter</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://danluu.com/cache-incidents/">https://danluu.com/cache-incidents/</a></span><br />
+			<span class="d">Added: 2022-02-12 22:04:41.532500028 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I&#39;m trying some experimental tiers on Patreon to see if I can get to substack-like levels of financial support for this blog without moving to substack! A decade of major cache incidents at Twitter This was co-authored 
+			
+				(Open <a href="https://danluu.com/cache-incidents/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="0005A9E5-FB73-4470-89CF-362DD0D1D1AC"><a href="https://convey.earth/conversation?id=48">Convey</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://convey.earth/conversation?id=48">https://convey.earth/conversation?id=48</a></span><br />
+			<span class="d">Added: 2022-02-04 18:50:33.62513113 &#43;0000 UTC</span>
+		</div>
+		<p class="p">2022 February 01 16:21 stuartscott 1473754¤ 1240149¤ You may have noticed that the January edition of the Convey Digest looks a little different from the previous ones - the color scheme is now based on the dominant
+			
+				(Open <a href="https://convey.earth/conversation?id=48" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5E2F906D-29F5-4863-8F9F-1A8B82E40BBC"><a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/">Data Caching Across Microservices in a Serverless Architecture</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/">https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472444057 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Organizations are re-architecting their traditional monolithic applications to incorporate microservices. This helps them gain agility and scalability and accelerate time-to-market for new features. Each microser
+			
+				(Open <a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="973CCA37-0F8A-4370-B2D7-A2670EB77CCA"><a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e">Immutable Collections in Java using Sealed Types</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e">https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e</a></span><br />
+			<span class="d">Added: 2020-11-22 19:50:09.498816967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">JDK 15 was released on September 15, 2020. JEP 360 Sealed Types was included as a preview feature in this release. Sealed Types is part of Project Amber. Sealed classes or interfaces can be used to…
+			
+				(Open <a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="86B34871-F4BB-44A0-804A-56556B12F3CB"><a href="https://twitter.com/alexxubyte/status/1491821606422781975">https://twitter.com/alexxubyte/status/1491821606422781975</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://twitter.com/alexxubyte/status/1491821606422781975">https://twitter.com/alexxubyte/status/1491821606422781975</a></span><br />
+			<span class="d">Added: 2022-02-13 22:20:38.556627035 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://twitter.com/alexxubyte/status/1491821606422781975" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="92BCE160-6EB4-43DE-AB20-676C1A7E492B"><a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/">How to Work with Emotions</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/">https://www.lionsroar.com/forum-how-to-work-with-emotions/</a></span><br />
+			<span class="d">Added: 2020-01-20 07:48:57.201634883 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Sharon Salzberg, Judith Simmer-Brown, John Tarrant, and Dzogchen Ponlop Rinpoche discuss skillful and unskillful involvement with emotions, offering new perspectives on how to think about and engage with our emotional li
+			
+				(Open <a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4EAE9D5E-8762-44E9-B560-8FA66CB88E48"><a href="https://lena-voita.github.io/nlp_course/word_embeddings.html">Distributional Semantics</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://lena-voita.github.io/nlp_course/word_embeddings.html">https://lena-voita.github.io/nlp_course/word_embeddings.html</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.471920967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">To capture meaning of words in their vectors, we first need to define the notion of meaning that can be used in practice. For this, let us try to understand how we, humans, get to know which w
+			
+				(Open <a href="https://lena-voita.github.io/nlp_course/word_embeddings.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="7AC1A3D3-2E66-4317-8C48-EDD600870093"><a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb">pytudes/Probability.ipynb at main · norvig/pytudes · GitHub</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb">https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb</a></span><br />
+			<span class="d">Added: 2021-06-20 03:01:48.03035593 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Python programs, usually short, of considerable difficulty, to perfect particular skills. - pytudes/Probability.ipynb at main · norvig/pytudes
+			
+				(Open <a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="A2C05C7C-A5E7-46B1-B47A-1D5BD53DF6FE"><a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/">Partitioning GitHub’s relational databases to handle scale</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/">https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/</a></span><br />
+			<span class="d">Added: 2021-09-28 19:04:08.894801139 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In 2019, to meet growth and availability challenges, we set a plan in motion to improve our tooling and ability to partition relational databases.
+			
+				(Open <a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ACBA973D-AC13-4337-9A13-E797707FEB37"><a href="https://learn.particular.net/users/sign_in">Online education by Particular Software</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://learn.particular.net/users/sign_in">https://learn.particular.net/users/sign_in</a></span><br />
+			<span class="d">Added: 2021-06-20 03:02:37.519088983 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Skip to main content Online education by Particular Software Toggle menu MENU Welcome Back! EMAIL PASSWORD REMEMBER ME Forgot Password? If you are a human, ignore this field SIGN IN Create a new account HOME SUPPOR
+			
+				(Open <a href="https://learn.particular.net/users/sign_in" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4A4DBD31-E21E-404F-B4FC-D3A89081A97F"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg">What&#39;s in a Good Error Message? - Gunnar Morling</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg">https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg</a></span><br />
+			<span class="d">Added: 2022-02-03 19:43:27.72410798 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="CE1D160C-9BD4-44F6-8701-5FC512623AD8"><a href="https://www.spakhm.com/p/how-to-get-promoted">How to get promoted</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.spakhm.com/p/how-to-get-promoted">https://www.spakhm.com/p/how-to-get-promoted</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:23.689921855 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Almost everyone who does great work toils in relative obscurity. Performance reviews are social fiction. How do people really advance through the corporate hierarchy?
+			
+				(Open <a href="https://www.spakhm.com/p/how-to-get-promoted" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D473BC81-57FE-451F-BB84-6DAF4A34B7F5"><a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1">Testing in Production, the safe way</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1">https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1</a></span><br />
+			<span class="d">Added: 2020-01-25 21:07:09.173211097 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this post, I hope to explore different forms of “testing in production”, when each form of testing is the most beneficial as well as how to test services in production in a safe way. However…
+			
+				(Open <a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="1803FA34-0EF0-4D37-9429-A2738C72A3AF"><a href="https://iximiuz.com/en/posts/computer-networking-101/">Computer Networking Basics For Developers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://iximiuz.com/en/posts/computer-networking-101/">https://iximiuz.com/en/posts/computer-networking-101/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.473012924 &#43;0000 UTC</span>
+		</div>
+		<p class="p">What is a LAN? What is a network segment? Ethernet collision domains vs broadcast domains. How network switches work? How to send IP packets? VLAN vs VXLAN.
+			
+				(Open <a href="https://iximiuz.com/en/posts/computer-networking-101/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="546C87AF-7B7A-4689-A830-C7B9A7294144"><a href="https://joelhooks.com/digital-garden">🌱 My blog is a digital garden, not a blog</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://joelhooks.com/digital-garden">https://joelhooks.com/digital-garden</a></span><br />
+			<span class="d">Added: 2022-03-02 13:59:56.193624973 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The phrase &#34;digital garden&#34; is a metaphor for thinking about writing and creating that focuses less on the resulting &#34;showpiece&#34; and more on the process, care, and craft it takes to get there. While not everybody has or 
+			
+				(Open <a href="https://joelhooks.com/digital-garden" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="94E868CC-FAF2-4068-B1AF-FB2A8134350B"><a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/">Stay Interviews (the opposite of Exit Interviews) – Mike Crittenden</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/">https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/</a></span><br />
+			<span class="d">Added: 2021-06-14 02:24:17.310279846 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Exit Interviews ask why people are leaving, and Stay Interviews ask why they keep working here.
+			
+				(Open <a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ACAFC094-E832-4177-8988-CD37A2546ACB"><a href="https://www.theguardian.com/books/2022/feb/27/manhattan-phoenix-review-epic-history-new-york-fire-water?utm_term=621b7ce0197d521d5bd973ee96e7e838&amp;utm_campaign=GuardianTodayUS&amp;utm_source=esp&amp;utm_medium=Email&amp;CMP=GTUS_email">Manhattan Phoenix review: epic history of how New York was forged by fire – and water | Books | The Guardian</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theguardian.com/books/2022/feb/27/manhattan-phoenix-review-epic-history-new-york-fire-water?utm_term=621b7ce0197d521d5bd973ee96e7e838&amp;utm_campaign=GuardianTodayUS&amp;utm_source=esp&amp;utm_medium=Email&amp;CMP=GTUS_email">https://www.theguardian.com/books/2022/feb/27/manhattan-phoenix-review-epic-history-new-york-fire-water?utm_term=621b7ce0197d521d5bd973ee96e7e838&amp;utm_campaign=GuardianTodayUS&amp;utm_source=esp&amp;utm_medium=Email&amp;CMP=GTUS_email</a></span><br />
+			<span class="d">Added: 2022-03-11 22:42:59.309005975 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Daniel Levy pins the great fire of 1835 as the birth event of modern Manhattan in a tale as teeming as the city itself
+			
+				(Open <a href="https://www.theguardian.com/books/2022/feb/27/manhattan-phoenix-review-epic-history-new-york-fire-water?utm_term=621b7ce0197d521d5bd973ee96e7e838&amp;utm_campaign=GuardianTodayUS&amp;utm_source=esp&amp;utm_medium=Email&amp;CMP=GTUS_email" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="243783C4-C897-490D-80E6-182A4DC7ACE6"><a href="https://opensource.com/article/21/11/cluster-logging-kubernetes">What you need to know about cluster logging in Kubernetes</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://opensource.com/article/21/11/cluster-logging-kubernetes">https://opensource.com/article/21/11/cluster-logging-kubernetes</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.47310996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Explore how different container logging patterns in Kubernetes work.
+			
+				(Open <a href="https://opensource.com/article/21/11/cluster-logging-kubernetes" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9E769276-C043-4327-BD56-16F07A66B4E4"><a href="https://en.wikipedia.org/wiki/User_space">User space</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://en.wikipedia.org/wiki/User_space">https://en.wikipedia.org/wiki/User_space</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.471538066 &#43;0000 UTC</span>
+		</div>
+		<p class="p">For the term &#34;user space&#34; as used in Wikipedia, see Wikipedia:User pages. &#34;Kernel space&#34; redirects here. For the mathematical definition, see Null space. This article needs additional citations for verification. Please h
+			
+				(Open <a href="https://en.wikipedia.org/wiki/User_space" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4287DD39-F68F-4AFE-A728-00534EB7B5AD"><a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/">VPE and CTO - the first 90 days –</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/">https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/</a></span><br />
+			<span class="d">Added: 2020-11-16 02:47:12.523211002 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I put this mind map together a few years ago after a discussion about what a new VP of Engineering or CTO should think about in their first 90 days in a new role. It’s a map of the areas I believe every new technical le
+			
+				(Open <a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="34BB5A22-51FE-4F9A-92EA-E765615BFF5A"><a href="https://orionmagazine.org/article/on-memory-and-survival/">Orion Magazine - On Memory and Survival</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://orionmagazine.org/article/on-memory-and-survival/">https://orionmagazine.org/article/on-memory-and-survival/</a></span><br />
+			<span class="d">Added: 2022-03-01 16:53:36.376021862 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I could blame it on a lot of things. On my education, or lack thereof, on the reasons why I still can’t spell worth a damn.
+			
+				(Open <a href="https://orionmagazine.org/article/on-memory-and-survival/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2183E3CB-5AD3-4D96-95E5-6A57D58BAC2D"><a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/">A categorized list of all Java and JVM features since JDK 8 to 16 - Advanced Web Machinery</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/">https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:11.951596021 &#43;0000 UTC</span>
+		</div>
+		<p class="p">From Java 8 to 17
+			
+				(Open <a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="E48D0031-178B-4DF4-B201-DD97C41FEF33"><a href="https://blog.close.com/subject-lines/">Sales email subject lines: 50&#43; tips, examples, and biggest mistakes</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://blog.close.com/subject-lines/">https://blog.close.com/subject-lines/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:56:34.453863143 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Find out about the best ways to write subject lines for your cold sales emails to improve your open and response rates! This post is here to help you craft a subject line that appeals to your customers &amp; is relevant to y
+			
+				(Open <a href="https://blog.close.com/subject-lines/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D1EBDE68-DFE3-4116-BCDD-51C0188E30E3"><a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/">On Call Shouldn’t Suck: A Guide For Managers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/">https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/</a></span><br />
+			<span class="d">Added: 2020-10-05 02:45:04.299745082 &#43;0000 UTC</span>
+		</div>
+		<p class="p">https://twitter.com/mipsytipsy/status/1309604622554640384 There are few engineering topics that provoke as much heated commentary as oncall. Everybody has a strong opinion. So let me say straight up that there are few if
+			
+				(Open <a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3B292186-F7D4-4BAE-9514-894D386456D9"><a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw">What’s the size of the project?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw">https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:43.753388881 &#43;0000 UTC</span>
+		</div>
+		<p class="p">scc --exclude-dir docs/book ─────────────────────────────────────────────────────────────────────────────── Language Files Lines Blanks Comments Code Complexity ────────────────────────────────
+			
+				(Open <a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="A9B0816E-8809-4588-A4FD-F484F9AFD28B"><a href="https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/">What is Developer Experience? a roundup of links and goodness</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/">https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/</a></span><br />
+			<span class="d">Added: 2022-03-04 13:03:31.506291866 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I recently contributed to a series of fireside chats hosted by LaunchDarkly. One of the themes that we discussed was Developer Experience, and how to improve it. I was asked by one of the attendees at the EMEA event (vid
+			
+				(Open <a href="https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F03A6943-3161-48A5-B1CF-3414B76490C6"><a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/">Fairness in multi-tenant systems</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/">https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:29:26.916128158 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Building fairness into multitenant systems to provide predictable performance and availability
+			
+				(Open <a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="63ED09BD-BE6F-4FFA-A955-002EAED9172F"><a href="https://queue.acm.org/detail.cfm?id=3415014">Data on the Outside vs. Data on the Inside - ACM Queue</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://queue.acm.org/detail.cfm?id=3415014">https://queue.acm.org/detail.cfm?id=3415014</a></span><br />
+			<span class="d">Added: 2020-11-16 03:29:09.615636825 &#43;0000 UTC</span>
+		</div>
+		<p class="p">August 2, 2020 Pat Helland Recently, there has been a lot of interest in services. These can be microservices or just services. In each case, the service provides a function with its own code and data, and opera
+			
+				(Open <a href="https://queue.acm.org/detail.cfm?id=3415014" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="59872DBD-46DE-4E72-B527-A2F8EB3AA488"><a href="https://saucecode.bar/posts/06-using-www-authenticate.html">using www-authenticate for user authentication</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://saucecode.bar/posts/06-using-www-authenticate.html">https://saucecode.bar/posts/06-using-www-authenticate.html</a></span><br />
+			<span class="d">Added: 2022-03-04 13:14:28.720092058 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This article explains how to use the www-authenticate header to handle user authentication without any client side code.
+			
+				(Open <a href="https://saucecode.bar/posts/06-using-www-authenticate.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="92BC21DB-94BA-41EA-AA2C-EB25CF574795"><a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter">“A damn stupid thing to do”—the origins of C</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter">https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter</a></span><br />
+			<span class="d">Added: 2020-12-14 01:06:14.395256996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Today, C may be a lingua franca among programmers. This is its (abridged) history.
+			
+				(Open <a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8392AB94-0594-43D2-ABA5-AAC5B24AE254"><a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/">Mercurial&#39;s Journey to and Reflections on Python 3</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/">https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/</a></span><br />
+			<span class="d">Added: 2020-01-22 03:10:36.542356967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Mercurial 5.2 was released on November 5, 2019. It is the first version of Mercurial that supports Python 3. This milestone comes nearly 11 years after Python 3.0 was first released on December 3, 2008. Speaking as a mai
+			
+				(Open <a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4104A599-BB8C-4079-8C3A-12D8CE067A5F"><a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337">Why it’s difficult to build teams in high growth organisations | by Jason Yip | Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337">https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337</a></span><br />
+			<span class="d">Added: 2021-06-14 02:39:32.210827827 &#43;0000 UTC</span>
+		</div>
+		<p class="p">By “high growth”, I mean in terms of employee count and roughly doubling or more every year. Even at slower growth rates, some of the phenomena I’ll describe may be relevant. The only option where…
+			
+				(Open <a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F62EDE75-F797-47AD-AF47-54C9AF7B905D"><a href="https://iximiuz.com/en/posts/container-networking-is-simple/">Container Networking Is Simple!</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://iximiuz.com/en/posts/container-networking-is-simple/">https://iximiuz.com/en/posts/container-networking-is-simple/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472911834 &#43;0000 UTC</span>
+		</div>
+		<p class="p">How container networking works under the hood? Setting up docker-like container networking from scratch. Bonus: podman rootless container networking explained.
+			
+				(Open <a href="https://iximiuz.com/en/posts/container-networking-is-simple/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8D47E7AE-E2D1-4F5E-ADA2-D5C5AE91FCD6"><a href="https://www.defmacro.org/2015/02/25/startup-ideas.html">How to pick startup ideas</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.defmacro.org/2015/02/25/startup-ideas.html">https://www.defmacro.org/2015/02/25/startup-ideas.html</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:12.827280998 &#43;0000 UTC</span>
+		</div>
+		<p class="p">One of the most important things I learned from running a startup is that on a macro scale the innovation market is efficient. If the market conditions allow for a startup to arise, it’s overwhelmingly probable that mult
+			
+				(Open <a href="https://www.defmacro.org/2015/02/25/startup-ideas.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="FB97E69F-BBE9-4DE4-BAFC-8A5C428228B2"><a href="https://bitfieldconsulting.com/golang/career">A career ending mistake — Bitfield Consulting</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://bitfieldconsulting.com/golang/career">https://bitfieldconsulting.com/golang/career</a></span><br />
+			<span class="d">Added: 2022-02-22 19:53:33.374945163 &#43;0000 UTC</span>
+		</div>
+		<p class="p">As software engineers, we&#39;re constantly making detailed, elaborate plans for computers to execute. Isn&#39;t it weird that we rarely give a moment&#39;s thought to the program for our own careers?
+			
+				(Open <a href="https://bitfieldconsulting.com/golang/career" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2734B0B4-57F1-4687-AEB9-4D99A82A7E10"><a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b">Optimizing Distributed Joins: The Case of Google Cloud Spanner and DataStax Astra DB | by DataStax | Building the Open Data Stack | Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b">https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b</a></span><br />
+			<span class="d">Added: 2022-01-30 07:55:11.117269992 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this post, learn how relational and NoSQL databases, Google Cloud Spanner and DataStax Astra DB, optimize distributed joins for real-time applications. Distributed joins are commonly considered to…
+			
+				(Open <a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D0EF149F-0350-4016-8C7B-C7A62E82732E"><a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/">How to put machine learning models into production</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/">https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/</a></span><br />
+			<span class="d">Added: 2020-10-25 06:32:53.718122005 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Data scientists excel at creating models that represent and predict real-world data, but effectively deploying machine learning models is more of an art than science. Deployment requires skills more commonly found in sof
+			
+				(Open <a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9782E34D-D67B-4446-8904-A043590EBF92"><a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32">https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32">https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32</a></span><br />
+			<span class="d">Added: 2021-03-07 04:00:02.018476009 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Troubleshooting in Kubernetes can be a daunting task. In this article you will learn how to diagnose issues in Pods, Services and Ingress.
+			
+				(Open <a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5A02A461-03F0-4D93-8258-0A95A98CA773"><a href="https://arxiv.org/pdf/2104.00087.pdf"></a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://arxiv.org/pdf/2104.00087.pdf">https://arxiv.org/pdf/2104.00087.pdf</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:56.06173706 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://arxiv.org/pdf/2104.00087.pdf" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="6209073B-4370-479B-B60E-1E5281B21CF6"><a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202">GPS</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202">https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202</a></span><br />
+			<span class="d">Added: 2022-01-30 13:45:06.893004894 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Interactive article explaining how GPS works.
+			
+				(Open <a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="C5840C97-8A47-412B-9619-757E22D1F358"><a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md">resilience-engineering/intro.md at master · lorin/resilience-engineering · GitHub</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md">https://github.com/lorin/resilience-engineering/blob/master/intro.md</a></span><br />
+			<span class="d">Added: 2021-02-14 06:48:24.060963153 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Resilience engineering papers. Contribute to lorin/resilience-engineering development by creating an account on GitHub.
+			
+				(Open <a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="153D61E7-394F-4E25-837F-1107CAB96E59"><a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do">What TPMs Do and What Software Engineers Can Learn From Them</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do">https://newsletter.pragmaticengineer.com/p/what-tpms-do</a></span><br />
+			<span class="d">Added: 2022-02-18 06:47:30.013221979 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A deep dive with five Technical Program Managers (TPM) on what the role is, how it evolved, and how engineers and managers can benefit from working with TPMs.
+			
+				(Open <a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="71A6CC9C-0133-45CF-BBBF-5E2288680954"><a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming">Beyond Microservices: Streams, State and Scalability</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming">https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming</a></span><br />
+			<span class="d">Added: 2022-01-29 21:51:51.795267105 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Gwen Shapira talks about how microservices evolved in the last few years, based on experience gained while working with companies using Apache Kafka to update their application architecture.
+			
+				(Open <a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4B341D85-649C-4D5A-8551-31BDE28AC022"><a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5">Failure Modes and Continuous Resilience - adrian cockcroft - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5">https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5</a></span><br />
+			<span class="d">Added: 2020-01-19 05:29:02.044257164 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A resilient system continues to operate successfully in the presence of failures. There are many possible failure modes, and each exercises a different aspect of resilience. The system needs to…
+			
+				(Open <a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="AB81D5DF-D925-4E10-AACF-204FEC720356"><a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html">Introduction to AWS Lake Formation - Build a Secure Data Lake in Days | AWS Online Tech Talks</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html">https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:37.371964931 &#43;0000 UTC</span>
+		</div>
+		<p class="p">AWS Lake Formation (coming soon) will make it easy to set up a secure data lake in days. With AWS Lake Formation, you will be able to ingest, catalog, clean, transform, and secure your data, and make it available for ana
+			
+				(Open <a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B1366A5D-4A71-4FFB-A922-4668D7DCA093"><a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg">Our Journey with Quarkus</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg">https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:36.351290941 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Quarkus truly appears to be the smartest possible solution, in our experience.
+			
+				(Open <a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5BE3BDE4-6B27-4A2A-8384-233AC1C72BCF"><a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/">Reddit - Dive into anything</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/">https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/</a></span><br />
+			<span class="d">Added: 2022-03-06 18:19:36.222723007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">3.9m members in the programming community. Computer Programming
+			
+				(Open <a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="67794E53-71A0-40A7-AA58-B74BBEDC96C1"><a href="https://www.defmacro.org/2014/10/03/engman.html">44 engineering management lessons</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.defmacro.org/2014/10/03/engman.html">https://www.defmacro.org/2014/10/03/engman.html</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:17.431499004 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to engineering management. It’s fun, it’s exhausting, it’s rewarding — but most importantly it’s new! What worked for you before won’t work now. You’ll have to acquire a new set of skills, and shed some bad habit
+			
+				(Open <a href="https://www.defmacro.org/2014/10/03/engman.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F2F1740F-A682-49BD-A7CE-106B9CF488BF"><a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/">https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/">https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/</a></span><br />
+			<span class="d">Added: 2022-02-27 21:14:32.595848083 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Basically, sake comprises rice, water, and the fermenting agent called koji, resulting in an alcoholic level that usually sits between 13 and 16 percent. And you might be interested to know that the rice used is differen
+			
+				(Open <a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ACC6DB41-087D-41C5-B177-EA627EA5ACCD"><a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/">Don&#39;t make yourself redundant</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/">https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/</a></span><br />
+			<span class="d">Added: 2020-10-05 02:44:52.821810007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">When splitting big teams into two smaller teams, don&#39;t make yourself redundant. Instead, try this advice to remain impactful.
+			
+				(Open <a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F83B3D52-4909-4EF8-937B-23C9D6A73ADD"><a href="https://news.ycombinator.com/item?id=24814687">7 days ago</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://news.ycombinator.com/item?id=24814687">https://news.ycombinator.com/item?id=24814687</a></span><br />
+			<span class="d">Added: 2020-10-25 06:28:36.088758945 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This article has a large gap in the story: it ignores sensor data sources, which are both the highest velocity and highest volume data models by multiple orders of magnitude. They have become ubiquitous in diverse, mediu
+			
+				(Open <a href="https://news.ycombinator.com/item?id=24814687" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8E8307BD-6D30-437E-8F22-D01A691B58B6"><a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6">https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6">https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6</a></span><br />
+			<span class="d">Added: 2021-02-16 03:18:15.004760026 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D2659AD7-1452-45F7-B2F0-074737CE8D7A"><a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/">CRISP: Critical Path Analysis for Microservice Architectures</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/">https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/</a></span><br />
+			<span class="d">Added: 2022-01-17 21:33:09.414513111 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Uber’s backend is an exemplar of microservice architecture. Each microservice is a small, individually deployable program performing a specific business logic (operation). The microservice architecture is a type of distr
+			
+				(Open <a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5F308D40-0FB6-4409-AAF0-868CA46D76FE"><a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/">Analyzing data stored in Amazon DocumentDB (with MongoDB compatibility) using Amazon Sagemaker | AWS Machine Learning Blog</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/">https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:46:07.911393165 &#43;0000 UTC</span>
+		</div>
+		<p class="p">{ &#34;id&#34;: &#34;13469392114&#34;, &#34;type&#34;: &#34;PullRequestEvent&#34;, &#34;actor&#34;: { &#34;id&#34;: 33526713, &#34;login&#34;: &#34;arjkesh&#34;, &#34;display_login&#34;: &#34;arjkesh&#34;, &#34;gravatar_id&#34;: &#34;&#34;, &#34;url&#34;: &#34;https://api.github.com/users/arjkesh&#34;, 
+			
+				(Open <a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="29A95F3A-14F0-4423-A688-FEA34B9FFD35"><a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/">Copying Better: How To Acquire The Tacit Knowledge of Experts</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/">https://commoncog.com/blog/how-to-learn-tacit-knowledge/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.470806121 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Much of expertise is tacit: that is, it cannot be captured through words alone. We look at techniques to learn the tacit knowledge of experts.
+			
+				(Open <a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="0F9CA482-5026-4D25-81CD-86B801F145C1"><a href="https://kg.dev/thoughts/be-anonymous">Be anonymous</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://kg.dev/thoughts/be-anonymous">https://kg.dev/thoughts/be-anonymous</a></span><br />
+			<span class="d">Added: 2022-02-21 10:38:02.598958969 &#43;0000 UTC</span>
+		</div>
+		<p class="p">My website.
+			
+				(Open <a href="https://kg.dev/thoughts/be-anonymous" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B2CCAF5A-EEB8-4EDC-8899-08081B84FA71"><a href="http://akkartik.name/post/literate-programming">Literate programming: Knuth is doing it wrong</a></h3>
+		<div class="byline">
+			<span class="u"><a href="http://akkartik.name/post/literate-programming">http://akkartik.name/post/literate-programming</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472525119 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Oct 3, 2014 Literate programming: Knuth is doing it wrong Literate programming advocates this: Order your code for others to read, not for the compiler. Beautifully typeset your code so one can curl up in bed to read it
+			
+				(Open <a href="http://akkartik.name/post/literate-programming" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="08E03994-02F2-415B-AD40-3AA908CFAC16"><a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw">Java sockets I/O: blocking, non-blocking and asynchronous</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw">https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:24.146421909 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="49A40D1A-BD4E-4076-8E2A-C174F80F9187"><a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">1.3. Productivity</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">https://dave.cheney.net/practical-go/presentations/qcon-china.html</a></span><br />
+			<span class="d">Added: 2022-03-01 15:35:47.325203895 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Design is the art of arranging code to work today, and be changeable forever. — Sandi Metz The last underlying principle I want to highlight is productivity. Developer productivity is a sprawling topic but it boils 
+			
+				(Open <a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="152B5455-0C2E-4CE5-BEF5-3FB5BD06D088"><a href="https://cate.blog/2021/08/09/on-being-strategic/">On Being “Strategic”</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://cate.blog/2021/08/09/on-being-strategic/">https://cate.blog/2021/08/09/on-being-strategic/</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:09.864347934 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Ages ago, a work colleague / friend offered me the following piece of advice: “We need to make sure you’re seen as strategic”. I’ve thought about it a lot ever since. It was the first time I realised I was on the edge
+			
+				(Open <a href="https://cate.blog/2021/08/09/on-being-strategic/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="38884C26-1CBF-4F39-863B-1297059B7970"><a href="https://news.ycombinator.com/item?id=24786778">How to put machine learning models into production | Hacker News</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://news.ycombinator.com/item?id=24786778">https://news.ycombinator.com/item?id=24786778</a></span><br />
+			<span class="d">Added: 2020-10-25 06:32:57.345412969 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Hacker News new | past | comments | ask | show | jobs | submit login How to put machine learning models into production (stackoverflow.blog) 120 points by Aaronmacaron 8 days ago | hide | past | favorite | 34 comments 
+			
+				(Open <a href="https://news.ycombinator.com/item?id=24786778" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="75CDCEB0-679B-44A4-852E-23484D887092"><a href="https://treblle.com/blog/the-10-rest-commandments">The 10 REST Commandments - Treblle</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://treblle.com/blog/the-10-rest-commandments">https://treblle.com/blog/the-10-rest-commandments</a></span><br />
+			<span class="d">Added: 2022-03-11 22:42:33.353334903 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Find out how to build great REST APIs in any language by following these 10 essential rules.
+			
+				(Open <a href="https://treblle.com/blog/the-10-rest-commandments" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2F682234-9E4F-4889-8029-5376E9ECC042"><a href="https://commoncog.com/blog/accelerated-expertise/">Accelerated Expertise</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://commoncog.com/blog/accelerated-expertise/">https://commoncog.com/blog/accelerated-expertise/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.470912933 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A summary of Accelerated Expertise, the best book on accelerating training programs we have today.
+			
+				(Open <a href="https://commoncog.com/blog/accelerated-expertise/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3B6CB96B-63A5-4747-AC87-D5A7D936D80B"><a href="https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/">The Seven Habits That Lead to Happiness in Old Age - The Atlantic</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/">https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/</a></span><br />
+			<span class="d">Added: 2022-02-23 08:31:30.785979986 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Your well-being is like a retirement account: The sooner you invest, the greater your returns will be.
+			
+				(Open <a href="https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="E4FE0219-C276-4423-8FAD-2FA657B9810F"><a href="https://learnwardleymapping.com/book/">The Book</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://learnwardleymapping.com/book/">https://learnwardleymapping.com/book/</a></span><br />
+			<span class="d">Added: 2022-02-25 15:09:41.99259901 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This is the story of Simon Wardley. Follow his journey from bumbling and confused CEO lost in the headlights of change to someone with a vague idea of what they&#39;re doing.
+			
+				(Open <a href="https://learnwardleymapping.com/book/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5E528535-D488-45A0-B0D7-5C7EE9F45269"><a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/">Emerging Architectures for Modern Data Infrastructure</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/">https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:28:58.590971946 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Software systems are increasingly based on data, rather than code. And a new class of tools and technologies have emerged to process data for both analytics and operational AI/ ML.
+			
+				(Open <a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="88E9BAF9-01A6-4774-BE3E-EE928BAD13B0"><a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector">How to choose the best Java garbage collector</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector">https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector</a></span><br />
+			<span class="d">Added: 2022-02-14 08:25:45.931617021 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Improve Java application performance by choosing the best garbage collector for your application&#39;s throughput, latency, and footprint requirements.
+			
+				(Open <a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B894AE2E-3C5E-4941-A8C5-769BD2531CB5"><a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained">DataHub: Popular metadata architectures explained | LinkedIn Engineering</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained">https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained</a></span><br />
+			<span class="d">Added: 2020-12-19 19:18:08.410096168 &#43;0000 UTC</span>
+		</div>
+		<p class="p">When I started my journey at LinkedIn ten years ago, the company was just beginning to experience extreme growth in the volume, variety, and velocity of our data. Over the next few years, my colleagues and I in LinkedIn’
+			
+				(Open <a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="371B741A-360B-457A-8E22-8714499A4D51"><a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/">A Short, Simple Introduction to Information Theory – Ryan Moulton&#39;s Articles</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/">https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:28:49.101143836 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Information Theory is one of the most useful things for Computer Scientists to understand about statistics, and it&#39;s deeply related to things we do every day. If you are comfortable writing code but sometimes intimidated
+			
+				(Open <a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="EAB90B18-87D1-4B09-90C4-C78525EDF920"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter">What&#39;s in a Good Error Message?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter">https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.473227024 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="16A89C55-2E46-46B7-9186-8DFB400E402C"><a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints">Overview ¶</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints">https://pkg.go.dev/cmd/go#hdr-Build_constraints</a></span><br />
+			<span class="d">Added: 2022-03-01 15:15:14.106298923 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Go is a tool for managing Go source code.
+			
+				(Open <a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="907C0700-41D9-4113-A04C-AE82EAB79A78"><a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/">How to Get Into SRE – Alice Goldfuss</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/">https://blog.alicegoldfuss.com/how-to-get-into-sre/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:57:27.926506996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">My personal guide.
+			
+				(Open <a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="6FDB0B3D-9B1A-44C9-B337-58081D1DC392"><a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html">Journey into Observability: Reading material | Mads Hartmann</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html">https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html</a></span><br />
+			<span class="d">Added: 2020-01-19 20:02:56.259206056 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I’ve been reading up on observability over the last three months. In this post I have organized the material into a sort of recommended reading order. It doesn’t reflect the order in which I read it, but I think this ord
+			
+				(Open <a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F36CF381-606E-45C7-9147-C680660ADD3C"><a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html">How to Read a Wine Label, in 12 Easy Lessons - The New York Times</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html">https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html</a></span><br />
+			<span class="d">Added: 2020-10-03 22:10:30.001008987 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The wine shop can be intimidating, with so many different styles of labeling. Here’s help in decoding a dozen basic types.
+			
+				(Open <a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="A056BB4B-676A-464C-82E6-9AFFB7ED9023"><a href="https://zhenzhongxu.com/the-four-innovation-phases-of-netflixs-trillions-scale-real-time-data-infrastructure-2370938d7f01">The Four Innovation Phases of Netflix’s Trillions Scale Real-time Data Infrastructure | by Zhenzhong Xu | Feb, 2022 | Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://zhenzhongxu.com/the-four-innovation-phases-of-netflixs-trillions-scale-real-time-data-infrastructure-2370938d7f01">https://zhenzhongxu.com/the-four-innovation-phases-of-netflixs-trillions-scale-real-time-data-infrastructure-2370938d7f01</a></span><br />
+			<span class="d">Added: 2022-03-11 22:31:04.65281701 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The blog post will share the four phases of Real-time Data Infrastructure’s iterative journey in Netflix (2015-2021). For each phase, we will go over the evolving business motivations, the team’s unique challenges, the 
+			
+				(Open <a href="https://zhenzhongxu.com/the-four-innovation-phases-of-netflixs-trillions-scale-real-time-data-infrastructure-2370938d7f01" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3719A1C9-84AE-480A-9732-F3296BFC4C4B"><a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F">https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F">https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F</a></span><br />
+			<span class="d">Added: 2021-02-16 03:19:16.030979156 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="80084756-28D3-4781-89C8-484C9A746F00"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww">What&#39;s in a Good Error Message?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww">https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:39.613649845 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3E615600-2B6D-426F-AC56-F9BFB4D9D251"><a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5">Failure Modes and Continuous Resilience</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5">https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:51.419013977 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A resilient system continues to operate successfully in the presence of failures. There are many possible failure modes, and each exercises a different aspect of resilience. The system needs to…
+			
+				(Open <a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="46FFB2D8-317B-462D-AD71-4069DCB717F0"><a href="https://nesslabs.com/mind-garden">You and your mind garden</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://nesslabs.com/mind-garden">https://nesslabs.com/mind-garden</a></span><br />
+			<span class="d">Added: 2022-03-02 14:00:01.643723011 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In French, “cultiver son jardin intérieur” means to tend to your internal garden—to take care of your mind. The garden metaphor is particularly apt: taking care of your mind involves cultivating your curiosity (the seeds
+			
+				(Open <a href="https://nesslabs.com/mind-garden" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="744F225B-D881-4600-964F-BC976DE3B9CD"><a href="https://www.youtube.com/watch?v=93_3CxCl_eI">YOW! 2019 - Josh Long - The Reactive Revolution - YouTube</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.youtube.com/watch?v=93_3CxCl_eI">https://www.youtube.com/watch?v=93_3CxCl_eI</a></span><br />
+			<span class="d">Added: 2021-06-20 02:38:51.257305145 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Share your videos with friends, family, and the world
+			
+				(Open <a href="https://www.youtube.com/watch?v=93_3CxCl_eI" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9ADC0870-B6F9-4DC0-B898-CB7A43899238"><a href="https://johnnyrodgers.is/building-a-modern-home">building a modern home - Johnny Rodgers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://johnnyrodgers.is/building-a-modern-home">https://johnnyrodgers.is/building-a-modern-home</a></span><br />
+			<span class="d">Added: 2022-02-03 19:47:25.927577018 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Personal site of Johnny Rodgers, technology designer from Vancouver.
+			
+				(Open <a href="https://johnnyrodgers.is/building-a-modern-home" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="51CBA16F-BF3D-4093-874C-C8439FE0B7F3"><a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team">How to Handle a Disagreement on Your Team</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team">https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team</a></span><br />
+			<span class="d">Added: 2021-06-20 02:47:40.929359912 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Rely on your mediation skills, not your authority.
+			
+				(Open <a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="32992F5F-AE2D-455C-9220-5F745266AB66"><a href="http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf">‎cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf</a></h3>
+		<div class="byline">
+			<span class="u"><a href="http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf">http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf</a></span><br />
+			<span class="d">Added: 2022-03-02 14:02:11.560539007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5DD11538-E58D-4C23-BFF0-3214A458CD8D"><a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/">A Complete Guide To Mechanical Keyboards</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/">https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:42.818650007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this article, we dive into the possibilities of mechanical keyboards. The different layouts, switch types and even keycap material. Strap yourself in — this will be a deep dive!
+			
+				(Open <a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="7C68C329-A59A-4F8D-B795-0D61911878FA"><a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/">This is What a Large-Scale Cloud Adoption Program Looks Like</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/">https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/</a></span><br />
+			<span class="d">Added: 2022-02-03 20:01:26.464634895 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Dio Rettori discusses some of the lessons learned, challenges, and considerations of large-scale adoption for JPMorgan Chase.
+			
+				(Open <a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="EF99A6E9-8C52-4FAD-9BC3-5475BE7B7660"><a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/">Reproducible Builds in Java</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/">https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/</a></span><br />
+			<span class="d">Added: 2022-02-06 13:01:06.832920074 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Reproducible builds are a set of software development practices that create an independently-verifiable path from source to binary code.https://reproducible-builds.org/Reproducible builds are important and provide benefi
+			
+				(Open <a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ECFE519B-F709-4FDC-98D0-E0F643810B47"><a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea">Production Oriented Development - Paul Osman - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea">https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea</a></span><br />
+			<span class="d">Added: 2020-01-30 02:45:22.718299865 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Code working in production is the only thing that matters. Teams should optimize for delivering code to production as quickly as possible.
+			
+				(Open <a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2E46DBFF-90BB-4B14-9DF6-C0388D62032A"><a href="https://www.theobservereffect.org/tobi.html">The Observer Effect – Tobi Lütke</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theobservereffect.org/tobi.html">https://www.theobservereffect.org/tobi.html</a></span><br />
+			<span class="d">Added: 2020-12-19 19:09:05.707730054 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to the third interview on &#39;The Observer Effect&#39;. We are lucky to have one of the most interesting founders in technology and commerce - Tobi Lütke, Founder and CEO of Shopify. This interview was
+			
+				(Open <a href="https://www.theobservereffect.org/tobi.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="772B3693-3D94-48A4-BB74-9A7F81FA0B09"><a href="https://twitter.com/9to5mac/status/1499129510238822400">Tweet from @9to5mac</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://twitter.com/9to5mac/status/1499129510238822400">https://twitter.com/9to5mac/status/1499129510238822400</a></span><br />
+			<span class="d">Added: 2022-03-02 22:32:45.797072887 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Don’t miss what’s happening People on Twitter are the first to know. Log in Sign up Did someone say … cookies? Twitter and its partners use cookies to provide you with a better, safer and faster service and to support ou
+			
+				(Open <a href="https://twitter.com/9to5mac/status/1499129510238822400" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3A96B38D-9B04-467E-B292-D0FA97557140"><a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/">The 40 Best Questions to Ask in an Interview — How to Go Deeper Than “What’s the Culture Like?”</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/">https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/</a></span><br />
+			<span class="d">Added: 2020-10-25 06:33:15.182893991 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Candidates need to sidestep common interview questions. Here are the best questions to ask in an interview.
+			
+				(Open <a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="247F00C1-71D9-49B2-AB91-47B4F826AF14"><a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/">What does it mean to listen on a port?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/">https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/</a></span><br />
+			<span class="d">Added: 2022-02-14 08:25:41.701181888 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This story explores some concepts in computer networking, inspired by Michael Nielsen’s idea of discovery fiction. Code samples can also be found in this repo. Excerpts use openbsd-flavoured netcat on Debian Linux; behvi
+			
+				(Open <a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="391136C2-FBE9-4E59-864E-C07E8F6CFEAA"><a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html">Yann Herklotz - Introduction to Luhmann&#39;s Zettelkasten</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html">https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html</a></span><br />
+			<span class="d">Added: 2020-12-22 18:34:28.277521133 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to my blog! I am a final year student studying Electronic and Information Engineering at Imperial 
+			
+				(Open <a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="22C9D369-7D87-417E-8241-0FF77B96719B"><a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c">Health, Availability, Debuggability - Observability&#43; - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c">https://medium.com/observability/health-availability-debuggability-5b0ab300b35c</a></span><br />
+			<span class="d">Added: 2020-01-19 20:02:51.116274833 &#43;0000 UTC</span>
+		</div>
+		<p class="p">As we collect various observability signals from systems, it fosters a new conversation around the classification of the signals. There is a significant discussion on observability signals and even…
+			
+				(Open <a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B5E085CD-4922-4DC1-A965-78EC343CD945"><a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/">How to Talk about Consistency and Isolation in Distributed DBs</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/">https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/</a></span><br />
+			<span class="d">Added: 2022-02-15 11:04:48.938548088 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The SQL standard defines isolation levels, but we don&#39;t have a great vocabulary for talking about consistency levels, and how these two things interact.
+			
+				(Open <a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+</body>
+</html>

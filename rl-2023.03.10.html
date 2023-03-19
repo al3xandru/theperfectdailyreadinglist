@@ -1,0 +1,1826 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Reading list for Fri, Mar.10, 2023</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com"> 
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+	<link href="https://fonts.googleapis.com/css2?family=Josefin+Slab:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+	<link href="style.css" rel="stylesheet">
+	<script>
+function toggle(id) {
+	var el = document.getElementById(id);
+	el.style.display = (el.style.display == "none" || el.style.display == "") ? "block" : "none";
+}
+	</script>
+</head>
+<body>
+<h1>Reading list for Fri, Mar.10, 2023</h1>
+<header>
+<div>Total: 541 from which: 3 suggested today and 91 expired</div>
+<nav>
+Jump to: 
+
+	<a href="#today">Today&#39;s reading list</a> | 
+
+	<a href="#saveme">Random expired</a> | 
+
+	<a href="#expired">Expired</a> | 
+
+</nav>
+</header>
+
+<section>
+<h2 id="today">Today&#39;s reading list <a href="javascript:toggle('oltoday');">&#177;</a></h2>
+<div>3 links selected from 450 today Fri, Mar.10, 2023</div>
+<ol id="oltoday">
+
+<li>
+	<article>
+		<h3 id="78CCB322-3531-4446-84FC-7C634E1FF7C3"><a href="https://medium.com/bbc-design-engineering/bbc-online-a-year-with-serverless-ffc2ae474277">BBC Online — A year with serverless | by Johnathan Ishmael | BBC Product &amp; Technology | Mar, 2022 | Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/bbc-design-engineering/bbc-online-a-year-with-serverless-ffc2ae474277">https://medium.com/bbc-design-engineering/bbc-online-a-year-with-serverless-ffc2ae474277</a></span><br />
+			<span class="d">Added: 2022-04-16 08:18:32.959736824 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this post I reflect on our progress so far, and some of the interesting challenges we are facing while building the BBC’s critical digital services. If you’re a technology builder, interested in…
+			
+				... (8582 chars. See <a href="javascript:toggle('b78CCB322-3531-4446-84FC-7C634E1FF7C3');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="b78CCB322-3531-4446-84FC-7C634E1FF7C3">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><div><blockquote><p id="6739">Its been a little over a year since I published my last two blog posts, in which I <a rel="noopener" href="https://medium.com/bbc-design-engineering/delivering-bbc-online-using-serverless-79d4a9b0da16">outlined the process we went through to choose the technology</a> for BBC online and the <a rel="noopener" href="https://medium.com/bbc-design-engineering/delivering-bbc-online-using-serverless-79d4a9b0da16">steps we took to optimise serverless</a> for our use. Recently my colleague Graeme has <a rel="noopener" href="https://medium.com/bbc-design-engineering/refactor-organisation-80e4e171d922">published a blog post</a> on the organisational challenges we’ve faced in delivering this project.</p></blockquote><figure><figcaption>The BBC’s Office in MediaCity, Salford — one of many bases that the BBC’s Software Engineering teams are located.</figcaption></figure><p id="1db8">In this post I reflect on our progress so far, and some of the interesting challenges we are facing while building the BBC’s critical digital services. If you’re a technology builder, interested in the biggest of challenges, we’re always looking for people like you to <a href="https://careerssearch.bbc.co.uk/jobs/job/Software-Engineer-BBC-Core-Services-Mid-and-Senior-Levels/56052" rel="noopener ugc nofollow" target="_blank">join our adventure</a>.</p><p id="d373">Throughout the last twelve months our engineering teams have been reimagining and innovating on our products. In doing so they have moved from our older technology platforms on to our new shared serverless platform called ‘WebCore’. We’re about 30% of our way through moving to this new platform. Despite this, the benefits of using a serverless platform are starting to show.</p><figure><figcaption>Pages on WebCore (left), pages under development (middle) and pages we’re going to start development on (right). Block size represents number of page views across a typical month.</figcaption></figure><p id="7b93">During this time we’ve not had any operational incidents (lack of audience service, or inability to update our pages) caused by the underlying technology. This isn’t by luck, serverless has handled many of the performance and operational challenges for us, letting us focus on other parts of our platform resulting in a higher quality platform that is more dependable</p><figure><figcaption>WebCore highlights for February 2022.</figcaption></figure><p id="f0dc">Using serverless takes away the need to spend time engineering the fundamentals of your platform, instead allowing you to focus on the value you deliver to your customers. So what have we been doing with that time?</p><h2 id="ee88">Personalisation / Relevancy</h2><p id="cd75">The BBC achieves its high levels of reliability and performance by relying upon caching, both internally within our systems, at the edge of our networks and via CDNs. The result is fast loading pages that can be stored at the edge. Yet, in a world where relevant content is key, we need to adapt our services to deliver more tailored and personalised content to our audiences. This means more variation and more load.</p><p id="b789">We spent a number of months preparing the platform to handle personalised requests end-to-end across the stack. This has now launched for some pages. For example, if you’re signed in, are located within UK territory and visit <a href="https://www.bbc.co.uk" rel="noopener ugc nofollow" target="_blank">the BBC homepage</a> you’ll get a page customised for you.</p><p id="a8fa">The page takes around 500ms to render and be delivered to the audience. In that timeframe we invoke around 30 functions. Around 150ms is spent running React to render the content to HTML, the rest is spent fetching or processing data.</p><p id="5fe4">In February 2022, 145 million requests were personalised, representing 6% of WebCore’s traffic.</p><blockquote><p id="fc34">Our goal: over the next 12 months we aim to personalise almost every page in some way — making it relevant for every user on every request.</p></blockquote><h2 id="0bef">Experimentation</h2><p id="5b39">Delivering value and improving audience experience is at the heart of what we do, previous platforms that have relied heavily on caching for performance have meant we’ve been unable to perform experiments on our pages. <a href="https://en.wikipedia.org/wiki/A/B_testing" rel="noopener ugc nofollow" target="_blank">A/B/n testing </a>allows us to improve the audience experience by understanding what users want to interact with on a page.</p><p id="0fde">Experiments means more variations of a page, consider if we ran an experiment with 6 variations on the global navigation for the website (the bar listing Home, News, Sport, Weather etc.). If we did this, we’d increase the number of pages we’d render by a factor of 6, instantly as soon as the experiment was activated.</p><p id="a730">The team that builds the global navigation is separate to the team building the news story pages or the news onwards journeys (right hand side bar on story pages). Imagine if all three teams started experimenting at the same time, there would be N * N * N more variations of the page! As builders of the platform running this, we have no control over who runs an experiment with how many variations. We just have to be ready!</p><p id="a686">We’re in our late stages of development with this piece of work — but when it is active, we’ll enable experimentation across the platform at any scale.</p><blockquote><p id="2d32">Our goal: experiment on every new feature we release, to ensure it’s valuable to our audience.</p></blockquote><h2 id="6c15"><strong>Speed of updates</strong></h2><p id="eaa3">During the working day, the BBC News and Sport websites have editorial changes around ~3 times per second. This includes changes to our news and sport articles, indexes, videos and short form posts (excluding non-editorial updates such as sport events scores).</p><p id="dabb">For those pages that aren’t personalised (and so rendered for you), we want the content to be as fresh as possible. Previous platforms have relied on long (30 second+) caches times and multiple caches to handle the load and provide the resilience required.</p><p id="df12">Serverless has unlocked the ability for us to process more, reliably. This not only includes the execution environment where we transform our data and render our web pages, but also using serverless Redis that can scale to meet the demands of our workload.</p><figure><figcaption>A graph showing how the impact of our changes on editorial updates.</figcaption></figure><p id="13e8">Throughout the last 8 months we’ve slowly reduced our cache times on the stack, such that editorial updates for content have decreased from 2 ½ minutes to 30 seconds.</p><p id="155d">We think we can improve this further!</p><blockquote><p id="5ed3">Our goal: In the next 12 months, get editorial updates to under 5 seconds.</p></blockquote><h2 id="f6c0"><strong>Build times</strong></h2><p id="3da4">Enabling our engineering teams to deploy often and safely is key to our success. So we’ve taken the time to move away from our traditional CI/CD pipeline. Historically we were based in Jenkins on a small number of compute instances. Now we’re making use of serverless CI/CD pipelines to enable us to scale our build and deployment process based on the load and demand on the system.</p><p id="e80d">Its been a change in mindset, rather than running sequential builds, why not run every build step and test as concurrently as possible.</p><p id="332f">Currently our build times are around 5 minutes, down from 24 minutes at the start of the project due to using serverless for our CI/CD process.</p><blockquote><p id="004c">Our goal: Reduce our build times below two minutes!</p></blockquote><h2 id="a829"><strong>Only a few minor issues</strong></h2><p id="35f2">While our experience of using serverless has been excellent, there have been a few minor issues with the underlying technology along the way.</p><p id="b1e4">One of the primary issues we’ve faced, was that of noisy neighbours. Most serverless platforms are shared, in that the provider’s resources are allocated to multiple customers, with all data being securely sandboxed and isolated from one another.</p><p id="172c">This is optimal from the providers point of view as they can maximise the efficiency of their service. Keeping carbon footprints and costs down.</p><p id="72cc">Our serverless execution is time sensitive, as a user asking for a web page will have to wait for the Lambda function to respond. So we keep a close eye on the response times. We started to notice an increase in our function duration on the hour and quarter hour.</p><p id="7ee5">After ruling out any internal issues, e.g. cache clean ups, delays in services providing data, increased traffic from our content systems. We determined this was an underlying platform issue.</p><figure><figcaption>A graph showing average duration of our presentation Lambda.</figcaption></figure><p id="15db">The graph shows increased latency on the hour and quarter hour, caused by the underlying serverless infrastructure.</p><p id="1801">Working with our service provider, we were able to identify the issue as being a noisy neighbour problem, caused by other customers having ‘on the hour’ workloads.</p><p id="1278">These improvements delivered by the serverless team benefit everyone using their serverless product.</p><h2 id="991b"><strong>Summing Up</strong></h2><p id="4281">As the BBC’s audience continues to grow globally, we continue to push the boundaries of what we can achieve with the technology. Serverless has proven to be a powerful tool to help grow the digital offering of one of the worlds largest websites, both from content delivery through to powering our build tooling.</p><p id="37a1">Personally I’m very proud of the work which goes on within the BBC. There is an amazing software engineering community, filled with amazingly talented people. Recent events have shown the critical nature of the service we provide, to be part of a team that helps keep the world informed, educated and entertained is a privilege.</p><p id="4f36">We’re always looking for talented people to take on the goals we’ve set ourselves. If you want to work as part of an amazing team, on a world class product <a href="https://careerssearch.bbc.co.uk/jobs/job/Software-Engineer-BBC-Core-Services-Mid-and-Senior-Levels/56052" rel="noopener ugc nofollow" target="_blank">take a look at our roles</a>.</p></div></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="6CD08708-EB54-4CC2-A59D-89F48DAEC174"><a href="https://monorepo.tools/">Understanding Monorepos</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://monorepo.tools/">https://monorepo.tools/</a></span><br />
+			<span class="d">Added: 2022-03-22 13:17:35.769743919 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Everything you need to know about monorepos, and the tools to build them.
+			
+				... (4576 chars. See <a href="javascript:toggle('b6CD08708-EB54-4CC2-A59D-89F48DAEC174');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="b6CD08708-EB54-4CC2-A59D-89F48DAEC174">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><div role="main"><div data-test-id="understanding-monorepos"><article><div><div><p>Monorepos are hot right now, especially among Web developers. We created this resource to help developers <mark>understand what monorepos are</mark>, <mark>what benefits</mark>they can bring, and the <mark>tools available</mark> to make monorepo development delightful.</p><p>There are many great monorepo tools, built by great teams, with different philosophies. We do our best to represent each tool objectively, and <a href="https://github.com/nrwl/monorepo.tools?utm_source=monorepo.tools" target="_blank" rel="noreferrer" title="Contribute to monorepo.tools!">we welcome pull requests if we got something wrong!</a></p><p>The tools we&#39;ll focus on are: <a href="https://bazel.build/?utm_source=monorepo.tools" rel="noreferrer" target="_blank">Bazel (by Google)</a>,  <a href="https://gradle.org/?utm_source=monorepo.tools" rel="noreferrer" target="_blank">Gradle Build Tool (by Gradle, Inc)</a>,  <a rel="noreferrer" target="_blank" href="https://microsoft.github.io/lage/?utm_source=monorepo.tools">Lage (by Microsoft)</a>,  <a rel="noreferrer" target="_blank" href="https://lerna.js.org/?utm_source=monorepo.tools">Lerna</a>, <a href="https://nx.dev/?utm_source=monorepo.tools" rel="noreferrer" target="_blank">Nx (by Nrwl)</a>, <a href="https://pantsbuild.org/?utm_source=monorepo.tools" rel="noreferrer" target="_blank">Pants (by the Pants Build community)</a>, <a rel="noreferrer" target="_blank" href="https://rushstack.io/?utm_source=monorepo.tools">Rush (by Microsoft)</a>, and <a rel="noreferrer" target="_blank" href="https://turborepo.org/?utm_source=monorepo.tools">Turborepo (by Vercel)</a>. We chose these tools because of their usage or recognition in the Web development community.</p></div><svg viewBox="0 0 340 340" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M166.655 289.73C166.655 303.466 155.994 313.58 142.6 313.58C129.206 313.58 118.545 303.466 118.545 289.73C118.545 275.994 129.206 265.88 142.6 265.88C155.994 265.88 166.655 275.994 166.655 289.73ZM128.386 289.73C128.386 298.409 134.126 305.038 142.6 305.038C151.074 305.038 156.814 298.409 156.814 289.73C156.814 281.051 151.074 274.423 142.6 274.423C134.126 274.423 128.386 281.051 128.386 289.73Z"></path><path d="M62.1484 312.965H52.9912V266.017H53.7429L76.636 291.165L99.1874 266.017H100.007V312.965H90.7819V295.539C90.7819 292.395 91.1236 287.407 91.1236 287.407C91.1236 287.407 88.3217 291.507 86.1349 293.967L76.9094 304.286H76.021L66.7954 293.967C64.6086 291.507 61.8068 287.407 61.8068 287.407C61.8068 287.407 62.1484 292.395 62.1484 295.539V312.965Z"></path><path d="M222.435 313.375H223.392V266.495H214.44V285.971C214.44 289.183 215.055 294.445 215.055 294.445C215.055 294.445 211.843 290.208 209.588 288.09L186.148 266.085H185.191V312.965H194.144V293.489C194.144 290.14 193.46 285.015 193.46 285.015C193.46 285.015 196.672 289.183 198.995 291.37L222.435 313.375Z"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M288.141 289.73C288.141 303.466 277.481 313.58 264.087 313.58C250.692 313.58 240.032 303.466 240.032 289.73C240.032 275.994 250.692 265.88 264.087 265.88C277.481 265.88 288.141 275.994 288.141 289.73ZM249.872 289.73C249.872 298.409 255.613 305.038 264.087 305.038C272.561 305.038 278.301 298.409 278.301 289.73C278.301 281.051 272.561 274.423 264.087 274.423C255.613 274.423 249.872 281.051 249.872 289.73Z"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M45.8997 51.0001C45.8997 34.1002 59.5997 20.4001 76.4997 20.4001C93.3996 20.4001 107.1 34.1002 107.1 51.0001C107.1 57.4336 105.114 63.4035 101.723 68.3303L151.891 111.331C156.961 107.603 163.223 105.4 170 105.4C176.776 105.4 183.038 107.603 188.109 111.332L238.277 68.3303C234.886 63.4035 232.9 57.4336 232.9 51.0001C232.9 34.1002 246.601 20.4001 263.5 20.4001C280.4 20.4001 294.1 34.1002 294.1 51.0001C294.1 66.1624 283.073 78.749 268.6 81.177V217.187L293.894 191.894L301.106 199.106L263.5 236.713L225.894 199.106L233.106 191.894L258.4 217.188V81.177C253.59 80.37 249.161 78.4408 245.39 75.6679L195.222 118.669C198.614 123.596 200.6 129.566 200.6 136C200.6 152.9 186.9 166.6 170 166.6C153.1 166.6 139.4 152.9 139.4 136C139.4 129.566 141.385 123.596 144.778 118.669L94.61 75.6679C90.8393 78.4409 86.4098 80.37 81.5997 81.177V217.188L106.894 191.894L114.106 199.106L76.5 236.713L38.8938 199.106L46.1063 191.894L71.3997 217.187V81.177C56.9273 78.749 45.8997 66.1624 45.8997 51.0001ZM76.4997 30.6001C65.2331 30.6001 56.0997 39.7335 56.0997 51.0001C56.0997 62.2667 65.2331 71.4001 76.4997 71.4001C87.7663 71.4001 96.8997 62.2667 96.8997 51.0001C96.8997 39.7335 87.7663 30.6001 76.4997 30.6001ZM170 115.6C158.733 115.6 149.6 124.733 149.6 136C149.6 147.267 158.733 156.4 170 156.4C181.266 156.4 190.4 147.267 190.4 136C190.4 124.733 181.266 115.6 170 115.6ZM263.5 30.6001C274.767 30.6001 283.9 39.7335 283.9 51.0001C283.9 62.2667 274.767 71.4001 263.5 71.4001C252.234 71.4001 243.1 62.2667 243.1 51.0001C243.1 39.7335 252.234 30.6001 263.5 30.6001Z"></path></svg></div></article><div><div><h2>What is a monorepo</h2><p>Let&#39;s start with a common understanding of what a Monorepo is.</p></div><div><h2>Why a monorepo</h2><p>What are the situations solved by monorepos.</p></div><div><h2>Features of a monorepo</h2><p>What to expect from a monorepo tool</p></div></div></div><article></article><div data-test-id="why-a-monorepo" id="why-a-monorepo"><div><p>Let&#39;s go deeper into the rabbit hole.</p></div><article><div><p>For the sake of this discussion, let&#39;s say the opposite of monorepo is a &#34;polyrepo&#34;. A polyrepo is the current standard way of developing applications: a repo for each team, application, or project. And it&#39;s common that each repo has a single build artifact, and simple build pipeline.</p><p>The industry has moved to the polyrepo way of doing things for one big reason: <b>team autonomy</b>. Teams want to make their own decisions about what libraries they&#39;ll use, when they&#39;ll deploy their apps or libraries, and who can contribute to or use their code.</p><p>Those are all good things, so why should teams do anything differently? Because this autonomy is provided by isolation, and isolation harms collaboration. More specifically, these are common drawbacks to a polyrepo environment:</p></div><div><section><p><span>Polyrepo</span></p><div><h2>Cumbersome code sharing</h2><p>To share code across repositories, you&#39;d likely create a repository for the shared code. Now you have to set up the tooling and CI environment, add committers to the repo, and set up package publishing so other repos can depend on it. And let&#39;s not get started on reconciling incompatible versions of third party libraries across repositories...</p></div></section><section><p><span>Polyrepo</span></p><div><h2>Significant code duplication</h2><p>No one wants to go through the hassle of setting up a shared repo, so teams just write their own implementations of common services and components in each repo. This wastes up-front time, but also increases the burden of maintenance, security, and quality control as the components and services change.</p></div></section><section><p><span>Polyrepo</span></p><div><h2>Costly cross-repo changes to shared libraries and consumers</h2><p>Consider a critical bug or breaking change in a shared library: the developer needs to set up their environment to apply the changes across multiple repositories with disconnected revision histories. Not to speak about the coordination effort of versioning and releasing the packages.</p></div></section><section><p><span>Polyrepo</span></p><div><h2>Inconsistent tooling</h2><p>Each project uses its own set of commands for running tests, building, serving, linting, deploying, and so forth. Inconsistency creates mental overhead of remembering which commands to use from project to project.</p></div></section></div></article><article><div><p>We can end up in pretty tricky situations when working in a polyrepo. But how can a monorepo help solve all of them?</p></div><div><section><p><span>Monorepo</span></p><div><h2>No overhead to create new projects</h2><p>Use the existing CI setup, and no need to publish versioned packages if all consumers are in the same repo.</p></div></section><section><p><span>Monorepo</span></p><div><h2>Atomic commits across projects</h2><p>Everything works together at every commit. There&#39;s no such thing as a breaking change when you fix everything in the same commit.</p></div></section><section><p><span>Monorepo</span></p><div><h2>One version of everything</h2><p>No need to worry about incompatibilities because of projects depending on conflicting versions of third party libraries.</p></div></section><section><p><span>Monorepo</span></p><div><h2>Developer mobility</h2><p>Get a consistent way of building and testing applications written using different tools and technologies. Developers can confidently contribute to other teams’ applications and verify that their changes are safe.</p></div></section></div></article></div><article></article><article data-test-id="perception-shift" id="perception-shift"><div><p>It&#39;s complex, we know. But you&#39;re not alone in this journey.</p></div><div><h2 id="monorepo-changes-your-organization">A monorepo changes your organization</h2><p>It is more than code &amp; tools. <mark>A monorepo changes your organization</mark> &amp; the way you think about code. By adding consistency, lowering the friction in creating new projects and performing large scale refactorings, by facilitating code sharing and cross-team collaboration, it&#39;ll allow your organization to work more efficiently.</p></div></article><article data-test-id="monorepo-resources"><div><p>Here is a curated list of useful videos and podcasts to go deeper or just see the information in another way.</p></div><div><h2 id="monorepo-books">Monorepo books</h2><p>Here is a curated list of books about monorepos that we think are worth a read.</p><ul><li><a href="https://go.nrwl.io/react-book" target="_blank" rel="noreferrer" title="Effective React Development With Nx"><div><p><img loading="lazy" src="https://monorepo.tools/images/react-dev-nx-cover.svg" alt="Effective React Development With Nx book cover"/></p></div></a></li><li><a href="https://www.angulararchitects.io/en/book/" target="_blank" rel="noreferrer" title="Learn how to build enterprise-scale Angular applications which are maintainable in the long run"><div><p><img loading="lazy" src="https://www.angulararchitects.io/wp-content/uploads/2021/12/cover-4rd-small.png" alt="Learn how to build enterprise-scale Angular applications which are maintainable in the long run book cover"/></p></div></a></li></ul></div><div><h2 id="monorepo-contributors">Contributors</h2><p>All this content has been created, reviewed and validated by these awesome folks.</p><ul><li><div><p><img src="https://avatars.githubusercontent.com/u/47395?s=150" alt="Alex Eagle avatar"/></p></div></li><li><div><p><img src="https://avatars.githubusercontent.com/u/34725?s=150" alt="Kenneth Chau avatar"/></p></div></li><li><div><p><img src="https://avatars.githubusercontent.com/u/463703?s=150" alt="Jeff Cross avatar"/></p></div></li><li><div><p><img src="https://avatars1.githubusercontent.com/u/35996?s=150" alt="Victor Savkin avatar"/></p></div></li><li><div><p><img src="https://avatars.githubusercontent.com/u/4673363?s=150" alt="Pete Gonzalez avatar"/></p></div></li><li><div><p><img src="https://avatars.githubusercontent.com/u/2613650?s=150" alt="Justin Reock avatar"/></p></div></li><li><div><p><img src="https://avatars.githubusercontent.com/u/512764?s=150" alt="Benjy Weinberger avatar"/></p></div></li></ul></div></article></div></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D2B97403-EFCA-4E65-85F4-6DA2EE699C01"><a href="https://www.vox.com/even-better/23562374/negotiate-anything-prepare-questions">How to negotiate over practically anything</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.vox.com/even-better/23562374/negotiate-anything-prepare-questions">https://www.vox.com/even-better/23562374/negotiate-anything-prepare-questions</a></span><br />
+			<span class="d">Added: 2023-02-02 21:14:18.57664299 &#43;0000 UTC</span>
+		</div>
+		<p class="p">There’s a better way to get the things you want.
+			
+				... (14752 chars. See <a href="javascript:toggle('bD2B97403-EFCA-4E65-85F4-6DA2EE699C01');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="bD2B97403-EFCA-4E65-85F4-6DA2EE699C01">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><div>
+  
+    <a href="https://www.vox.com/">
+      
+  <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 242 121"><path fill="#444745" d="M110.674 3.528h3.474L114.564 2H71.63l-.418 1.528h6.253c5.418 0 9.726 3.75 9.726 11.255 0 4.168-1.8 9.587-4.72 16.118L54.82 92.32l-6.81-79.756c-.556-6.252 2.5-9.03 9.59-9.03h4.027L62.042 2H1.6l-.557 1.528h3.89c4.725 0 6.532 2.918 7.087 8.615l10.7 103.1h25.427l42.518-90.038c6.392-13.48 13.2-21.677 20.01-21.677zm-5.002 112.27c-3.89 0-6.253-1.25-6.253-7.642 0-8.06 2.91-23.76 6.11-38.072.41 6.67 5 13.2 11.81 13.2 1.67 0 3.06-.138 4.44-.417-6.26 27.236-8.76 32.932-16.12 32.932zm121.024-54.19c8.06 0 13.2-6.67 13.2-14.173 0-6.392-4.585-11.116-11.115-11.116-11.81 0-17.36 9.31-27.09 26.53-2.08-10.7-6.94-24.73-19.45-24.73-14.03 0-30.15 20.01-45.02 32.37-6.67 5.56-14.17 9.17-20.15 9.17-6.11 0-9.72-6.26-9.72-17.23 4.31-17.93 6.67-22.65 13.34-22.65 4.59 0 6.53 2.64 6.53 8.06 0 5.69-1.25 15.42-3.75 27.51 6.67-2.09 16.68-10.42 25.01-19.45-4.44-10.56-13.89-17.79-27.65-17.79-25.42 0-47.66 22.78-47.66 48.35 0 17.65 12.51 30.984 32.1 30.984 32.38 0 45.86-28.066 45.86-47.52 0-2.78-.14-4.86-.42-7.364C155.717 57.14 162.108 52 167.388 52c5.975 0 10.7 15.007 15.423 37.657-4.17 4.58-8.34 13.474-10.42 15.002-.836-8.06-6.115-13.06-13.2-13.06-7.92 0-13.48 7.5-13.48 13.893 0 7.226 5 11.95 11.53 11.95 13.76 0 17.65-13.062 26.265-24.595 2.64 12.363 8.754 24.59 19.313 24.59 12.506 0 24.178-10.7 30.15-18.34l-1.11-1.81c-3.89 3.753-7.642 6.254-11.95 6.254-7.78 0-13.34-16.81-17.645-37.1 2.5-3.47 6.53-12.225 9.31-15.28 1.95 3.612 5.978 10.42 15.15 10.42z"></path></svg>
+
+
+      
+    </a>
+  
+  
+    <div>
+      <figure>
+  <span>
+    
+    <span data-original="https://cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg">
+      
+        <picture data-cid="site/picture_element-1678428420_5115_111365" data-cdata="{&#34;image_id&#34;:71886899,&#34;ratio&#34;:&#34;*&#34;}">
+  
+
+
+  <source srcset="https://cdn.vox-cdn.com/thumbor/q94aD6yct5YCuVVeNz_KY66Q3K8=/0x0:3000x2000/320x180/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 320w, https://cdn.vox-cdn.com/thumbor/dtSHWv3D9cDP8o4220v_Dzv0_Jc=/0x0:3000x2000/570x321/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 570w, https://cdn.vox-cdn.com/thumbor/U7a0RQzOm92X62Gqczqf4I4Z8W8=/0x0:3000x2000/820x461/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 820w, https://cdn.vox-cdn.com/thumbor/C5gyoEn3IZmftFgdtZxA3H67fYs=/0x0:3000x2000/1070x602/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 1070w, https://cdn.vox-cdn.com/thumbor/suptbLDCZvxTlhe1QliqHOpjIIc=/0x0:3000x2000/1320x743/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 1320w, https://cdn.vox-cdn.com/thumbor/iTANRT0WO5TBW4V4LXaZ2gxcTVw=/0x0:3000x2000/1570x883/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 1570w, https://cdn.vox-cdn.com/thumbor/PkE2ALNDLEbF7Y7uiAUfaWnDBa8=/0x0:3000x2000/1820x1024/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 1820w, https://cdn.vox-cdn.com/thumbor/IQ_rbagobTfEjcgVetFpa1_qQW0=/0x0:3000x2000/2070x1164/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 2070w, https://cdn.vox-cdn.com/thumbor/pdNtj147wN8NCppTtT0vyULDfH4=/0x0:3000x2000/2320x1305/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 2320w, https://cdn.vox-cdn.com/thumbor/KztP-Giusd-USfcwvRcoMMj7aBM=/0x0:3000x2000/2570x1446/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 2570w, https://cdn.vox-cdn.com/thumbor/VtRFR9bSJKKJbfABZg7eFw82zfk=/0x0:3000x2000/2820x1586/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 2820w, https://cdn.vox-cdn.com/thumbor/yDpY7UKzusL7EXtPrbk3HBLUyls=/0x0:3000x2000/3070x1727/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 3070w, https://cdn.vox-cdn.com/thumbor/hb_gToFVsv_RtOMKi5a-PLGOQts=/0x0:3000x2000/3320x1868/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 3320w, https://cdn.vox-cdn.com/thumbor/39fSxC1i4SjC1QVnenINKLD8wZg=/0x0:3000x2000/3570x2008/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 3570w, https://cdn.vox-cdn.com/thumbor/0kJGNs2W36gVMTp22YqQ2casxL4=/0x0:3000x2000/3820x2149/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 3820w" sizes="100vw" type="image/webp"/>
+
+
+<img srcset="https://cdn.vox-cdn.com/thumbor/9O5qk3Hs7SIMiZLNs99Ik89kAj0=/0x0:3000x2000/320x180/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 320w, https://cdn.vox-cdn.com/thumbor/SCFOyj-5w4A_Xs1ltBhMTJNTSP4=/0x0:3000x2000/570x321/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 570w, https://cdn.vox-cdn.com/thumbor/SONdrf1FtGYYYtQPbcz6_ziMaCM=/0x0:3000x2000/820x461/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 820w, https://cdn.vox-cdn.com/thumbor/_3A_VLgwegGRki_4glhC2QQDu6k=/0x0:3000x2000/1070x602/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 1070w, https://cdn.vox-cdn.com/thumbor/hyNEe6fQK8HN3qWa7cha9TK11LQ=/0x0:3000x2000/1320x743/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 1320w, https://cdn.vox-cdn.com/thumbor/cVbvphSk28opB3Y1Rxj3_B6aCHQ=/0x0:3000x2000/1570x883/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 1570w, https://cdn.vox-cdn.com/thumbor/JqLGwCCVKeEYQ4-84pQP8rXKES0=/0x0:3000x2000/1820x1024/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 1820w, https://cdn.vox-cdn.com/thumbor/0rXsT7xkBmaffw2HivAGvLE71dA=/0x0:3000x2000/2070x1164/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 2070w, https://cdn.vox-cdn.com/thumbor/eKZifv24r-k2SVd95w0W3HH1Wd0=/0x0:3000x2000/2320x1305/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 2320w, https://cdn.vox-cdn.com/thumbor/UPGWW_LzngXJgLpr31A6FD2W4PE=/0x0:3000x2000/2570x1446/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 2570w, https://cdn.vox-cdn.com/thumbor/UV9QkaiO6IjJgFNwPuuZXvf9MU8=/0x0:3000x2000/2820x1586/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 2820w, https://cdn.vox-cdn.com/thumbor/PWzvFj6Cys16xl-5LWyV98EFUmo=/0x0:3000x2000/3070x1727/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 3070w, https://cdn.vox-cdn.com/thumbor/3fkz9Hg67KTgE5QMCk88t61BcL8=/0x0:3000x2000/3320x1868/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 3320w, https://cdn.vox-cdn.com/thumbor/FWAWUlOhrR_0Bv2i6Df_ELJalWQ=/0x0:3000x2000/3570x2008/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 3570w, https://cdn.vox-cdn.com/thumbor/5jyW_i0L96vccvB2ZUJ5dpfenVA=/0x0:3000x2000/3820x2149/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 3820w" sizes="100vw" alt="Illustration of colorful speech bubbles overlapping against a yellow background." data-upload-width="3000" src="https://cdn.vox-cdn.com/thumbor/jHeCYO1dpNftWPmDLVIskPhpKjo=/0x0:3000x2000/1200x675/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg"/>
+
+</picture>
+
+      
+    </span>
+    
+  </span>
+  
+    <span>
+      
+      
+        <cite>Getty Images</cite>
+      
+    </span>
+  
+</figure>
+
+    </div>
+  
+  <div>
+    
+    
+    
+
+    <p>There’s a better way to get the things you want.</p>
+
+    <div>
+  <p><span>
+    
+      By
+      
+      
+        
+          <span>
+            
+            <time data-ui="timestamp" datetime="2023-01-20T13:00:00">
+  Jan 20, 2023,  8:00am EST
+</time>
+          </span>
+        
+      
+      
+      
+    
+    
+  </span>
+  <span>
+    <a data-entry-admin="23326415" data-cid="tools/entry_admin_button-1678428420_1535_111366" data-cdata="{&#34;id&#34;:23326415}"></a>
+
+  </span>
+</p></div>
+
+  </div>
+</div><div>
+  <main id="content" tabindex="-1">
+    
+    
+
+
+    
+
+      
+
+
+
+    
+
+
+
+
+
+
+
+<div>
+  <p id="78wwwn">Chris Voss had only been an FBI hostage negotiator for a year and a half when he was assigned to handle negotiations for a bank hostage at Chase Manhattan Bank in Brooklyn in 1993. About 90 minutes after first picking up the phone with one of the hostage takers, Voss had struck a deal and was able to convince the kidnappers to leave the bank. Voss credits his success to non-adversarial confrontation and building trust.</p>
+<p id="9zUonC">“In any negotiation — business, personal — you have to find a way to gently show people reality,” says Voss, who <a href="https://www.masterclass.com/classes/chris-voss-teaches-the-art-of-negotiation">teaches a Masterclass on negotiation</a>, “without them feeling cornered or attacked.”</p>
+<p id="fZCYtL">The stakes in most other negotiations are far lower than Voss’s brush with hostage captors. <a href="https://www.vox.com/identities/2016/9/29/13096310/wage-gap-women-negotiate-lean-in">Asking for a raise</a>, <a href="https://www.vox.com/even-better/23161444/splitting-home-chores-unfair-equitable">splitting chore duties</a>, suggesting a different restaurant for date night — practically anything is negotiable. “It’s just not always worthwhile for us to try, and we’re not always going to be successful,” says <a href="https://www.zoechance.com/">Zoe Chance</a>, a senior lecturer at the Yale School of Management, “but anyone should be able to ask anyone for anything.”</p>
+<p id="T2oeGB">Negotiation is a collaborative conversation, a means of problem-solving, and an opportunity for transformation, according to negotiation and commercial consultant <a href="https://www.devonsmiley.com/">Devon Smiley</a>. “Something isn’t working for me,” she says. “So how do I make it work for me? How do I transform it?” In the process of this transformation, all involved parties should get what they want; no one side should feel like the loser. </p>
+<p id="ZewEaM">How to effectively leverage this balance of give and take requires skill and practice, but mastering the art of negotiation isn’t impossible. Through objective-setting, preparation, and curiosity, even beginner negotiators can equip themselves with the tools to get what they want. </p>
+<h3 id="ZlfaAR">Before you can get someone to say yes, practice saying no (and know what will make others say no to you)</h3>
+<p id="e95IKr">A natural aspect of negotiation is rejection. Before you can feel comfortable asking for what you want, Chance suggests getting used to saying “no.” “As you become more comfortable practicing saying no, you get more comfortable with the idea of other people saying no to you,” she says, “and that helps you be more comfortable asking.” </p>
+<p id="PlViGS">At the start of one of her MBA classes, Chance instructs her students to reject every request or invitation they receive for 24 hours. This exercise allows participants to feel comfortable <a href="https://www.vox.com/even-better/23310442/vox-conversations-boundaries-nedra-glover-tawwab-even-better">setting boundaries</a>. Giving yourself permission to turn down others in low-pressure situations helps prepare you for the inevitability of denying requests in the future.</p>
+<p id="swDscY">Notice how others react when you turn them down. For most inconsequential requests, your “no” hasn’t ruined their day or shattered the relationship. The same is true when the roles are reversed. If you’re on the receiving end of a “no,” depending on how important your ask is, you can either try to come to terms both parties are happy with, or you can decide to drop the request, Chance says. </p>
+<p id="CfZTv0">There are certain non-negotiables, according to Brian Buck, the chief executive of <a href="https://www.scotworkusa.com/">Scotwork USA</a>, a negotiation consultancy and training firm. Asking someone to change their opinions and principles isn’t likely to go over well. “If I were to go talk to another parent about how to raise their children,” Buck says, “they’re going to have very strong opinions.” There isn’t much you can offer the other party to help them see your way in these situations. Attempts at negotiating prices for certain goods, like the cost of a sweater at a department store or a bunch of bananas at a big-box grocery, probably won’t be successful either, Buck says. </p>
+<h3 id="iXqmUE">Don’t take negotiating personally</h3>
+<p id="Q7FRlB">Engaging in a back-and-forth over a personal request can feel like a referendum on your worth. <a href="https://www.pon.harvard.edu/tag/cultural-barriers/">Culture</a> and <a href="https://hbr.org/2019/09/3-of-the-most-common-challenges-women-face-in-negotiations">gender</a> influence norms and emotions around making requests, but very often people forgo asking for what they want because they don’t want to be seen as greedy or a nuisance, Smiley says. However, a negotiation has very little to do with you. (It should be noted that racial and gender biases impact the outcome of salary negotiation. <a href="https://www.colorado.edu/business/faculty-research/2020/04/29/role-race-salary-negotiations">Studies</a> <a href="https://news.usc.edu/192848/women-men-salary-negotiation-virtual-agents-usc-research/">find</a> these results are because of biased interviewers, not because the interviewer was a poor negotiator.) The other party’s goals, objectives, constraints, and budget factor into their offers. Not getting exactly what you want doesn’t mean the other person doesn’t like you or you’re not worthy. “That’s a terrible way to negotiate,” Chance says, “and it ends up creating a lot of bad vibes that make us not want to negotiate again in the future.” </p>
+<p id="YyQKnJ">In most negotiations involving money, you’re often bargaining with a representative of a company or organization. Asking a customer service rep for a discount on your cable bill isn’t an attack on that person’s character; negotiating a higher salary with a human resources manager doesn’t lower their pay. Just because you haggle with a human doesn’t mean the person on the other end will be directly affected. It’s okay to consider your own needs over those of a corporation. </p>
+<p id="YW08c2">To do this, Smiley says to consider the “ripple of impact” of how getting what you want can materially impact your life. The consequences of negotiating a raise, for instance, extend beyond the size of your paycheck; the extra money may allow you to enroll your kids in swimming lessons or to make a donation to a charity. “By you asking, there’s more benefit happening than just what’s going in your wallet,” Smiley says. </p>
+<p id="L29DjZ">Making a negotiation less personal doesn’t mean removing the human element. Remain polite and professional in tone and pay attention to how the other party responds, Smiley says. Rudeness and aggression are red flags and you should consider how you might be treated down the line. If you’re haggling over the price of tomatoes at the farmer’s market, you may be willing to overlook minor brusqueness, but if you’re weighing signing a two-year lease with a landlord who doesn’t answer questions or who is disrespectful, how will they treat you later? Always be mindful of your reactions and avoid snarky or rude retorts in the heat of the moment. </p>
+<h3 id="RFGfmV">Prepare as much as you can prior to negotiating</h3>
+<p id="CbjCIZ">Before making a case for what you want, you’ll need to anticipate all the reasons another party might want to counter your proposal. Even for small negotiations, such as asking your friend to change the date of her birthday party so you can attend, there are three things you should be prepared to answer, according to Smiley: your main goals for the interaction, the potential pushback, and a few creative concessions or offers you could make.</p>
+<p id="woVHc9">Get creative with your goals, Chance says, because you may succeed by asking for things few people consider requesting. For example, if you’re buying a car, would you prefer higher-end floor mats, an extended warranty, or a lower financing rate in lieu of a discount on the price? “If you haven’t thought of it, you can’t ask for it,” Chance says. “It’s really hard to be creative when you’re stressed. So we should never expect ourselves to come up with great ideas when we’re in a stressful negotiation.”</p>
+<p id="Jc9ekX">However, only ask for what you really want and would be satisfied receiving, Voss says. Approaching with too outrageous an offer can come off as disingenuous or manipulative.</p>
+<p id="v7TJ7M">In her book <a href="https://bookshop.org/p/books/don-t-leave-money-on-the-table-negotiation-strategies-for-women-leaders-in-male-dominated-industries-jacqueline-twillie-mba/10782798?ean=9781089197928"><em>Don’t Leave Money on the Table: Negotiation Strategies for Women Leaders in Male-Dominated Industries</em></a><em>, </em>negotiation strategist <a href="https://www.jacquelinetwillie.com/">Jacqueline Twillie</a> coined a preparation checklist called LATTE: look at the details, anticipate challenges, think about the walk-away point, talk it through, evaluate options. Twillie likens negotiation to a job interview. Before sitting down with an interviewer, you’ll want to know about the company, its goals, and who you’d be working with. Take a similar approach to negotiating: Who is the other party in the negotiation? What do they want? Then, consider all the ways you could be challenged — your proposed rate is too high, the rental car you want is unavailable, your partner has an important meeting on the day you need them to take your child to a doctor’s appointment — and how you will respond. “This prevents you from walking away from the conversation thinking,<em> </em>‘Oh my goodness, I should have said this or that<em>,</em>’” Twillie says.</p>
+<p id="vGw07e">At some point, you may get frustrated and need to take a breather. What are your signs of annoyance? Do you feel rage in the pit of your stomach? Be aware of these tells and remind yourself to take a break if they arise. Voss recommends ending every conversation, even if you’re frustrated, by reiterating how much you want to make a deal with the other person. “The last impression is a lasting impression,” Voss says.</p>
+<p id="n7jAod">Once you’ve thoroughly prepared your talking points, practice delivering your ask aloud. For important negotiations, it’s helpful to rehearse the entire scenario with a friend who can help point out your blind spots. Finally, consider other alternatives to your current situation. What other car dealerships, employers, phone companies could you choose?</p>
+<p id="BASzqS">However, not every negotiation will be anticipated, so you’ll need to think on your feet for creative solutions. Say the front desk staff at a hotel informs you that, due to an error, the room you booked is no longer available. While you could complain, think about your objective — to find a room to sleep in — and what might make up for the inconvenience, Buck says. Start by asking questions: When will the room be available? What other rooms are open? Are there any amenities that would compensate for the error? You could potentially negotiate a few days of complimentary meals in return for a room with a lower rate than what you originally paid. </p>
+<h3 id="RpisvP">Approach the conversation with curiosity, authenticity, and generosity</h3>
+<p id="eZQGG0">In order for both sides to come to an agreement, you need to take an interest in what the other party wants. Instead of getting angry, frustrated, or offended when someone counters your proposal, ask open-ended questions, Smiley says. She recommends inquiries like, “What are your thoughts on this?” “How does this align with what you were expecting?” and, “What are your top three priorities?” “A rather cheeky question that I’ve used a few times and I usually get a laugh, but usually a good response too,” Smiley says, “is ‘How can I make this feel better for you without making it worse for me?’” Chance’s magic question is, “What would it take to make this happen?” This invites collaboration and outlines a path forward for requests such as structural changes at work. Sometimes the most straightforward approach is most effective. Buck is a proponent of asking, “How can I get a better deal?” </p>
+<p id="ZP1IbB">Address any points of contention, Voss says, like high prices or feelings of frustration. If you’re attempting to set a rate with a new client but fear they will try to negotiate a lower price, try saying, “My price is high,” then, leave a few seconds for the other side to respond or give you the floor to proceed, Voss says. “Because calling out the elephant in the room is what gets rid of the elephant in the room, not denying it, not ignoring it,” he says. Then, let the other side respond.</p>
+<p id="JRMYyR">Arming yourself with more information helps you unearth true holdups. For example, if you’re trying to negotiate with your boss a longer deadline on a work project, you might ask about workflow procedures and learn that your portion of the project must be completed before a coworker can begin their contribution. Understanding the bigger picture can help you collaborate on a solution. When the other side feels heard, the negotiation will progress smoothly, Voss says.</p>
+<p id="QEMZLD">Once you’ve learned about your counterpart’s goals, think about what you can offer to facilitate an agreement. Smiley suggests using if/then statements, like, “If you can give me a 5 percent discount, then I could pay in cash.”</p>
+<h3 id="ed5V7F">Accepting a good-enough offer is a win</h3>
+<p id="qFBpdW">Throughout the course of your research and preparation, and before you begin the negotiation, you should set a minimum of what you’re willing to accept. If you’re buying a car, what is the highest price you’re willing to pay for the minimum amount of features and amenities? Should you negotiate a better deal, great; if not, you’re still happy with the agreed-upon price. “Sometimes there’s nothing additional that happens that wasn’t already in the offer, and many times, it was already a really good offer,” Chance says. “Don’t take it personally.”</p>
+<p id="TN9hUO">If you’re considering walking away, balance alternative options. Where else can you buy the car? Will their prices be comparable? Do the other cars’ specs match up to the one you’re currently considering? Or are you being a bit unrealistic in what you want? Smiley says this line of questioning can help negotiators decide if they want to continue working toward a deal or walk away.</p>
+<h3 id="o8G67V">Don’t be afraid to walk away</h3>
+<p id="jNb6KF">Negotiators have to be willing to turn down any potential deal, Twillie says. “When you are not willing to walk away, it doesn’t matter what you’re negotiating, you’ve already given away your power,” she says. Imagine what your life would look like if you didn’t accept this new job, buy this condo, or couldn’t get a discount on this<em> </em>product. There is usually a way forward without accepting a deal that won’t make you happy in the long term. </p>
+<p id="Xm8TO4">“That mental path will help you to make a better decision,” Twillie says. </p>
+<p id="z90JGF"><a href="http://www.vox.com/even-better"><em>Even Better</em></a><em> is here to offer deeply sourced, actionable advice for helping you live a better life. Do you have a question on money and work; friends, family, and community; or personal growth and health? Send us your question by filling out this </em><a href="https://docs.google.com/forms/d/e/1FAIpQLSfiStGSlsWDBmglim7Dh1Y9Hy386rkeKGpfwF6BCjmgnZdqfQ/viewform"><em>form</em></a><em>. We might turn it into a story.</em></p>
+  <div data-cid="site/article_footer-1678428420_8614_111368" data-cdata="{&#34;base_type&#34;:&#34;Entry&#34;,&#34;id&#34;:23326415,&#34;timestamp&#34;:1674219600,&#34;published_timestamp&#34;:1674219600,&#34;show_published_and_updated_timestamps&#34;:false,&#34;title&#34;:&#34;How to negotiate over practically anything&#34;,&#34;type&#34;:&#34;Feature&#34;,&#34;url&#34;:&#34;https://www.vox.com/even-better/23562374/negotiate-anything-prepare-questions&#34;,&#34;entry_layout&#34;:{&#34;key&#34;:&#34;unison_default&#34;,&#34;layout&#34;:&#34;unison_main&#34;,&#34;template&#34;:&#34;minimal&#34;},&#34;additional_byline&#34;:null,&#34;authors&#34;:[{&#34;id&#34;:9280472,&#34;name&#34;:&#34;Allie Volpe&#34;,&#34;url&#34;:&#34;https://www.vox.com/authors/allie-volpe&#34;,&#34;twitter_handle&#34;:&#34;allieevolpe&#34;,&#34;profile_image_url&#34;:&#34;https://cdn.vox-cdn.com/thumbor/d-yYmQWbssU7IHWPVnMMx_Th5RQ=/512x512/cdn.vox-cdn.com/author_profile_images/195941/AllieVolpe_Headshot_March2020_web-05.0.0.jpg&#34;,&#34;title&#34;:&#34;&#34;,&#34;email&#34;:&#34;&#34;,&#34;short_author_bio&#34;:&#34;is a senior reporter at Vox covering mental health, relationships, wellness, money, home life, and work through the lens of meaningful self-improvement.&#34;}],&#34;byline_enabled&#34;:true,&#34;byline_credit_text&#34;:&#34;By&#34;,&#34;byline_serial_comma_enabled&#34;:true,&#34;comment_count&#34;:0,&#34;comments_enabled&#34;:false,&#34;legacy_comments_enabled&#34;:false,&#34;coral_comments_enabled&#34;:false,&#34;coral_comment_counts_enabled&#34;:false,&#34;commerce_disclosure&#34;:null,&#34;community_name&#34;:&#34;Vox&#34;,&#34;community_url&#34;:&#34;https://www.vox.com/&#34;,&#34;community_logo&#34;:&#34;\r\n&lt;svg width=\&#34;386px\&#34; height=\&#34;385px\&#34; viewBox=\&#34;0 0 386 385\&#34; version=\&#34;1.1\&#34; xmlns=\&#34;http://www.w3.org/2000/svg\&#34; xmlns:xlink=\&#34;http://www.w3.org/1999/xlink\&#34; &gt;\r\n    \r\n    &lt;title&gt;vox-mark&lt;/title&gt;\r\n    \r\n    &lt;defs&gt;&lt;/defs&gt;\r\n    &lt;g id=\&#34;Page-1\&#34; stroke=\&#34;none\&#34; stroke-width=\&#34;1\&#34; fill=\&#34;none\&#34; fill-rule=\&#34;evenodd\&#34; &gt;\r\n        &lt;path d=\&#34;M239.811,0 L238.424,6 L259.374,6 C278.011,6 292.908,17.38 292.908,43.002 C292.908,56.967 287.784,75.469 276.598,96.888 L182.689,305.687 L159.283,35.693 C159.283,13.809 168.134,6 191.88,6 L205.854,6 L207.247,0 L1.409,0 L0,6 L13.049,6 C28.88,6 35.863,15.885 37.264,34.514 L73.611,385 L160.221,385 L304.525,79.217 C328.749,31.719 349.237,6 372.525,6 L384.162,6 L385.557,0 L239.811,0\&#34; id=\&#34;vox-mark\&#34; fill=\&#34;#444745\&#34; &gt;&lt;/path&gt;\r\n    &lt;/g&gt;\r\n&lt;/svg&gt;&#34;,&#34;cross_community&#34;:false,&#34;groups&#34;:[{&#34;base_type&#34;:&#34;EntryGroup&#34;,&#34;id&#34;:107232,&#34;timestamp&#34;:1678282203,&#34;title&#34;:&#34;Even Better&#34;,&#34;type&#34;:&#34;SiteGroup&#34;,&#34;url&#34;:&#34;https://www.vox.com/even-better&#34;,&#34;slug&#34;:&#34;even-better&#34;,&#34;community_logo&#34;:&#34;\r\n&lt;svg width=\&#34;386px\&#34; height=\&#34;385px\&#34; viewBox=\&#34;0 0 386 385\&#34; version=\&#34;1.1\&#34; xmlns=\&#34;http://www.w3.org/2000/svg\&#34; xmlns:xlink=\&#34;http://www.w3.org/1999/xlink\&#34; &gt;\r\n    \r\n    &lt;title&gt;vox-mark&lt;/title&gt;\r\n    \r\n    &lt;defs&gt;&lt;/defs&gt;\r\n    &lt;g id=\&#34;Page-1\&#34; stroke=\&#34;none\&#34; stroke-width=\&#34;1\&#34; fill=\&#34;none\&#34; fill-rule=\&#34;evenodd\&#34; &gt;\r\n        &lt;path d=\&#34;M239.811,0 L238.424,6 L259.374,6 C278.011,6 292.908,17.38 292.908,43.002 C292.908,56.967 287.784,75.469 276.598,96.888 L182.689,305.687 L159.283,35.693 C159.283,13.809 168.134,6 191.88,6 L205.854,6 L207.247,0 L1.409,0 L0,6 L13.049,6 C28.88,6 35.863,15.885 37.264,34.514 L73.611,385 L160.221,385 L304.525,79.217 C328.749,31.719 349.237,6 372.525,6 L384.162,6 L385.557,0 L239.811,0\&#34; id=\&#34;vox-mark\&#34; fill=\&#34;#444745\&#34; &gt;&lt;/path&gt;\r\n    &lt;/g&gt;\r\n&lt;/svg&gt;&#34;,&#34;community_name&#34;:&#34;Vox&#34;,&#34;community_url&#34;:&#34;https://www.vox.com/&#34;,&#34;cross_community&#34;:false,&#34;entry_count&#34;:113,&#34;always_show&#34;:false,&#34;description&#34;:&#34;Helping people live better lives individually and collectively — from mental health to relationships of all kinds to work, money, and more.&#34;,&#34;disclosure&#34;:&#34;&#34;,&#34;cover_image_url&#34;:&#34;&#34;,&#34;cover_image&#34;:null,&#34;title_image_url&#34;:&#34;&#34;,&#34;intro_image&#34;:null,&#34;four_up_see_more_text&#34;:&#34;View All&#34;,&#34;primary&#34;:true}],&#34;internal_groups&#34;:[{&#34;base_type&#34;:&#34;EntryGroup&#34;,&#34;id&#34;:72751,&#34;timestamp&#34;:1678194001,&#34;title&#34;:&#34;Category—Evergreen&#34;,&#34;type&#34;:&#34;SiteGroup&#34;,&#34;url&#34;:&#34;&#34;,&#34;slug&#34;:&#34;category-evergreen&#34;,&#34;community_logo&#34;:&#34;\r\n&lt;svg width=\&#34;386px\&#34; height=\&#34;385px\&#34; viewBox=\&#34;0 0 386 385\&#34; version=\&#34;1.1\&#34; xmlns=\&#34;http://www.w3.org/2000/svg\&#34; xmlns:xlink=\&#34;http://www.w3.org/1999/xlink\&#34; &gt;\r\n    \r\n    &lt;title&gt;vox-mark&lt;/title&gt;\r\n    \r\n    &lt;defs&gt;&lt;/defs&gt;\r\n    &lt;g id=\&#34;Page-1\&#34; stroke=\&#34;none\&#34; stroke-width=\&#34;1\&#34; fill=\&#34;none\&#34; fill-rule=\&#34;evenodd\&#34; &gt;\r\n        &lt;path d=\&#34;M239.811,0 L238.424,6 L259.374,6 C278.011,6 292.908,17.38 292.908,43.002 C292.908,56.967 287.784,75.469 276.598,96.888 L182.689,305.687 L159.283,35.693 C159.283,13.809 168.134,6 191.88,6 L205.854,6 L207.247,0 L1.409,0 L0,6 L13.049,6 C28.88,6 35.863,15.885 37.264,34.514 L73.611,385 L160.221,385 L304.525,79.217 C328.749,31.719 349.237,6 372.525,6 L384.162,6 L385.557,0 L239.811,0\&#34; id=\&#34;vox-mark\&#34; fill=\&#34;#444745\&#34; &gt;&lt;/path&gt;\r\n    &lt;/g&gt;\r\n&lt;/svg&gt;&#34;,&#34;community_name&#34;:&#34;Vox&#34;,&#34;community_url&#34;:&#34;https://www.vox.com/&#34;,&#34;cross_community&#34;:false,&#34;entry_count&#34;:1429,&#34;always_show&#34;:false,&#34;description&#34;:&#34;&#34;,&#34;disclosure&#34;:&#34;&#34;,&#34;cover_image_url&#34;:&#34;&#34;,&#34;cover_image&#34;:null,&#34;title_image_url&#34;:&#34;&#34;,&#34;intro_image&#34;:null,&#34;four_up_see_more_text&#34;:&#34;View All&#34;}],&#34;image&#34;:{&#34;ratio&#34;:&#34;*&#34;,&#34;original_url&#34;:&#34;https://cdn.vox-cdn.com/uploads/chorus_image/image/71886881/negotiation03.0.jpg&#34;,&#34;network&#34;:&#34;unison&#34;,&#34;bgcolor&#34;:&#34;white&#34;,&#34;pinterest_enabled&#34;:false,&#34;caption&#34;:null,&#34;credit&#34;:&#34;Getty Images&#34;,&#34;focal_area&#34;:{&#34;top_left_x&#34;:1260,&#34;top_left_y&#34;:760,&#34;bottom_right_x&#34;:1740,&#34;bottom_right_y&#34;:1240},&#34;bounds&#34;:[0,0,3000,2000],&#34;uploaded_size&#34;:{&#34;width&#34;:3000,&#34;height&#34;:2000},&#34;focal_point&#34;:null,&#34;image_id&#34;:71886881,&#34;alt_text&#34;:&#34;Illustration of colorful speech bubbles overlapping against a yellow background.&#34;},&#34;hub_image&#34;:{&#34;ratio&#34;:&#34;*&#34;,&#34;original_url&#34;:&#34;https://cdn.vox-cdn.com/uploads/chorus_image/image/71886881/negotiation03.0.jpg&#34;,&#34;network&#34;:&#34;unison&#34;,&#34;bgcolor&#34;:&#34;white&#34;,&#34;pinterest_enabled&#34;:false,&#34;caption&#34;:null,&#34;credit&#34;:&#34;Getty Images&#34;,&#34;focal_area&#34;:{&#34;top_left_x&#34;:1260,&#34;top_left_y&#34;:760,&#34;bottom_right_x&#34;:1740,&#34;bottom_right_y&#34;:1240},&#34;bounds&#34;:[0,0,3000,2000],&#34;uploaded_size&#34;:{&#34;width&#34;:3000,&#34;height&#34;:2000},&#34;focal_point&#34;:null,&#34;image_id&#34;:71886881,&#34;alt_text&#34;:&#34;Illustration of colorful speech bubbles overlapping against a yellow background.&#34;},&#34;lede_image&#34;:{&#34;ratio&#34;:&#34;*&#34;,&#34;original_url&#34;:&#34;https://cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg&#34;,&#34;network&#34;:&#34;unison&#34;,&#34;bgcolor&#34;:&#34;white&#34;,&#34;pinterest_enabled&#34;:false,&#34;caption&#34;:null,&#34;credit&#34;:&#34;Getty Images&#34;,&#34;focal_area&#34;:{&#34;top_left_x&#34;:1260,&#34;top_left_y&#34;:760,&#34;bottom_right_x&#34;:1740,&#34;bottom_right_y&#34;:1240},&#34;bounds&#34;:[0,0,3000,2000],&#34;uploaded_size&#34;:{&#34;width&#34;:3000,&#34;height&#34;:2000},&#34;focal_point&#34;:null,&#34;image_id&#34;:71886899,&#34;alt_text&#34;:&#34;Illustration of colorful speech bubbles overlapping against a yellow background.&#34;},&#34;group_cover_image&#34;:null,&#34;picture_standard_lead_image&#34;:{&#34;ratio&#34;:&#34;*&#34;,&#34;original_url&#34;:&#34;https://cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg&#34;,&#34;network&#34;:&#34;unison&#34;,&#34;bgcolor&#34;:&#34;white&#34;,&#34;pinterest_enabled&#34;:false,&#34;caption&#34;:null,&#34;credit&#34;:&#34;Getty Images&#34;,&#34;focal_area&#34;:{&#34;top_left_x&#34;:1260,&#34;top_left_y&#34;:760,&#34;bottom_right_x&#34;:1740,&#34;bottom_right_y&#34;:1240},&#34;bounds&#34;:[0,0,3000,2000],&#34;uploaded_size&#34;:{&#34;width&#34;:3000,&#34;height&#34;:2000},&#34;focal_point&#34;:null,&#34;image_id&#34;:71886899,&#34;alt_text&#34;:&#34;Illustration of colorful speech bubbles overlapping against a yellow background.&#34;,&#34;picture_element&#34;:{&#34;html&#34;:{},&#34;alt&#34;:&#34;Illustration of colorful speech bubbles overlapping against a yellow background.&#34;,&#34;default&#34;:{&#34;srcset&#34;:&#34;https://cdn.vox-cdn.com/thumbor/7ivCBQwQ8WVhdUTp_1lnJI6arAY=/0x0:3000x2000/320x240/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 320w, https://cdn.vox-cdn.com/thumbor/y_jAWFZdMk3XvTrpSTN0Ungd91s=/0x0:3000x2000/620x465/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 620w, https://cdn.vox-cdn.com/thumbor/TDzJ6pqPhTjwEu_ajwK10X9F_IQ=/0x0:3000x2000/920x690/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 920w, https://cdn.vox-cdn.com/thumbor/BLaoybO47kuFx0hzjite_4X3DTY=/0x0:3000x2000/1220x915/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 1220w, https://cdn.vox-cdn.com/thumbor/YE0UJ0Smv1seIkzMAZzSem9UAME=/0x0:3000x2000/1520x1140/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 1520w&#34;,&#34;webp_srcset&#34;:&#34;https://cdn.vox-cdn.com/thumbor/BrVRe2Z3UZ1vPMIvxTbmUFdJiik=/0x0:3000x2000/320x240/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 320w, https://cdn.vox-cdn.com/thumbor/pRb9HgtxIrG8uQE_MyqIMpXKUzI=/0x0:3000x2000/620x465/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 620w, https://cdn.vox-cdn.com/thumbor/cyT2XZrb24jftrgR-SzjD1kguEg=/0x0:3000x2000/920x690/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 920w, https://cdn.vox-cdn.com/thumbor/dyuTga1hAWhXkFCwExiCOafTHzk=/0x0:3000x2000/1220x915/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 1220w, https://cdn.vox-cdn.com/thumbor/6zm2ouhEMBkgBx8QuWkSxIBtCIo=/0x0:3000x2000/1520x1140/filters:focal(1260x760:1740x1240):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg 1520w&#34;,&#34;media&#34;:null,&#34;sizes&#34;:&#34;(min-width: 809px) 485px, (min-width: 600px) 60vw, 100vw&#34;,&#34;fallback&#34;:&#34;https://cdn.vox-cdn.com/thumbor/fp26UGe6EafIwRAnH3Zgvt1bIwQ=/0x0:3000x2000/1200x900/filters:focal(1260x760:1740x1240)/cdn.vox-cdn.com/uploads/chorus_image/image/71886899/negotiation03.0.jpg&#34;},&#34;art_directed&#34;:[]}},&#34;image_is_placeholder&#34;:false,&#34;image_is_hidden&#34;:false,&#34;network&#34;:&#34;vox&#34;,&#34;omits_labels&#34;:true,&#34;optimizable&#34;:false,&#34;promo_headline&#34;:&#34;How to negotiate over practically anything&#34;,&#34;recommended_count&#34;:0,&#34;recs_enabled&#34;:false,&#34;slug&#34;:&#34;even-better/23562374/negotiate-anything-prepare-questions&#34;,&#34;dek&#34;:&#34;There’s a better way to get the things you want.&#34;,&#34;homepage_title&#34;:&#34;How to negotiate over practically anything&#34;,&#34;homepage_description&#34;:&#34;There’s a better way to get the things you want.&#34;,&#34;show_homepage_description&#34;:false,&#34;title_display&#34;:&#34;How to negotiate over practically anything&#34;,&#34;pull_quote&#34;:null,&#34;voxcreative&#34;:false,&#34;show_entry_time&#34;:true,&#34;show_dates&#34;:true,&#34;paywalled_content&#34;:false,&#34;paywalled_content_box_logo_url&#34;:&#34;&#34;,&#34;paywalled_content_page_logo_url&#34;:&#34;&#34;,&#34;paywalled_content_main_url&#34;:&#34;&#34;,&#34;article_footer_body&#34;:&#34;Millions turn to Vox to educate themselves, their family, and their friends about what’s happening in the world around them, and to learn about things that spark their curiosity. Financial contributions from our readers are a critical part of supporting our resource-intensive work and help us keep our journalism free for all. \r\n &lt;a href=\&#34;\r\nhttp://vox.com/pages/support-now?itm_campaign=jan2023-footer&amp;itm_medium=site&amp;itm_source=article-footer_default \&#34;&gt;Please consider making a one-time contribution to Vox today.\r\n&lt;/a&gt;&#34;,&#34;article_footer_header&#34;:&#34;&lt;a href=\&#34;http://vox.com/pages/support-now?itm_campaign=help-us-plan-eoy22&amp;itm_medium=site&amp;itm_source=article-footer \&#34;&gt;Will you support Vox’s explanatory journalism?&lt;/a&gt;&#34;,&#34;use_article_footer&#34;:true,&#34;article_footer_cta_annual_plans&#34;:&#34;{\r\n  \&#34;default_plan\&#34;: 1,\r\n  \&#34;plans\&#34;: [\r\n    {\r\n      \&#34;amount\&#34;: 95,\r\n      \&#34;plan_id\&#34;: 74295\r\n    },\r\n    {\r\n      \&#34;amount\&#34;: 120,\r\n      \&#34;plan_id\&#34;: 81108\r\n    },\r\n    {\r\n      \&#34;amount\&#34;: 250,\r\n      \&#34;plan_id\&#34;: 77096\r\n    }\r\n  ]\r\n}&#34;,&#34;article_footer_cta_button_annual_copy&#34;:&#34;year&#34;,&#34;article_footer_cta_button_copy&#34;:&#34;Yes, I&#39;ll give&#34;,&#34;article_footer_cta_button_monthly_copy&#34;:&#34;month&#34;,&#34;article_footer_cta_default_frequency&#34;:&#34;annual&#34;,&#34;article_footer_cta_monthly_plans&#34;:&#34;{\r\n  \&#34;default_plan\&#34;: 1,\r\n  \&#34;plans\&#34;: [\r\n    {\r\n      \&#34;amount\&#34;: 9,\r\n      \&#34;plan_id\&#34;: 77780\r\n    },\r\n    {\r\n      \&#34;amount\&#34;: 20,\r\n      \&#34;plan_id\&#34;: 69279\r\n    },\r\n    {\r\n      \&#34;amount\&#34;: 50,\r\n      \&#34;plan_id\&#34;: 46947\r\n    }\r\n  ]\r\n}&#34;,&#34;article_footer_cta_once_plans&#34;:&#34;{\r\n  \&#34;default_plan\&#34;: 0,\r\n  \&#34;plans\&#34;: [\r\n    {\r\n      \&#34;amount\&#34;: 20,\r\n      \&#34;plan_id\&#34;: 69278\r\n    },\r\n    {\r\n      \&#34;amount\&#34;: 50,\r\n      \&#34;plan_id\&#34;: 48880\r\n    },\r\n    {\r\n      \&#34;amount\&#34;: 100,\r\n      \&#34;plan_id\&#34;: 46607\r\n    }\r\n  ]\r\n}&#34;,&#34;use_article_footer_cta_read_counter&#34;:true,&#34;use_article_footer_cta&#34;:true,&#34;layout&#34;:&#34;&#34;,&#34;featured_placeable&#34;:false,&#34;video_placeable&#34;:false,&#34;disclaimer&#34;:null,&#34;volume_placement&#34;:&#34;lede&#34;,&#34;video_autoplay&#34;:false,&#34;youtube_url&#34;:&#34;http://bit.ly/voxyoutube&#34;,&#34;facebook_video_url&#34;:&#34;&#34;,&#34;play_in_modal&#34;:true,&#34;user_preferences_for_privacy_enabled&#34;:false,&#34;show_branded_logos&#34;:true,&#34;uses_video_lede&#34;:false,&#34;image_brightness&#34;:&#34;image-light&#34;,&#34;display_logo_lockup&#34;:false,&#34;svg_logo_data&#34;:&#34;&lt;svg id=\&#34;Layer_1\&#34; xmlns=\&#34;http://www.w3.org/2000/svg\&#34; viewBox=\&#34;0 0 242 121\&#34;&gt;&lt;path fill=\&#34;#444745\&#34; d=\&#34;M110.674 3.528h3.474L114.564 2H71.63l-.418 1.528h6.253c5.418 0 9.726 3.75 9.726 11.255 0 4.168-1.8 9.587-4.72 16.118L54.82 92.32l-6.81-79.756c-.556-6.252 2.5-9.03 9.59-9.03h4.027L62.042 2H1.6l-.557 1.528h3.89c4.725 0 6.532 2.918 7.087 8.615l10.7 103.1h25.427l42.518-90.038c6.392-13.48 13.2-21.677 20.01-21.677zm-5.002 112.27c-3.89 0-6.253-1.25-6.253-7.642 0-8.06 2.91-23.76 6.11-38.072.41 6.67 5 13.2 11.81 13.2 1.67 0 3.06-.138 4.44-.417-6.26 27.236-8.76 32.932-16.12 32.932zm121.024-54.19c8.06 0 13.2-6.67 13.2-14.173 0-6.392-4.585-11.116-11.115-11.116-11.81 0-17.36 9.31-27.09 26.53-2.08-10.7-6.94-24.73-19.45-24.73-14.03 0-30.15 20.01-45.02 32.37-6.67 5.56-14.17 9.17-20.15 9.17-6.11 0-9.72-6.26-9.72-17.23 4.31-17.93 6.67-22.65 13.34-22.65 4.59 0 6.53 2.64 6.53 8.06 0 5.69-1.25 15.42-3.75 27.51 6.67-2.09 16.68-10.42 25.01-19.45-4.44-10.56-13.89-17.79-27.65-17.79-25.42 0-47.66 22.78-47.66 48.35 0 17.65 12.51 30.984 32.1 30.984 32.38 0 45.86-28.066 45.86-47.52 0-2.78-.14-4.86-.42-7.364C155.717 57.14 162.108 52 167.388 52c5.975 0 10.7 15.007 15.423 37.657-4.17 4.58-8.34 13.474-10.42 15.002-.836-8.06-6.115-13.06-13.2-13.06-7.92 0-13.48 7.5-13.48 13.893 0 7.226 5 11.95 11.53 11.95 13.76 0 17.65-13.062 26.265-24.595 2.64 12.363 8.754 24.59 19.313 24.59 12.506 0 24.178-10.7 30.15-18.34l-1.11-1.81c-3.89 3.753-7.642 6.254-11.95 6.254-7.78 0-13.34-16.81-17.645-37.1 2.5-3.47 6.53-12.225 9.31-15.28 1.95 3.612 5.978 10.42 15.15 10.42z\&#34;/&gt;&lt;/svg&gt;&#34;}">
+       
+
+      <div>
+        <p><label tabindex="0" role="radio" aria-checked="true">
+                
+                <p>
+                  <span>$95</span><span>/year</span>
+                </p>
+              </label>
+            
+              <label tabindex="0" role="radio" aria-checked="true">
+                
+                <p>
+                  <span>$120</span><span>/year</span>
+                </p>
+              </label>
+            
+              <label tabindex="0" role="radio" aria-checked="true">
+                
+                <p>
+                  <span>$250</span><span>/year</span>
+                </p>
+              </label>
+            
+
+            <label tabindex="0">
+              
+              <span>Other</span>
+            </label>
+          </p>
+        </div>
+
+        
+
+        <a href="https://vox.memberful.com/checkout?plan=" id="contribute--submit">
+          <p>
+            Yes, I&#39;ll give $120<span>/year</span>
+          </p>
+        </a>
+
+        <p>
+          Yes, I&#39;ll give $120<span>/year</span>
+        </p>
+
+        <div>
+            <p>
+              <span>
+                We accept credit card, Apple Pay, and
+              </span>
+              <span>
+                Google Pay. You can also contribute via
+              </span>
+            </p>
+            <p><a href="https://www.paypal.com/donate/?hosted_button_id=VSP4PYJX98SHL" target="_blank">
+              <img src="https://cdn.vox-cdn.com/uploads/chorus_asset/file/22734206/paypal_logo.png"/>
+            </a>
+          </p></div>
+
+      </div> 
+
+ 
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  </main>
+  
+
+</div></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+<section>
+<h2 id="saveme">Random expired <a href="javascript:toggle('olsaveme');">&#177;</a></h2>
+<div>2 links selected from 91 expired links</div>
+<ol id="olsaveme">
+
+<li>
+	<article>
+		<h3 id="EAB90B18-87D1-4B09-90C4-C78525EDF920"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter">What&#39;s in a Good Error Message?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter">https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.473227024 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8D47E7AE-E2D1-4F5E-ADA2-D5C5AE91FCD6"><a href="https://www.defmacro.org/2015/02/25/startup-ideas.html">How to pick startup ideas</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.defmacro.org/2015/02/25/startup-ideas.html">https://www.defmacro.org/2015/02/25/startup-ideas.html</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:12.827280998 &#43;0000 UTC</span>
+		</div>
+		<p class="p">One of the most important things I learned from running a startup is that on a macro scale the innovation market is efficient. If the market conditions allow for a startup to arise, it’s overwhelmingly probable that mult
+			
+				(Open <a href="https://www.defmacro.org/2015/02/25/startup-ideas.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+<section>
+<h2 id="expired">Expired <a href="javascript:toggle('olexpired');">&#177;</a></h2>
+<div>91 links expired today Fri, Mar.10, 2023</div>
+<ol id="olexpired">
+
+<li>
+	<article>
+		<h3 id="F62EDE75-F797-47AD-AF47-54C9AF7B905D"><a href="https://iximiuz.com/en/posts/container-networking-is-simple/">Container Networking Is Simple!</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://iximiuz.com/en/posts/container-networking-is-simple/">https://iximiuz.com/en/posts/container-networking-is-simple/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472911834 &#43;0000 UTC</span>
+		</div>
+		<p class="p">How container networking works under the hood? Setting up docker-like container networking from scratch. Bonus: podman rootless container networking explained.
+			
+				(Open <a href="https://iximiuz.com/en/posts/container-networking-is-simple/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5E2F906D-29F5-4863-8F9F-1A8B82E40BBC"><a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/">Data Caching Across Microservices in a Serverless Architecture</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/">https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472444057 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Organizations are re-architecting their traditional monolithic applications to incorporate microservices. This helps them gain agility and scalability and accelerate time-to-market for new features. Each microser
+			
+				(Open <a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2F682234-9E4F-4889-8029-5376E9ECC042"><a href="https://commoncog.com/blog/accelerated-expertise/">Accelerated Expertise</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://commoncog.com/blog/accelerated-expertise/">https://commoncog.com/blog/accelerated-expertise/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.470912933 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A summary of Accelerated Expertise, the best book on accelerating training programs we have today.
+			
+				(Open <a href="https://commoncog.com/blog/accelerated-expertise/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D473BC81-57FE-451F-BB84-6DAF4A34B7F5"><a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1">Testing in Production, the safe way</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1">https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1</a></span><br />
+			<span class="d">Added: 2020-01-25 21:07:09.173211097 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this post, I hope to explore different forms of “testing in production”, when each form of testing is the most beneficial as well as how to test services in production in a safe way. However…
+			
+				(Open <a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4EAE9D5E-8762-44E9-B560-8FA66CB88E48"><a href="https://lena-voita.github.io/nlp_course/word_embeddings.html">Distributional Semantics</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://lena-voita.github.io/nlp_course/word_embeddings.html">https://lena-voita.github.io/nlp_course/word_embeddings.html</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.471920967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">To capture meaning of words in their vectors, we first need to define the notion of meaning that can be used in practice. For this, let us try to understand how we, humans, get to know which w
+			
+				(Open <a href="https://lena-voita.github.io/nlp_course/word_embeddings.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ECFE519B-F709-4FDC-98D0-E0F643810B47"><a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea">Production Oriented Development - Paul Osman - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea">https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea</a></span><br />
+			<span class="d">Added: 2020-01-30 02:45:22.718299865 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Code working in production is the only thing that matters. Teams should optimize for delivering code to production as quickly as possible.
+			
+				(Open <a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5E528535-D488-45A0-B0D7-5C7EE9F45269"><a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/">Emerging Architectures for Modern Data Infrastructure</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/">https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:28:58.590971946 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Software systems are increasingly based on data, rather than code. And a new class of tools and technologies have emerged to process data for both analytics and operational AI/ ML.
+			
+				(Open <a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9E769276-C043-4327-BD56-16F07A66B4E4"><a href="https://en.wikipedia.org/wiki/User_space">User space</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://en.wikipedia.org/wiki/User_space">https://en.wikipedia.org/wiki/User_space</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.471538066 &#43;0000 UTC</span>
+		</div>
+		<p class="p">For the term &#34;user space&#34; as used in Wikipedia, see Wikipedia:User pages. &#34;Kernel space&#34; redirects here. For the mathematical definition, see Null space. This article needs additional citations for verification. Please h
+			
+				(Open <a href="https://en.wikipedia.org/wiki/User_space" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="243783C4-C897-490D-80E6-182A4DC7ACE6"><a href="https://opensource.com/article/21/11/cluster-logging-kubernetes">What you need to know about cluster logging in Kubernetes</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://opensource.com/article/21/11/cluster-logging-kubernetes">https://opensource.com/article/21/11/cluster-logging-kubernetes</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.47310996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Explore how different container logging patterns in Kubernetes work.
+			
+				(Open <a href="https://opensource.com/article/21/11/cluster-logging-kubernetes" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="744F225B-D881-4600-964F-BC976DE3B9CD"><a href="https://www.youtube.com/watch?v=93_3CxCl_eI">YOW! 2019 - Josh Long - The Reactive Revolution - YouTube</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.youtube.com/watch?v=93_3CxCl_eI">https://www.youtube.com/watch?v=93_3CxCl_eI</a></span><br />
+			<span class="d">Added: 2021-06-20 02:38:51.257305145 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Share your videos with friends, family, and the world
+			
+				(Open <a href="https://www.youtube.com/watch?v=93_3CxCl_eI" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="67794E53-71A0-40A7-AA58-B74BBEDC96C1"><a href="https://www.defmacro.org/2014/10/03/engman.html">44 engineering management lessons</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.defmacro.org/2014/10/03/engman.html">https://www.defmacro.org/2014/10/03/engman.html</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:17.431499004 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to engineering management. It’s fun, it’s exhausting, it’s rewarding — but most importantly it’s new! What worked for you before won’t work now. You’ll have to acquire a new set of skills, and shed some bad habit
+			
+				(Open <a href="https://www.defmacro.org/2014/10/03/engman.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="22C9D369-7D87-417E-8241-0FF77B96719B"><a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c">Health, Availability, Debuggability - Observability&#43; - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c">https://medium.com/observability/health-availability-debuggability-5b0ab300b35c</a></span><br />
+			<span class="d">Added: 2020-01-19 20:02:51.116274833 &#43;0000 UTC</span>
+		</div>
+		<p class="p">As we collect various observability signals from systems, it fosters a new conversation around the classification of the signals. There is a significant discussion on observability signals and even…
+			
+				(Open <a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="AB81D5DF-D925-4E10-AACF-204FEC720356"><a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html">Introduction to AWS Lake Formation - Build a Secure Data Lake in Days | AWS Online Tech Talks</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html">https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:37.371964931 &#43;0000 UTC</span>
+		</div>
+		<p class="p">AWS Lake Formation (coming soon) will make it easy to set up a secure data lake in days. With AWS Lake Formation, you will be able to ingest, catalog, clean, transform, and secure your data, and make it available for ana
+			
+				(Open <a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2E46DBFF-90BB-4B14-9DF6-C0388D62032A"><a href="https://www.theobservereffect.org/tobi.html">The Observer Effect – Tobi Lütke</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theobservereffect.org/tobi.html">https://www.theobservereffect.org/tobi.html</a></span><br />
+			<span class="d">Added: 2020-12-19 19:09:05.707730054 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to the third interview on &#39;The Observer Effect&#39;. We are lucky to have one of the most interesting founders in technology and commerce - Tobi Lütke, Founder and CEO of Shopify. This interview was
+			
+				(Open <a href="https://www.theobservereffect.org/tobi.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="1803FA34-0EF0-4D37-9429-A2738C72A3AF"><a href="https://iximiuz.com/en/posts/computer-networking-101/">Computer Networking Basics For Developers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://iximiuz.com/en/posts/computer-networking-101/">https://iximiuz.com/en/posts/computer-networking-101/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.473012924 &#43;0000 UTC</span>
+		</div>
+		<p class="p">What is a LAN? What is a network segment? Ethernet collision domains vs broadcast domains. How network switches work? How to send IP packets? VLAN vs VXLAN.
+			
+				(Open <a href="https://iximiuz.com/en/posts/computer-networking-101/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="E48D0031-178B-4DF4-B201-DD97C41FEF33"><a href="https://blog.close.com/subject-lines/">Sales email subject lines: 50&#43; tips, examples, and biggest mistakes</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://blog.close.com/subject-lines/">https://blog.close.com/subject-lines/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:56:34.453863143 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Find out about the best ways to write subject lines for your cold sales emails to improve your open and response rates! This post is here to help you craft a subject line that appeals to your customers &amp; is relevant to y
+			
+				(Open <a href="https://blog.close.com/subject-lines/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ACBA973D-AC13-4337-9A13-E797707FEB37"><a href="https://learn.particular.net/users/sign_in">Online education by Particular Software</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://learn.particular.net/users/sign_in">https://learn.particular.net/users/sign_in</a></span><br />
+			<span class="d">Added: 2021-06-20 03:02:37.519088983 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Skip to main content Online education by Particular Software Toggle menu MENU Welcome Back! EMAIL PASSWORD REMEMBER ME Forgot Password? If you are a human, ignore this field SIGN IN Create a new account HOME SUPPOR
+			
+				(Open <a href="https://learn.particular.net/users/sign_in" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="0005A9E5-FB73-4470-89CF-362DD0D1D1AC"><a href="https://convey.earth/conversation?id=48">Convey</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://convey.earth/conversation?id=48">https://convey.earth/conversation?id=48</a></span><br />
+			<span class="d">Added: 2022-02-04 18:50:33.62513113 &#43;0000 UTC</span>
+		</div>
+		<p class="p">2022 February 01 16:21 stuartscott 1473754¤ 1240149¤ You may have noticed that the January edition of the Convey Digest looks a little different from the previous ones - the color scheme is now based on the dominant
+			
+				(Open <a href="https://convey.earth/conversation?id=48" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="7AC1A3D3-2E66-4317-8C48-EDD600870093"><a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb">pytudes/Probability.ipynb at main · norvig/pytudes · GitHub</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb">https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb</a></span><br />
+			<span class="d">Added: 2021-06-20 03:01:48.03035593 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Python programs, usually short, of considerable difficulty, to perfect particular skills. - pytudes/Probability.ipynb at main · norvig/pytudes
+			
+				(Open <a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="907C0700-41D9-4113-A04C-AE82EAB79A78"><a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/">How to Get Into SRE – Alice Goldfuss</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/">https://blog.alicegoldfuss.com/how-to-get-into-sre/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:57:27.926506996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">My personal guide.
+			
+				(Open <a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F36CF381-606E-45C7-9147-C680660ADD3C"><a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html">How to Read a Wine Label, in 12 Easy Lessons - The New York Times</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html">https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html</a></span><br />
+			<span class="d">Added: 2020-10-03 22:10:30.001008987 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The wine shop can be intimidating, with so many different styles of labeling. Here’s help in decoding a dozen basic types.
+			
+				(Open <a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="16A89C55-2E46-46B7-9186-8DFB400E402C"><a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints">Overview ¶</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints">https://pkg.go.dev/cmd/go#hdr-Build_constraints</a></span><br />
+			<span class="d">Added: 2022-03-01 15:15:14.106298923 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Go is a tool for managing Go source code.
+			
+				(Open <a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2183E3CB-5AD3-4D96-95E5-6A57D58BAC2D"><a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/">A categorized list of all Java and JVM features since JDK 8 to 16 - Advanced Web Machinery</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/">https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:11.951596021 &#43;0000 UTC</span>
+		</div>
+		<p class="p">From Java 8 to 17
+			
+				(Open <a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8E8307BD-6D30-437E-8F22-D01A691B58B6"><a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6">https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6">https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6</a></span><br />
+			<span class="d">Added: 2021-02-16 03:18:15.004760026 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5F308D40-0FB6-4409-AAF0-868CA46D76FE"><a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/">Analyzing data stored in Amazon DocumentDB (with MongoDB compatibility) using Amazon Sagemaker | AWS Machine Learning Blog</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/">https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:46:07.911393165 &#43;0000 UTC</span>
+		</div>
+		<p class="p">{ &#34;id&#34;: &#34;13469392114&#34;, &#34;type&#34;: &#34;PullRequestEvent&#34;, &#34;actor&#34;: { &#34;id&#34;: 33526713, &#34;login&#34;: &#34;arjkesh&#34;, &#34;display_login&#34;: &#34;arjkesh&#34;, &#34;gravatar_id&#34;: &#34;&#34;, &#34;url&#34;: &#34;https://api.github.com/users/arjkesh&#34;, 
+			
+				(Open <a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="152B5455-0C2E-4CE5-BEF5-3FB5BD06D088"><a href="https://cate.blog/2021/08/09/on-being-strategic/">On Being “Strategic”</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://cate.blog/2021/08/09/on-being-strategic/">https://cate.blog/2021/08/09/on-being-strategic/</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:09.864347934 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Ages ago, a work colleague / friend offered me the following piece of advice: “We need to make sure you’re seen as strategic”. I’ve thought about it a lot ever since. It was the first time I realised I was on the edge
+			
+				(Open <a href="https://cate.blog/2021/08/09/on-being-strategic/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="EF99A6E9-8C52-4FAD-9BC3-5475BE7B7660"><a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/">Reproducible Builds in Java</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/">https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/</a></span><br />
+			<span class="d">Added: 2022-02-06 13:01:06.832920074 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Reproducible builds are a set of software development practices that create an independently-verifiable path from source to binary code.https://reproducible-builds.org/Reproducible builds are important and provide benefi
+			
+				(Open <a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="63ED09BD-BE6F-4FFA-A955-002EAED9172F"><a href="https://queue.acm.org/detail.cfm?id=3415014">Data on the Outside vs. Data on the Inside - ACM Queue</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://queue.acm.org/detail.cfm?id=3415014">https://queue.acm.org/detail.cfm?id=3415014</a></span><br />
+			<span class="d">Added: 2020-11-16 03:29:09.615636825 &#43;0000 UTC</span>
+		</div>
+		<p class="p">August 2, 2020 Pat Helland Recently, there has been a lot of interest in services. These can be microservices or just services. In each case, the service provides a function with its own code and data, and opera
+			
+				(Open <a href="https://queue.acm.org/detail.cfm?id=3415014" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9782E34D-D67B-4446-8904-A043590EBF92"><a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32">https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32">https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32</a></span><br />
+			<span class="d">Added: 2021-03-07 04:00:02.018476009 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Troubleshooting in Kubernetes can be a daunting task. In this article you will learn how to diagnose issues in Pods, Services and Ingress.
+			
+				(Open <a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="29A95F3A-14F0-4423-A688-FEA34B9FFD35"><a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/">Copying Better: How To Acquire The Tacit Knowledge of Experts</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/">https://commoncog.com/blog/how-to-learn-tacit-knowledge/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.470806121 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Much of expertise is tacit: that is, it cannot be captured through words alone. We look at techniques to learn the tacit knowledge of experts.
+			
+				(Open <a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="94E868CC-FAF2-4068-B1AF-FB2A8134350B"><a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/">Stay Interviews (the opposite of Exit Interviews) – Mike Crittenden</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/">https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/</a></span><br />
+			<span class="d">Added: 2021-06-14 02:24:17.310279846 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Exit Interviews ask why people are leaving, and Stay Interviews ask why they keep working here.
+			
+				(Open <a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="71A6CC9C-0133-45CF-BBBF-5E2288680954"><a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming">Beyond Microservices: Streams, State and Scalability</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming">https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming</a></span><br />
+			<span class="d">Added: 2022-01-29 21:51:51.795267105 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Gwen Shapira talks about how microservices evolved in the last few years, based on experience gained while working with companies using Apache Kafka to update their application architecture.
+			
+				(Open <a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3B6CB96B-63A5-4747-AC87-D5A7D936D80B"><a href="https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/">The Seven Habits That Lead to Happiness in Old Age - The Atlantic</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/">https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/</a></span><br />
+			<span class="d">Added: 2022-02-23 08:31:30.785979986 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Your well-being is like a retirement account: The sooner you invest, the greater your returns will be.
+			
+				(Open <a href="https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="08E03994-02F2-415B-AD40-3AA908CFAC16"><a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw">Java sockets I/O: blocking, non-blocking and asynchronous</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw">https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:24.146421909 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B1366A5D-4A71-4FFB-A922-4668D7DCA093"><a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg">Our Journey with Quarkus</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg">https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:36.351290941 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Quarkus truly appears to be the smartest possible solution, in our experience.
+			
+				(Open <a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="E4FE0219-C276-4423-8FAD-2FA657B9810F"><a href="https://learnwardleymapping.com/book/">The Book</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://learnwardleymapping.com/book/">https://learnwardleymapping.com/book/</a></span><br />
+			<span class="d">Added: 2022-02-25 15:09:41.99259901 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This is the story of Simon Wardley. Follow his journey from bumbling and confused CEO lost in the headlights of change to someone with a vague idea of what they&#39;re doing.
+			
+				(Open <a href="https://learnwardleymapping.com/book/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D1EBDE68-DFE3-4116-BCDD-51C0188E30E3"><a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/">On Call Shouldn’t Suck: A Guide For Managers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/">https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/</a></span><br />
+			<span class="d">Added: 2020-10-05 02:45:04.299745082 &#43;0000 UTC</span>
+		</div>
+		<p class="p">https://twitter.com/mipsytipsy/status/1309604622554640384 There are few engineering topics that provoke as much heated commentary as oncall. Everybody has a strong opinion. So let me say straight up that there are few if
+			
+				(Open <a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="35BF825E-8A1E-4AFD-8277-ECAE794900FC"><a href="https://danluu.com/cache-incidents/">A decade of major cache incidents at Twitter</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://danluu.com/cache-incidents/">https://danluu.com/cache-incidents/</a></span><br />
+			<span class="d">Added: 2022-02-12 22:04:41.532500028 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I&#39;m trying some experimental tiers on Patreon to see if I can get to substack-like levels of financial support for this blog without moving to substack! A decade of major cache incidents at Twitter This was co-authored 
+			
+				(Open <a href="https://danluu.com/cache-incidents/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B894AE2E-3C5E-4941-A8C5-769BD2531CB5"><a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained">DataHub: Popular metadata architectures explained | LinkedIn Engineering</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained">https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained</a></span><br />
+			<span class="d">Added: 2020-12-19 19:18:08.410096168 &#43;0000 UTC</span>
+		</div>
+		<p class="p">When I started my journey at LinkedIn ten years ago, the company was just beginning to experience extreme growth in the volume, variety, and velocity of our data. Over the next few years, my colleagues and I in LinkedIn’
+			
+				(Open <a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8D47E7AE-E2D1-4F5E-ADA2-D5C5AE91FCD6"><a href="https://www.defmacro.org/2015/02/25/startup-ideas.html">How to pick startup ideas</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.defmacro.org/2015/02/25/startup-ideas.html">https://www.defmacro.org/2015/02/25/startup-ideas.html</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:12.827280998 &#43;0000 UTC</span>
+		</div>
+		<p class="p">One of the most important things I learned from running a startup is that on a macro scale the innovation market is efficient. If the market conditions allow for a startup to arise, it’s overwhelmingly probable that mult
+			
+				(Open <a href="https://www.defmacro.org/2015/02/25/startup-ideas.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="391136C2-FBE9-4E59-864E-C07E8F6CFEAA"><a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html">Yann Herklotz - Introduction to Luhmann&#39;s Zettelkasten</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html">https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html</a></span><br />
+			<span class="d">Added: 2020-12-22 18:34:28.277521133 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to my blog! I am a final year student studying Electronic and Information Engineering at Imperial 
+			
+				(Open <a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="49A40D1A-BD4E-4076-8E2A-C174F80F9187"><a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">1.3. Productivity</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">https://dave.cheney.net/practical-go/presentations/qcon-china.html</a></span><br />
+			<span class="d">Added: 2022-03-01 15:35:47.325203895 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Design is the art of arranging code to work today, and be changeable forever. — Sandi Metz The last underlying principle I want to highlight is productivity. Developer productivity is a sprawling topic but it boils 
+			
+				(Open <a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="A2C05C7C-A5E7-46B1-B47A-1D5BD53DF6FE"><a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/">Partitioning GitHub’s relational databases to handle scale</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/">https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/</a></span><br />
+			<span class="d">Added: 2021-09-28 19:04:08.894801139 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In 2019, to meet growth and availability challenges, we set a plan in motion to improve our tooling and ability to partition relational databases.
+			
+				(Open <a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="80084756-28D3-4781-89C8-484C9A746F00"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww">What&#39;s in a Good Error Message?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww">https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:39.613649845 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3E615600-2B6D-426F-AC56-F9BFB4D9D251"><a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5">Failure Modes and Continuous Resilience</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5">https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:51.419013977 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A resilient system continues to operate successfully in the presence of failures. There are many possible failure modes, and each exercises a different aspect of resilience. The system needs to…
+			
+				(Open <a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="92BCE160-6EB4-43DE-AB20-676C1A7E492B"><a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/">How to Work with Emotions</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/">https://www.lionsroar.com/forum-how-to-work-with-emotions/</a></span><br />
+			<span class="d">Added: 2020-01-20 07:48:57.201634883 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Sharon Salzberg, Judith Simmer-Brown, John Tarrant, and Dzogchen Ponlop Rinpoche discuss skillful and unskillful involvement with emotions, offering new perspectives on how to think about and engage with our emotional li
+			
+				(Open <a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="7C68C329-A59A-4F8D-B795-0D61911878FA"><a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/">This is What a Large-Scale Cloud Adoption Program Looks Like</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/">https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/</a></span><br />
+			<span class="d">Added: 2022-02-03 20:01:26.464634895 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Dio Rettori discusses some of the lessons learned, challenges, and considerations of large-scale adoption for JPMorgan Chase.
+			
+				(Open <a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="546C87AF-7B7A-4689-A830-C7B9A7294144"><a href="https://joelhooks.com/digital-garden">🌱 My blog is a digital garden, not a blog</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://joelhooks.com/digital-garden">https://joelhooks.com/digital-garden</a></span><br />
+			<span class="d">Added: 2022-03-02 13:59:56.193624973 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The phrase &#34;digital garden&#34; is a metaphor for thinking about writing and creating that focuses less on the resulting &#34;showpiece&#34; and more on the process, care, and craft it takes to get there. While not everybody has or 
+			
+				(Open <a href="https://joelhooks.com/digital-garden" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="FB97E69F-BBE9-4DE4-BAFC-8A5C428228B2"><a href="https://bitfieldconsulting.com/golang/career">A career ending mistake — Bitfield Consulting</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://bitfieldconsulting.com/golang/career">https://bitfieldconsulting.com/golang/career</a></span><br />
+			<span class="d">Added: 2022-02-22 19:53:33.374945163 &#43;0000 UTC</span>
+		</div>
+		<p class="p">As software engineers, we&#39;re constantly making detailed, elaborate plans for computers to execute. Isn&#39;t it weird that we rarely give a moment&#39;s thought to the program for our own careers?
+			
+				(Open <a href="https://bitfieldconsulting.com/golang/career" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="32992F5F-AE2D-455C-9220-5F745266AB66"><a href="http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf">‎cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf</a></h3>
+		<div class="byline">
+			<span class="u"><a href="http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf">http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf</a></span><br />
+			<span class="d">Added: 2022-03-02 14:02:11.560539007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="34BB5A22-51FE-4F9A-92EA-E765615BFF5A"><a href="https://orionmagazine.org/article/on-memory-and-survival/">Orion Magazine - On Memory and Survival</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://orionmagazine.org/article/on-memory-and-survival/">https://orionmagazine.org/article/on-memory-and-survival/</a></span><br />
+			<span class="d">Added: 2022-03-01 16:53:36.376021862 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I could blame it on a lot of things. On my education, or lack thereof, on the reasons why I still can’t spell worth a damn.
+			
+				(Open <a href="https://orionmagazine.org/article/on-memory-and-survival/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="973CCA37-0F8A-4370-B2D7-A2670EB77CCA"><a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e">Immutable Collections in Java using Sealed Types</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e">https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e</a></span><br />
+			<span class="d">Added: 2020-11-22 19:50:09.498816967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">JDK 15 was released on September 15, 2020. JEP 360 Sealed Types was included as a preview feature in this release. Sealed Types is part of Project Amber. Sealed classes or interfaces can be used to…
+			
+				(Open <a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ACC6DB41-087D-41C5-B177-EA627EA5ACCD"><a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/">Don&#39;t make yourself redundant</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/">https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/</a></span><br />
+			<span class="d">Added: 2020-10-05 02:44:52.821810007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">When splitting big teams into two smaller teams, don&#39;t make yourself redundant. Instead, try this advice to remain impactful.
+			
+				(Open <a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4104A599-BB8C-4079-8C3A-12D8CE067A5F"><a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337">Why it’s difficult to build teams in high growth organisations | by Jason Yip | Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337">https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337</a></span><br />
+			<span class="d">Added: 2021-06-14 02:39:32.210827827 &#43;0000 UTC</span>
+		</div>
+		<p class="p">By “high growth”, I mean in terms of employee count and roughly doubling or more every year. Even at slower growth rates, some of the phenomena I’ll describe may be relevant. The only option where…
+			
+				(Open <a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="A9B0816E-8809-4588-A4FD-F484F9AFD28B"><a href="https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/">What is Developer Experience? a roundup of links and goodness</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/">https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/</a></span><br />
+			<span class="d">Added: 2022-03-04 13:03:31.506291866 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I recently contributed to a series of fireside chats hosted by LaunchDarkly. One of the themes that we discussed was Developer Experience, and how to improve it. I was asked by one of the attendees at the EMEA event (vid
+			
+				(Open <a href="https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F83B3D52-4909-4EF8-937B-23C9D6A73ADD"><a href="https://news.ycombinator.com/item?id=24814687">7 days ago</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://news.ycombinator.com/item?id=24814687">https://news.ycombinator.com/item?id=24814687</a></span><br />
+			<span class="d">Added: 2020-10-25 06:28:36.088758945 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This article has a large gap in the story: it ignores sensor data sources, which are both the highest velocity and highest volume data models by multiple orders of magnitude. They have become ubiquitous in diverse, mediu
+			
+				(Open <a href="https://news.ycombinator.com/item?id=24814687" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="C5840C97-8A47-412B-9619-757E22D1F358"><a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md">resilience-engineering/intro.md at master · lorin/resilience-engineering · GitHub</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md">https://github.com/lorin/resilience-engineering/blob/master/intro.md</a></span><br />
+			<span class="d">Added: 2021-02-14 06:48:24.060963153 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Resilience engineering papers. Contribute to lorin/resilience-engineering development by creating an account on GitHub.
+			
+				(Open <a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5A02A461-03F0-4D93-8258-0A95A98CA773"><a href="https://arxiv.org/pdf/2104.00087.pdf"></a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://arxiv.org/pdf/2104.00087.pdf">https://arxiv.org/pdf/2104.00087.pdf</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:56.06173706 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://arxiv.org/pdf/2104.00087.pdf" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="59872DBD-46DE-4E72-B527-A2F8EB3AA488"><a href="https://saucecode.bar/posts/06-using-www-authenticate.html">using www-authenticate for user authentication</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://saucecode.bar/posts/06-using-www-authenticate.html">https://saucecode.bar/posts/06-using-www-authenticate.html</a></span><br />
+			<span class="d">Added: 2022-03-04 13:14:28.720092058 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This article explains how to use the www-authenticate header to handle user authentication without any client side code.
+			
+				(Open <a href="https://saucecode.bar/posts/06-using-www-authenticate.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4B341D85-649C-4D5A-8551-31BDE28AC022"><a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5">Failure Modes and Continuous Resilience - adrian cockcroft - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5">https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5</a></span><br />
+			<span class="d">Added: 2020-01-19 05:29:02.044257164 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A resilient system continues to operate successfully in the presence of failures. There are many possible failure modes, and each exercises a different aspect of resilience. The system needs to…
+			
+				(Open <a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="772B3693-3D94-48A4-BB74-9A7F81FA0B09"><a href="https://twitter.com/9to5mac/status/1499129510238822400">Tweet from @9to5mac</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://twitter.com/9to5mac/status/1499129510238822400">https://twitter.com/9to5mac/status/1499129510238822400</a></span><br />
+			<span class="d">Added: 2022-03-02 22:32:45.797072887 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Don’t miss what’s happening People on Twitter are the first to know. Log in Sign up Did someone say … cookies? Twitter and its partners use cookies to provide you with a better, safer and faster service and to support ou
+			
+				(Open <a href="https://twitter.com/9to5mac/status/1499129510238822400" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2734B0B4-57F1-4687-AEB9-4D99A82A7E10"><a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b">Optimizing Distributed Joins: The Case of Google Cloud Spanner and DataStax Astra DB | by DataStax | Building the Open Data Stack | Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b">https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b</a></span><br />
+			<span class="d">Added: 2022-01-30 07:55:11.117269992 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this post, learn how relational and NoSQL databases, Google Cloud Spanner and DataStax Astra DB, optimize distributed joins for real-time applications. Distributed joins are commonly considered to…
+			
+				(Open <a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="46FFB2D8-317B-462D-AD71-4069DCB717F0"><a href="https://nesslabs.com/mind-garden">You and your mind garden</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://nesslabs.com/mind-garden">https://nesslabs.com/mind-garden</a></span><br />
+			<span class="d">Added: 2022-03-02 14:00:01.643723011 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In French, “cultiver son jardin intérieur” means to tend to your internal garden—to take care of your mind. The garden metaphor is particularly apt: taking care of your mind involves cultivating your curiosity (the seeds
+			
+				(Open <a href="https://nesslabs.com/mind-garden" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="38884C26-1CBF-4F39-863B-1297059B7970"><a href="https://news.ycombinator.com/item?id=24786778">How to put machine learning models into production | Hacker News</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://news.ycombinator.com/item?id=24786778">https://news.ycombinator.com/item?id=24786778</a></span><br />
+			<span class="d">Added: 2020-10-25 06:32:57.345412969 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Hacker News new | past | comments | ask | show | jobs | submit login How to put machine learning models into production (stackoverflow.blog) 120 points by Aaronmacaron 8 days ago | hide | past | favorite | 34 comments 
+			
+				(Open <a href="https://news.ycombinator.com/item?id=24786778" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F03A6943-3161-48A5-B1CF-3414B76490C6"><a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/">Fairness in multi-tenant systems</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/">https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:29:26.916128158 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Building fairness into multitenant systems to provide predictable performance and availability
+			
+				(Open <a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="EAB90B18-87D1-4B09-90C4-C78525EDF920"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter">What&#39;s in a Good Error Message?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter">https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.473227024 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="247F00C1-71D9-49B2-AB91-47B4F826AF14"><a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/">What does it mean to listen on a port?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/">https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/</a></span><br />
+			<span class="d">Added: 2022-02-14 08:25:41.701181888 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This story explores some concepts in computer networking, inspired by Michael Nielsen’s idea of discovery fiction. Code samples can also be found in this repo. Excerpts use openbsd-flavoured netcat on Debian Linux; behvi
+			
+				(Open <a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3719A1C9-84AE-480A-9732-F3296BFC4C4B"><a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F">https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F">https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F</a></span><br />
+			<span class="d">Added: 2021-02-16 03:19:16.030979156 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="0F9CA482-5026-4D25-81CD-86B801F145C1"><a href="https://kg.dev/thoughts/be-anonymous">Be anonymous</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://kg.dev/thoughts/be-anonymous">https://kg.dev/thoughts/be-anonymous</a></span><br />
+			<span class="d">Added: 2022-02-21 10:38:02.598958969 &#43;0000 UTC</span>
+		</div>
+		<p class="p">My website.
+			
+				(Open <a href="https://kg.dev/thoughts/be-anonymous" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D0EF149F-0350-4016-8C7B-C7A62E82732E"><a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/">How to put machine learning models into production</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/">https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/</a></span><br />
+			<span class="d">Added: 2020-10-25 06:32:53.718122005 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Data scientists excel at creating models that represent and predict real-world data, but effectively deploying machine learning models is more of an art than science. Deployment requires skills more commonly found in sof
+			
+				(Open <a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4287DD39-F68F-4AFE-A728-00534EB7B5AD"><a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/">VPE and CTO - the first 90 days –</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/">https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/</a></span><br />
+			<span class="d">Added: 2020-11-16 02:47:12.523211002 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I put this mind map together a few years ago after a discussion about what a new VP of Engineering or CTO should think about in their first 90 days in a new role. It’s a map of the areas I believe every new technical le
+			
+				(Open <a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="6209073B-4370-479B-B60E-1E5281B21CF6"><a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202">GPS</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202">https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202</a></span><br />
+			<span class="d">Added: 2022-01-30 13:45:06.893004894 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Interactive article explaining how GPS works.
+			
+				(Open <a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="88E9BAF9-01A6-4774-BE3E-EE928BAD13B0"><a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector">How to choose the best Java garbage collector</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector">https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector</a></span><br />
+			<span class="d">Added: 2022-02-14 08:25:45.931617021 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Improve Java application performance by choosing the best garbage collector for your application&#39;s throughput, latency, and footprint requirements.
+			
+				(Open <a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4A4DBD31-E21E-404F-B4FC-D3A89081A97F"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg">What&#39;s in a Good Error Message? - Gunnar Morling</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg">https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg</a></span><br />
+			<span class="d">Added: 2022-02-03 19:43:27.72410798 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="CE1D160C-9BD4-44F6-8701-5FC512623AD8"><a href="https://www.spakhm.com/p/how-to-get-promoted">How to get promoted</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.spakhm.com/p/how-to-get-promoted">https://www.spakhm.com/p/how-to-get-promoted</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:23.689921855 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Almost everyone who does great work toils in relative obscurity. Performance reviews are social fiction. How do people really advance through the corporate hierarchy?
+			
+				(Open <a href="https://www.spakhm.com/p/how-to-get-promoted" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9ADC0870-B6F9-4DC0-B898-CB7A43899238"><a href="https://johnnyrodgers.is/building-a-modern-home">building a modern home - Johnny Rodgers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://johnnyrodgers.is/building-a-modern-home">https://johnnyrodgers.is/building-a-modern-home</a></span><br />
+			<span class="d">Added: 2022-02-03 19:47:25.927577018 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Personal site of Johnny Rodgers, technology designer from Vancouver.
+			
+				(Open <a href="https://johnnyrodgers.is/building-a-modern-home" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="92BC21DB-94BA-41EA-AA2C-EB25CF574795"><a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter">“A damn stupid thing to do”—the origins of C</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter">https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter</a></span><br />
+			<span class="d">Added: 2020-12-14 01:06:14.395256996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Today, C may be a lingua franca among programmers. This is its (abridged) history.
+			
+				(Open <a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5DD11538-E58D-4C23-BFF0-3214A458CD8D"><a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/">A Complete Guide To Mechanical Keyboards</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/">https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:42.818650007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this article, we dive into the possibilities of mechanical keyboards. The different layouts, switch types and even keycap material. Strap yourself in — this will be a deep dive!
+			
+				(Open <a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F2F1740F-A682-49BD-A7CE-106B9CF488BF"><a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/">https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/">https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/</a></span><br />
+			<span class="d">Added: 2022-02-27 21:14:32.595848083 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Basically, sake comprises rice, water, and the fermenting agent called koji, resulting in an alcoholic level that usually sits between 13 and 16 percent. And you might be interested to know that the rice used is differen
+			
+				(Open <a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="153D61E7-394F-4E25-837F-1107CAB96E59"><a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do">What TPMs Do and What Software Engineers Can Learn From Them</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do">https://newsletter.pragmaticengineer.com/p/what-tpms-do</a></span><br />
+			<span class="d">Added: 2022-02-18 06:47:30.013221979 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A deep dive with five Technical Program Managers (TPM) on what the role is, how it evolved, and how engineers and managers can benefit from working with TPMs.
+			
+				(Open <a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="6FDB0B3D-9B1A-44C9-B337-58081D1DC392"><a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html">Journey into Observability: Reading material | Mads Hartmann</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html">https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html</a></span><br />
+			<span class="d">Added: 2020-01-19 20:02:56.259206056 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I’ve been reading up on observability over the last three months. In this post I have organized the material into a sort of recommended reading order. It doesn’t reflect the order in which I read it, but I think this ord
+			
+				(Open <a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="86B34871-F4BB-44A0-804A-56556B12F3CB"><a href="https://twitter.com/alexxubyte/status/1491821606422781975">https://twitter.com/alexxubyte/status/1491821606422781975</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://twitter.com/alexxubyte/status/1491821606422781975">https://twitter.com/alexxubyte/status/1491821606422781975</a></span><br />
+			<span class="d">Added: 2022-02-13 22:20:38.556627035 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://twitter.com/alexxubyte/status/1491821606422781975" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B2CCAF5A-EEB8-4EDC-8899-08081B84FA71"><a href="http://akkartik.name/post/literate-programming">Literate programming: Knuth is doing it wrong</a></h3>
+		<div class="byline">
+			<span class="u"><a href="http://akkartik.name/post/literate-programming">http://akkartik.name/post/literate-programming</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472525119 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Oct 3, 2014 Literate programming: Knuth is doing it wrong Literate programming advocates this: Order your code for others to read, not for the compiler. Beautifully typeset your code so one can curl up in bed to read it
+			
+				(Open <a href="http://akkartik.name/post/literate-programming" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5BE3BDE4-6B27-4A2A-8384-233AC1C72BCF"><a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/">Reddit - Dive into anything</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/">https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/</a></span><br />
+			<span class="d">Added: 2022-03-06 18:19:36.222723007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">3.9m members in the programming community. Computer Programming
+			
+				(Open <a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B5E085CD-4922-4DC1-A965-78EC343CD945"><a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/">How to Talk about Consistency and Isolation in Distributed DBs</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/">https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/</a></span><br />
+			<span class="d">Added: 2022-02-15 11:04:48.938548088 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The SQL standard defines isolation levels, but we don&#39;t have a great vocabulary for talking about consistency levels, and how these two things interact.
+			
+				(Open <a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="51CBA16F-BF3D-4093-874C-C8439FE0B7F3"><a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team">How to Handle a Disagreement on Your Team</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team">https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team</a></span><br />
+			<span class="d">Added: 2021-06-20 02:47:40.929359912 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Rely on your mediation skills, not your authority.
+			
+				(Open <a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D2659AD7-1452-45F7-B2F0-074737CE8D7A"><a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/">CRISP: Critical Path Analysis for Microservice Architectures</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/">https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/</a></span><br />
+			<span class="d">Added: 2022-01-17 21:33:09.414513111 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Uber’s backend is an exemplar of microservice architecture. Each microservice is a small, individually deployable program performing a specific business logic (operation). The microservice architecture is a type of distr
+			
+				(Open <a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="371B741A-360B-457A-8E22-8714499A4D51"><a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/">A Short, Simple Introduction to Information Theory – Ryan Moulton&#39;s Articles</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/">https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:28:49.101143836 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Information Theory is one of the most useful things for Computer Scientists to understand about statistics, and it&#39;s deeply related to things we do every day. If you are comfortable writing code but sometimes intimidated
+			
+				(Open <a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8392AB94-0594-43D2-ABA5-AAC5B24AE254"><a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/">Mercurial&#39;s Journey to and Reflections on Python 3</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/">https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/</a></span><br />
+			<span class="d">Added: 2020-01-22 03:10:36.542356967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Mercurial 5.2 was released on November 5, 2019. It is the first version of Mercurial that supports Python 3. This milestone comes nearly 11 years after Python 3.0 was first released on December 3, 2008. Speaking as a mai
+			
+				(Open <a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3B292186-F7D4-4BAE-9514-894D386456D9"><a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw">What’s the size of the project?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw">https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:43.753388881 &#43;0000 UTC</span>
+		</div>
+		<p class="p">scc --exclude-dir docs/book ─────────────────────────────────────────────────────────────────────────────── Language Files Lines Blanks Comments Code Complexity ────────────────────────────────
+			
+				(Open <a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3A96B38D-9B04-467E-B292-D0FA97557140"><a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/">The 40 Best Questions to Ask in an Interview — How to Go Deeper Than “What’s the Culture Like?”</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/">https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/</a></span><br />
+			<span class="d">Added: 2020-10-25 06:33:15.182893991 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Candidates need to sidestep common interview questions. Here are the best questions to ask in an interview.
+			
+				(Open <a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,2036 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Reading list for Tue, Mar. 7, 2023</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com"> 
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+	<link href="https://fonts.googleapis.com/css2?family=Josefin+Slab:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+	<link href="style.css" rel="stylesheet">
+	<script>
+function toggle(id) {
+	var el = document.getElementById(id);
+	el.style.display = (el.style.display == "none" || el.style.display == "") ? "block" : "none";
+}
+	</script>
+</head>
+<body>
+<h1>Reading list for Tue, Mar. 7, 2023</h1>
+<header>
+<div>Total: 540 from which: 3 suggested today and 91 expired</div>
+<nav>
+Jump to: 
+
+	<a href="#today">Today&#39;s reading list</a> | 
+
+	<a href="#saveme">Random expired</a> | 
+
+	<a href="#expired">Expired</a> | 
+
+</nav>
+</header>
+
+<section>
+<h2 id="today">Today&#39;s reading list <a href="javascript:toggle('oltoday');">&#177;</a></h2>
+<div>3 links selected from 449 today Tue, Mar. 7, 2023</div>
+<ol id="oltoday">
+
+<li>
+	<article>
+		<h3 id="19413AC0-C2C4-4433-8DBD-15EA70D03A40"><a href="https://savo.rocks/posts/starting-your-computer-music-journey-with-clojure-and-overtone-in-emacs/">Starting your Computer Music Journey with Clojure and Overtone in Emacs</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://savo.rocks/posts/starting-your-computer-music-journey-with-clojure-and-overtone-in-emacs/">https://savo.rocks/posts/starting-your-computer-music-journey-with-clojure-and-overtone-in-emacs/</a></span><br />
+			<span class="d">Added: 2022-04-10 18:57:21.351387023 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this post I want to write about probably the most powerful text editor there is: Emacs and how to set it up so you can begin programming and live coding with Overtone in no time. Many users would disagree and argue th
+			
+				... (17738 chars. See <a href="javascript:toggle('b19413AC0-C2C4-4433-8DBD-15EA70D03A40');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="b19413AC0-C2C4-4433-8DBD-15EA70D03A40">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><div><p>In this post I want to write about probably the most powerful text editor there is: <a href="https://opensource.com/resources/what-emacs" target="_blank">Emacs</a> and how to set it up so you can begin programming and live coding with Overtone in no time. Many users would disagree and argue that <a href="https://en.wikipedia.org/wiki/Vi" target="_blank">vi</a>/<a href="https://en.wikipedia.org/wiki/Vim_(text_editor)" target="_blank">Vim</a> is the king of editors, and I’m not going to get into that bickering, which has lasted for several decades, as can be seen on <a href="https://en.wikipedia.org/wiki/Editor_war" target="_blank">this wiki page</a>. Even Google joined in on this joke, as can be seen in the following screenshot: <img data-src="/assets/img/emacs-vs-vi.png" alt="Google Emacs/vi search" src="https://savo.rocks/assets/img/emacs-vs-vi.png"/> <br/> I’m just going to say that Emacs has been my primary text editor/programming environment for several years now, and I found that it is very pleasant to use once I got past the fact that it has different keybindings than most modern programs.</p><h2 id="why-should-you-consider-emacs">Why should you consider Emacs?</h2><p>It is one of the oldest editors still in use. It is very stable, powerful, extensible, and has great learning resources. On top of that, there is a mature development environment built for Clojure called <a href="https://github.com/clojure-emacs/cider#readme" target="_blank">CIDER</a> that most Clojurians use. In fact, for every programming language there is a <a href="https://tldp.org/HOWTO/Emacs-Beginner-HOWTO-3.html" target="_blank">mode</a> which enhances your experience while working in Emacs. Modes also exist for other software programmers typically use, such as <a href="https://github.com/magit/magit#readme" target="_blank">Magit</a> for git or <a href="https://wikemacs.org/wiki/Ansi-term" target="_blank">Ansi-term</a> if you want to run a terminal process inside Emacs. <br/> Since Emacs is keyboard oriented (although you can use it with context menus if you want) in this article everything I do and describe will be done using keybindings. Although harder at first, it ultimately enables us to be more proficient and have better workflow, rarely taking our hands off our keyboards. There are many other benefits to using Emacs, but in favor of keeping this article short(ish) we will leave that for some other time. Now, let’s move on to the installation and setup!</p><h2 id="install-emacs">Install Emacs</h2><h3 id="linux">Linux</h3><p>There are many ways to install Emacs on Linux, but the easiest is probably through your distribution package manager. Since I’m using Arch Linux with default package manager Pacman, I can just type in my terminal <code>sudo pacman -S emacs</code> and voilà, it is on my system and ready to run. If you are on Ubuntu, the command for you would be <code>sudo apt install emacs</code>. Best way to find out is to search the web for installation instructions on your particular distribution. But most of them probably have very similar and easy process as Arch or Ubuntu.</p><h3 id="mac-osx">Mac OSX</h3><p>I seldom use Apple computers and their OSX, but I came across <a href="https://wikemacs.org/wiki/Installing_Emacs_on_OS_X" target="_blank">this page</a> which shows us several ways how to install Emacs. I know that <a href="https://brew.sh/" target="_blank">Homebrew</a> is pretty popular, so you can use it for installation. I noticed that you should first uninstall outdated version of Emacs that comes with the system and then you can install current version. Execute the following lines in your terminal:</p><div><p><code><table><tbody><tr><td><pre>1
+2
+3
+4
+</pre></td><td><pre><span>sudo rm</span> /usr/bin/emacs
+<span>sudo rm</span> <span>-rf</span> /usr/share/emacs
+brew tap railwaycat/emacsmacport
+brew <span>install </span>emacs-mac
+</pre></td></tr></tbody></table></code></p></div><p>and that should do it. If you want to do it another way visit the first link I gave in the Mac OSX section.</p><h3 id="windows">Windows</h3><p>This operating system doesn’t have an integrated package manager, so it’s best to go to <a href="https://ftp.gnu.org/gnu/emacs/windows/" target="_blank">GNU Emacs for Windows repository</a>, open the latest directory (at the time of writing of this article that is <a href="https://ftp.gnu.org/gnu/emacs/windows/emacs-28/" target="_blank">emacs-28</a> and download the <em>emacs-xx.x-installer.exe</em> (xx.x representing the version number here). Run the downloaded executable and install the program. The same process can be repeated for updates in the future. <br/> Next, you should set the <code>HOME</code> variable because we are going to need it when configuring Emacs. Open Powershell as administrator and execute the following: <code>setx HOME %USERPROFILE%</code>. This will set your <code>HOME</code> variable location to <code>C:\users\yourusername\</code>. You can specify some other location if you wish so.</p><h2 id="configure-emacs">Configure Emacs</h2><p>Plain Emacs installation looks like this: <img data-src="/assets/img/emacs-vanilla.png" alt="Plain Emacs Installation" src="https://savo.rocks/assets/img/emacs-vanilla.png"/> <br/> It looks much like any software: It has context menus at the top, then some useful graphical shortcuts below, and the rest is a welcome screen that you get when you first open Emacs. It contains some info on the program and further links where you can learn to use the editor.</p><h3 id="prelude">Prelude</h3><p>Since Emacs has been actively developed for several decades, many people configured it to suit their particular needs. But most of us are lazy and want to change as little as we need to have the best experience possible. Fortunately, there is a project called <a href="https://github.com/bbatsov/prelude#readme" target="_blank">Prelude</a> that enhances Emacs experience and makes it so that you get fully functioning development environment for many programming languages. It also contains <a href="https://github.com/clojure-emacs/cider#readme" target="_blank">CIDER</a> which means we don’t have to install it separately. You can go to <a href="https://github.com/bbatsov/prelude#readme" target="_blank">Prelude’s GitHub Page</a> to find out more about the changes it brings to the default Emacs installation. <br/> Prelude replaces your <em>.emacs.d</em> directory which is a place where emacs stores all preferences. You can easily install it by executing <code>curl -L https://git.io/epre | sh</code> in your terminal. Another way to do it is to visit aforementioned Prelude GitHub page, click on the green <em>Code</em> button and then <em>Download ZIP</em>. Or you can just use <a href="https://github.com/bbatsov/prelude/archive/refs/heads/master.zip" target="_blank">this link</a> to download that same ZIP. Then extract the contents in your <code>$HOME/.emacs.d/</code> directory and the effect should have the same results as if you used the terminal method, except the terminal method backs up your <em>.emacs.d</em> directory automatically, and manually downloading and extracting the repo from the ZIP doesn’t do that.</p><h3 id="tweaking-prelude">Tweaking Prelude</h3><p>If you open up Emacs now you’ll see bunch of changes happening really fast. This is because Emacs applies new settings which we got with Prelude. After that fairly short process you’ll get the message similar to “Prelude is ready to do thy bidding, Master <em>username</em>!”. Now, we need to do some minor tweaking to enable various prelude modules which will enhance our Experience. <br/> First, copy the file <code>prelude-modules.el</code> from <code>your-.emacs.d-directory/sample/</code> to <code>your-.emacs.d-directory/personal/</code> and open the freshly copied file in your favorite text editor (yes, I do mean Emacs!). There you can uncomment (remove semicolons before starting parenthesis) for modes that you want to be loaded. Here’s how my <em>preload-modules.el</em> file looks like:</p><div><p><code><table><tbody><tr><td><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+</pre></td><td><pre><span>;;; Uncomment the modules you&#39;d like to use and restart Prelude afterwards</span>
+
+<span>;;; General productivity tools</span>
+
+<span>(</span><span>require</span> <span>&#39;prelude-ido</span><span>)</span> <span>;; Supercharges Emacs completion for C-x C-f and more</span>
+<span>;; (require &#39;prelude-ivy) ;; A mighty modern alternative to ido</span>
+<span>;; (require &#39;prelude-selectrum) ;; A powerful, yet simple, alternative to ivy</span>
+<span>(</span><span>require</span> <span>&#39;prelude-helm</span><span>)</span> <span>;; Interface for narrowing and search</span>
+<span>;; (require &#39;prelude-helm-everywhere) ;; Enable Helm everywhere</span>
+<span>(</span><span>require</span> <span>&#39;prelude-company</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-key-chord</span><span>)</span> <span>;; Binds useful features to key combinations</span>
+
+<span>;;; Vim emulation</span>
+<span>;;</span>
+<span>;; Enable this module if you&#39;re fond of vim&#39;s keybindings.</span>
+<span>;; (require &#39;prelude-evil)</span>
+
+<span>;;; Org-mode (a legendary productivity tool that deserves its own category)</span>
+<span>;;</span>
+<span>;; Org-mode helps you keep TODO lists, notes and more.</span>
+<span>(</span><span>require</span> <span>&#39;prelude-org</span><span>)</span>
+
+<span>;;; Programming languages support</span>
+<span>;;</span>
+<span>;; Modules for a few very common programming languages</span>
+<span>;; are enabled by default.</span>
+
+<span>(</span><span>require</span> <span>&#39;prelude-c</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-clojure</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-coffee</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-common-lisp</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-css</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-dart</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-emacs-lisp</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-erlang</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-elixir</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-fsharp</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-go</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-haskell</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-js</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-latex</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-lisp</span><span>)</span> <span>;; Common setup for Lisp-like languages</span>
+<span>(</span><span>require</span> <span>&#39;prelude-lsp</span><span>)</span> <span>;; Base setup for the Language Server Protocol</span>
+<span>(</span><span>require</span> <span>&#39;prelude-lua</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-ocaml</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-perl</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-python</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-racket</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-ruby</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-rust</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-scala</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-scheme</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-shell</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-scss</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-ts</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-web</span><span>)</span> <span>;; Emacs mode for web templates</span>
+<span>(</span><span>require</span> <span>&#39;prelude-xml</span><span>)</span>
+<span>(</span><span>require</span> <span>&#39;prelude-yaml</span><span>)</span>
+
+<span>;;; Misc</span>
+<span>(</span><span>require</span> <span>&#39;prelude-erc</span><span>)</span> <span>;; A popular Emacs IRC client (useful if you&#39;re still into Freenode)</span>
+
+<span>(</span><span>provide</span> <span>&#39;prelude-modules</span><span>)</span>
+<span>;;; prelude-modules.el ends here</span>
+</pre></td></tr></tbody></table></code></p></div><p>If you compare it to your starting file you’ll see that, apart that I enabled all programming modules, I didn’t change much from the defaults. The biggest one is that I use <a href="https://www.emacswiki.org/emacs/InteractivelyDoThings" target="_blank">ido</a> completion tool instead of <a href="https://github.com/abo-abo/swiper" target="_blank">ivy</a> or <a href="" target="_blank">selectrum</a>. Although ivy and selectrum appear to be more powerful than ido, I just like the simplicity of it as it does what it has to do and doesn’t get in the way, so I just never switched when it stopped being the default. <br/> Next thing you should do is create a personal emacs configuration file that will contain your specific configuration options. You should create it on the following location: <code>your-.emacs.d-directory/personal/preload/emacs.el</code>. You can name it something other than <em>emacs.el</em>, but it needs to be in <code>personal/preload</code> directory as that will not get overwritten when you <a href="https://prelude.emacsredux.com/en/latest/installation/#updating-prelude" target="_blank">update Prelude</a>, which you should do from time to time. In the following code block you can see contents of my <em>emacs.el</em>:</p><div><p><code><table><tbody><tr><td><pre>1
+2
+3
+4
+5
+6
+</pre></td><td><pre><span>(</span><span>disable-theme</span> <span>&#39;zenburn</span><span>)</span>
+<span>(</span><span>setq</span> <span>custom-safe-themes</span> <span>t</span><span>)</span>
+<span>(</span><span>setq</span> <span>prelude-theme</span> <span>&#39;cyberpunk</span><span>)</span>
+<span>(</span><span>setq</span> <span>prelude-minimalistic-ui</span> <span>t</span><span>)</span>
+<span>(</span><span>menu-bar-mode</span> <span>-1</span><span>)</span>
+<span>(</span><span>scroll-bar-mode</span> <span>-1</span><span>)</span>
+</pre></td></tr></tbody></table></code></p></div><p>The first three lines make sure that Emacs does not use the default <a href="https://github.com/bbatsov/zenburn-emacs" target="_blank">Zenburn</a> theme and loads the <a href="https://github.com/n3mo/cyberpunk-theme.el" target="_blank">Cyberpunk</a> theme which I find more vibrant and easier to work with. It just comes down to personal preference. I suggest you try it, as it is one of the best themes around. Note that you need to install the cyberpunk theme first in Emacs. You do that by going to Emacs, then pressing M-x (this means to press <em>Alt</em> button and <em>x</em> button at the same time, but i’ll explain that later), type <code>package-install</code>, press <em>Enter</em>, then type <code>cyberpunk-theme</code> and press <em>Enter</em>. You have now installed cyberpunk theme and it will be loaded if you use first 3 lines from the code above. Next line, <code>(setq prelude-minimalistic-ui t)</code> disables line number on the left side of Emacs window. I have that disabled because in the bottom part of Emacs there is information on which line and character are you exactly, so I found I have no use for it. The <code>menu-bar-mode</code> and <code>scroll-bar-mode</code> are both set to <em>-1</em> value, because I don’t want to have neither menu-bar (context menus) or scroll bar, since everything can be done with Emacs keybindings. I have consciously made the decision to make myself learn to use Emacs properly, because I saw the potential of powerful keyboard-oriented editor. And you know what? I haven’t regretted it once! <br/> That’s about it as far as tweaking goes. It may seem little overwhelming, but it’s really just a couple of things I modified over the years of usage to suit my particular needs. You should have no problem setting it up for yourself the same way.</p><h2 id="emacs-basics">Emacs Basics</h2><p>This article is concentrated on setting up Emacs to be used with Clojure and Overtone for live coding. Properly describing various keybindings and concepts would require much longer article. In fact, many books were written on the subject, including O’reilly’s <a href="https://www.oreilly.com/library/view/learning-gnu-emacs/0596006489/ch01.html" target="_blank">Learning GNU Emacs</a> which is what I first read when I was getting to know the editor. Now, go to the link supplied and skip to the section named <em>Emacs Commands</em>. There you will find excellent explanation of many useful Emacs keybindings. Or you can read that chapter from the beginning if you want to understand more about Emacs.</p><h2 id="use-emacs-for-clojure-programming-and-overtone-live-coding">Use Emacs for Clojure Programming and Overtone Live Coding</h2><p>Now, we have everything set up and we can start using Emacs to do some great stuff. Open Emacs and press <code>C-x C-f</code> (hold Ctrl all the time, press x, release x, press f, release f, release Ctrl). Now, navigate to <code>my-overtone-project/src/my-overtone-project/</code> and open the file <em>core.clj</em>. If you don’t have Clojure project with Overtone as dependency, learn how to create it from <a href="https://savo.rocks/posts/overtone-basic-setup/" target="_blank">Overtone: Basic Setup</a> article that I wrote previously. <br/> With <em>core.clj</em> file open use <code>C-c M-j</code> keybinding to start CIDER REPL in Emacs. This will create a new window inside the Emacs frame where you opened the file, and after very short time you should see the prompt <code>my-overtone-project.core&gt; </code> waiting for user input. Go ahead and test it with a few simple commands. Press <code>C-x o</code> (Hold Ctrl, press x, release both Ctrl and x and press o) to switch to the buffer where REPL is opened. Type <code>(+ 3 8)</code> and hit enter. The REPL will return the result and present you with the prompt again, waiting for your next action. Try <code>(map inc [3 4 5 6 7 8]</code>. Again, the REPL returns the result and presents you with another input, like in the following code block:</p><div><p><code><table><tbody><tr><td><pre>1
+2
+3
+4
+5
+</pre></td><td><pre><span>my-overtone-project.core&gt;</span><span> </span><span>(</span><span>+</span><span> </span><span>3</span><span> </span><span>8</span><span>)</span><span>
+</span><span>11</span><span>
+</span><span>my-overtone-project.core&gt;</span><span> </span><span>(</span><span>map</span><span> </span><span>inc</span><span> </span><span>[</span><span>3</span><span> </span><span>4</span><span> </span><span>5</span><span> </span><span>6</span><span> </span><span>7</span><span> </span><span>8</span><span>])</span><span>
+</span><span>(</span><span>4</span><span> </span><span>5</span><span> </span><span>6</span><span> </span><span>7</span><span> </span><span>8</span><span> </span><span>9</span><span>)</span><span>
+</span><span>my-overtone-project.core&gt;</span><span>
+</span></pre></td></tr></tbody></table></code></p></div><p>Now that we are sure our REPL is working let’s go to the buffer where our <em>core.clj</em> file is opened. Press <code>C-x o</code> again and the buffer we’re working in will switch. Populate the <em>core.clj</em> as follows:</p><div><p><code><table><tbody><tr><td><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+</pre></td><td><pre><span>(</span><span>ns</span><span> </span><span>my-overtone-project.core</span><span>)</span><span>
+
+</span><span>(</span><span>use</span><span> </span><span>&#39;overtone.live</span><span>)</span><span>
+</span><span>(</span><span>use</span><span> </span><span>&#39;overtone.inst.synth</span><span>)</span><span>
+
+</span><span>(</span><span>defn</span><span> </span><span>play</span><span> </span><span>[</span><span>x</span><span>]</span><span>
+  </span><span>&#34;Can play either single tone: (play 60), (play :C4) or Whole chords&#34;</span><span>
+  </span><span>(</span><span>if</span><span> </span><span>(</span><span>seqable?</span><span> </span><span>x</span><span>)</span><span>
+    </span><span>(</span><span>doseq</span><span> </span><span>[</span><span>note</span><span> </span><span>x</span><span>]</span><span> </span><span>(</span><span>overpad</span><span> </span><span>note</span><span>))</span><span>
+    </span><span>(</span><span>if</span><span> </span><span>(</span><span>keyword?</span><span> </span><span>x</span><span>)</span><span>
+      </span><span>(</span><span>overpad</span><span> </span><span>(</span><span>note</span><span> </span><span>x</span><span>))</span><span>
+      </span><span>(</span><span>overpad</span><span> </span><span>x</span><span>))))</span><span>
+
+</span><span>(</span><span>play</span><span> </span><span>:C4</span><span>)</span><span>
+</span><span>(</span><span>play</span><span> </span><span>(</span><span>chord</span><span> </span><span>:C4</span><span> </span><span>:minor</span><span>))</span><span>
+
+</span><span>(</span><span>defn</span><span> </span><span>melody</span><span> </span><span>[</span><span>notes</span><span> </span><span>sleep</span><span>]</span><span>
+  </span><span>(</span><span>if</span><span> </span><span>(</span><span>empty?</span><span> </span><span>notes</span><span>)</span><span> </span><span>nil</span><span>
+      </span><span>(</span><span>doseq</span><span> </span><span>[]</span><span>
+        </span><span>(</span><span>play</span><span> </span><span>(</span><span>first</span><span> </span><span>notes</span><span>))</span><span>
+        </span><span>(</span><span>Thread/sleep</span><span> </span><span>sleep</span><span>)</span><span>
+        </span><span>(</span><span>melody</span><span> </span><span>(</span><span>rest</span><span> </span><span>notes</span><span>)</span><span> </span><span>sleep</span><span>))))</span><span>
+
+</span><span>(</span><span>defn</span><span> </span><span>vechord</span><span> </span><span>[</span><span>x</span><span> </span><span>y</span><span>]</span><span>
+  </span><span>(</span><span>conj</span><span> </span><span>(</span><span>vec</span><span> </span><span>(</span><span>chord</span><span> </span><span>x</span><span> </span><span>y</span><span>))</span><span> </span><span>0</span><span>))</span><span>
+
+</span><span>(</span><span>doseq</span><span> </span><span>[]</span><span>
+ </span><span>(</span><span>melody</span><span> </span><span>(</span><span>vechord</span><span> </span><span>:a3</span><span> </span><span>:minor</span><span>)</span><span> </span><span>250</span><span>)</span><span>
+ </span><span>(</span><span>melody</span><span> </span><span>(</span><span>vechord</span><span> </span><span>:f3</span><span> </span><span>:major</span><span>)</span><span> </span><span>250</span><span>)</span><span>
+ </span><span>(</span><span>melody</span><span> </span><span>(</span><span>vechord</span><span> </span><span>:c4</span><span> </span><span>:major</span><span>)</span><span> </span><span>250</span><span>)</span><span>
+ </span><span>(</span><span>melody</span><span> </span><span>(</span><span>vechord</span><span> </span><span>:g3</span><span> </span><span>:major</span><span>)</span><span> </span><span>250</span><span>)</span><span>
+ </span><span>(</span><span>melody</span><span> </span><span>(</span><span>vechord</span><span> </span><span>:a3</span><span> </span><span>:minor</span><span>)</span><span> </span><span>250</span><span>)</span><span>
+ </span><span>(</span><span>melody</span><span> </span><span>(</span><span>vechord</span><span> </span><span>:f3</span><span> </span><span>:major</span><span>)</span><span> </span><span>250</span><span>)</span><span>
+ </span><span>(</span><span>melody</span><span> </span><span>[</span><span>48</span><span> </span><span>52</span><span> </span><span>55</span><span> </span><span>0</span><span>]</span><span> </span><span>250</span><span>)</span><span>
+ </span><span>(</span><span>melody</span><span> </span><span>[</span><span>43</span><span> </span><span>50</span><span> </span><span>55</span><span> </span><span>0</span><span>]</span><span> </span><span>250</span><span>))</span><span>
+</span></pre></td></tr></tbody></table></code></p></div><p>You can copy it from this page and populate your file using Emacs keybindings. First, use <code>C-x h</code> to select everything in the <em>core.clj</em> buffer, then hit <em>Backspace</em> button to erase everything. Now, copy the last code block from this article and use <code>C-y</code> to populate the buffer with the code. It really feels effortless to use keybindings once you get used to them. Now, let’s walk through the code. <br/> First line declares our namespace. Namespaces are very important part of Clojure, but not for this particular example, so we won’t go into greater detail here. You can find more about namespaces <a href="https://clojure.org/guides/learn/namespaces" target="_blank">here</a>. <br/> Next, we have calls to <code>use</code> which will load everything defined in <code>overtone.live</code> and <code>overtone.inst.synth</code> namespaces into our namespace. This is not how we should do things in Clojure, as it is best to use <code>require</code>, but we’ll proceed for the sake of simplicity in this article. You can see the basic difference <a href="https://stackoverflow.com/questions/871997/difference-between-use-and-require" target="_blank">here</a>. <br/> Position your cursor at the end of the first <code>use</code> call, just after the parenthesis and hit <code>C-x C-e</code>. Your REPL should respond by loading Overtone. When it’s done remember to connect Overtone audio output to your sound card so you can get sound. The process is described <a href="https://savo.rocks/posts/overtone-basic-setup/" target="_blank">in one of my previous articles</a>. Move to the end of next line and do the same, and you loaded the synth library from Overtone from which we’re going to use <code>overpad</code> synth. <br/> In the next code block we defined the <code>play</code> function which will either play a single note or a sequence of notes at the same time. Position the cursor after the last parenthesis in <code>(overpad x))))</code> line and execute it with <code>C-x C-e</code>, as always. The function is now loaded in the REPL and we can try it out. Execute the <code>(play :C4)</code> line and you should hear a cool sounding synth playing the note C4. You can execute this line as many times as you like, should you want to hear that sound again. Let’s move along and execute the next line, <code>(play (chord :C4 :minor))</code> and we should get somewhat richer, sadder sound. That’s because we gave our <em>play</em> function three notes to play at once, which together make up the C4 Minor chord. Don’t worry about music theory now, this is going to be covered in future articles. <br/> Let’s move on to the next code block, which defines the function named <code>melody</code>. This function takes a sequence of notes as one argument, and the time in milliseconds which the thread waits to ‘play’ the next note. This solution is pretty “hacky” at best, but it’s good enough for us to test basic functionality and to play something. <br/> Next function, <code>vechord</code> turns every collection of chords to <a href="https://clojure.org/reference/data_structures#Vectors" target="_blank">vector</a> and adds zero to the end. Adding zero was my hacky solution to get every note at the end of the chord to appear to sound two times longer than the previous two, creating rhythmically pleasant experience (although zero actually plays very low-pitched note that is almost inaudible). I could come up with more elegant solution, but I wanted to leave this at it was to show that imperfection can still sound good! Don’t worry too much about it and just execute this expression like you did everything else. <br/> Finally, we’ll execute the <code>doseq</code> code block by placing the cursor at the end of the last line and using our familiar keybinding <code>C-x C-e</code>. What you hear should be a simple, yet nice melody!</p><h2 id="summary">Summary</h2><p>Well, here we are, at the end of our article. Although a bit lengthy, it shows in a detailed way:</p><ul><li>How to install and setup Emacs, arguably the most powerful text editor/development environment in the world</li><li>How to tweak the environment so you can truly concentrate on programming in a keyboard-focused way</li><li>How to use Clojure and Overtone to create music with it</li></ul><p>Now that we have our environment ready we can focus on exploring what kind of interesting sounds we can create with Overtone and how we can improve it. But more on that topic in the future articles. Until then, try to modify the code from this article and see (or better, listen) to what kind of results you will get. Until next time, happy coding!</p></div></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="1FF24455-E4F5-4249-8766-0EA32040F286"><a href="https://revolutionarylifestyledesign.com/play-better-games-metagame-life/">How to Play Better Games in the Metagame of Life</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://revolutionarylifestyledesign.com/play-better-games-metagame-life/">https://revolutionarylifestyledesign.com/play-better-games-metagame-life/</a></span><br />
+			<span class="d">Added: 2023-01-01 13:47:00.959817886 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Vewing life as a game not only makes life a lot more fun, but it gives you tremendous insight into the human condition.
+			
+				... (21031 chars. See <a href="javascript:toggle('b1FF24455-E4F5-4249-8766-0EA32040F286');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="b1FF24455-E4F5-4249-8766-0EA32040F286">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><div>
+				<main>
+		<article>
+						<div>
+																										<p><iframe src="about:blank" data-lazy-src="https://www.youtube.com/embed/AUJAZ6L8DkE" width="560" height="315" frameborder="0" allowfullscreen="allowfullscreen"></iframe></p>
+
+<p>Viewing life as a game is the most useful mental map I’ve found for being able to live your best life.</p>
+<p><a href="https://revolutionarylifestyledesign.com/win-game-life/">Viewing life as a game</a> not only makes life a lot more fun, but it gives you tremendous insight into the human condition.</p>
+<p>And within the Metagame of life, we all play minigames, each with their own rules, levels, rewards and punishments.</p>
+<p>The money game, the fame game, the women game, the power game, the status game, recognition game, the love game…</p>
+<p>And within all those games are even smaller games we play with each other to get those things.</p>
+<p>Every person on the planet is gaming each other, all the way down to little children crying and throwing a tantrum when they aren’t allowed to have ice cream.</p>
+<p>With the desired end result for all our games is to maximize pleasure and minimize pain.</p>
+<p>Unfortunately, many of our games end badly, often times with the opposite result of maximizing pain.</p>
+<p>Because some people, still play child’s games as adults, crying, screaming or threatening when they don’t get their way.</p>
+<p>People play bad games, not because they want to be miserable, being miserable is just the end result, the play bad games because of</p>
+<ul>
+<li>Lack of self-awareness</li>
+<li>Lack of understanding of what motivates other people</li>
+<li>Being blind to the negative patterns and games you’re running</li>
+<li>Not knowing how to get what you want in a positive, constructive way</li>
+<li>Not being able to create win/win scenarios for other people</li>
+<li>Or a combination of all the above</li>
+</ul>
+<p>People who consistently play bad games are toxic people, hurting themselves and others in a misguided attempt at happiness.</p>
+<p>People who play good games are happy, positive people who live fulfilling lives and uplift other people around them.</p>
+
+<p>Good games, in a sentence, are games you play with your friends, family, clients and girlfriend(s) where the end game is maximum happiness, and win/win scenarios for you and your people. In life, he who has the most joy wins, so it only makes sense to play for maximum joy. Some great games to play with other people are</p>
+<h2>1. Mutual value escalation</h2>
+<p>The goal of mutual value escalation is to move through life together with your people, helping each other to do better, be better, and lifting each other up when you fall. Helping yourself and your people maximize their health, wealth, relationships and life style.</p>
+<p>Another name for the game could be I’m great, your great, lets help each other be our best selves. Mutual value escalation comes from a place of seeing yourself as your best self, seeing other people as their best selves, and encouraging them to fulfill their potential. Seeing someone as their best self is an incredibly powerful way to relate to people, especially if you’re the first person in their lives to recognize their potential and support their goals.</p>
+<p>The rules are <a href="https://revolutionarylifestyledesign.com/why-positivity-is-the-only-path/">to stay positive</a>, supportive, give good advice when asked, and occasionally give unsolicited advice when you think that your friend or your girl is making a major mistake. Ultimately, it’s about seeing your people as the best versions of themselves, and supporting and encouraging them to be that person.</p>
+<p>When not played properly it turns into a game of value de-escalation, where you’re telling that person they’re no good, and they’re telling you the same, which is not where you want to be.</p>
+<h2>2. Us Vs. Them</h2>
+<p>Us vs. them might sound like a bad game at first, and it definitely can be depending on who’s playing and what the goals are, but it can be a great game when you play it ethically. Because the reality is, at least half of life is a competition, competition for money, resources, women, clients, customers, housing, status and all the other things people are playing for.</p>
+<p>Life becomes a lot more fun when you have people to help you compete. For me, having a group of guys who can not only support me in my goals, but offer valuable business advice, introduce me to women, making me more competitive in getting what I want.</p>
+<p>The same logic applies to your company, you want people on your team who are committed to helping you make money, get more clients, more revenue, more traffic, or whatever else you need to compete.</p>
+<p>Us. vs them applies to romantic relationships too, at the end of the day, there are very few people who will be loyal to you when you’re down, and a large part of being in a relationship is to have someone in your corner.</p>
+<p>Us vs them, is like mutual value escalation, but projected outward into the competition of life. Where you work as a team to help each other win, and help each other compete ethically. And if someone is being unethical to your people, you help your people throw stones at their enemies, not necessarily in the literal sense, but you have each other’s backs.</p>
+<p>Every successful organization, government, nation or enterprise plays us vs. them, as humans we’re tribal creatures. With that said, us vs. them goes badly in two ways:</p>
+<p><strong>1. Ethical failure:</strong> you can see this in nations when they attack a neighbor for resources and territory<br/>
+<strong>2. Infighting:</strong> When instead of cooperating within your team, you start to compete within your team, and us vs. them becomes us vs. us, this is how companies implode, friendships end, and divorce starts.</p>
+<h2>3. Recognition and appreciation</h2>
+<p>The recognition and appreciation game is a great game to play because it’s so easy to play, it costs you nothing to do, it makes other people happy, and almost no one else does it. The rules are simple, recognize people for doing things for you, and show them your appreciation.</p>
+<p>Most people are too hungry for their own recognition to give it to others, or they don’t really listen to other people, and it doesn’t occur to them to appreciate the other person. Ironically though, the more you appreciate other people, the more they tend to appreciate you.</p>
+<p>In fact you could say the recognition and appreciation game is the entire basis behind Dale Carnegie’s classic <a href="https://revolutionarylifestyledesign.com/how-to-win-friends-and-influence-people/">How To Win Friends And Influence People</a>, which is hands down the best book on navigating interpersonal relationships.</p>
+<p>The recognition and appreciation game is also incredibly important in business: recognizing and appreciating your clients, customers and supporters is extremely important, that’s why I play the recognition and appreciation game every day in the comments section of my videos and articles.</p>
+<p>Failure to play the recognition and appreciation game often leads to resentment, especially in romantic relationships, in fact not being appreciated is probably the #1 complaint from women about men. Which can lead women to play the:</p>
+<ul>
+<li>“I do so much for you” game and you to play the “I’m not a mind reader” game</li>
+<li>Or the “I didn’t ask you to do those things, you did them because you wanted to” game</li>
+<li>Or the “Does everything you do have strings attached to it?” game</li>
+</ul>
+<p>And then before long you’re both playing us vs. us instead of us vs. them, and it’s the beginning of the end of your relationship.</p>
+<h2>4. Let’s have fun</h2>
+<p>Let’s have fun is probably my favorite game, underneath my dedication to my mission and go-getter attitude, I’m basically a 12 year old who only wants to do things that are fun. I hate going to the dentist, doing chores, seeing distant relatives or any of the other things adults my age spend their life doing. It’s part of why I took such a radical turn in my life, so I could set my life up where I do the minimum of things I don’t want to do, as opposed to the guys I used to work with, who had to do something they didn’t want every day of the week, on top of a job they hated.</p>
+<p>Ultimately, adult life doesn’t have to be boring, and you don’t have to do chores when you make enough money to pay other people. Whenever I sit down with my friends, family or girlfriends I want to have fun. Jokes, impressions, funny movies, Family Guy, standup comedy, dancing, drinking, sex – whatever it is, free time for me is either fun time, or reading time, if it’s not fun I’d rather spend time learning or working on my business. I’m always thinking about how to have fun and try to bring a playful attitude to the people around me.</p>
+<p>If it’s a girl I’m dating and we’re chilling at my place I’m not above tickling, playfighting, teasing, doing a silly dance or giving her something only to snatch it back at the last minute, basically being 8 years old. When you keep it playful you make other people feel the same way and life becomes more fun for everyone.</p>
+<p>In short, healthy relationships are based on feed, not need. And especially not blame, shame, guilt or fear, sure if someone is violating your boundaries, or disrespecting you, there is a place for guilt and shame in moderation, but not much, when you have the right people in your life, most problems can be solved without resorting to negative emotions.</p>
+<p>The whole idea of good games is win/win scenarios, with a win being more happiness for everyone involved. But, just as important as playing good games, if not more important, is avoiding playing bad games.</p>
+
+<p>Bad games, in a sentence are games that you play with friends, lovers, family and clients that end in win/lose or even lose/lose scenarios. Win/lose is where you’re trying to get over on someone and lose/lose is even worse, where you know you’re willing to take a loss, only so you can drag someone down with you.</p>
+<p>With that said, the logic of bad games does not apply to competition outside of your inner circle as covered in us vs. them. In life you need to compete for jobs, clients, customers, women, investment and that often means someone else taking a loss while you’re taking a win. That’s the natural order of life, and as long as you’re ethical and respectful, it’s your duty to compete OUTSIDE or your inner circle, so you’re able to better help yourself and help your people.</p>
+<p>Competing within your circle is the kind of win/lose behavior you want to avoid, because ultimately you make other people less happy, and even though you might get a temporary win, the resentment you cause in others eventually kills those relationships, leading to a loss. Ultimately win/lose and lose/lose games within your circle ends in a loss for you.</p>
+<p>When you look around, you’ll see how much time people spend setting up games, losing them, then being upset about the loss. Often times those games are about controlling others, failing at getting control, being angry about your lack of control, yet refusing to recognize that you’re playing the wrong game, and refusing to take action to change your games.</p>
+<p>And when I say you, I mean you, because you have total control over all the games you CHOOSE TO play, because you choose to play them all, no one has or can every make you play a game you don’t want to. <a href="https://revolutionarylifestyledesign.com/11-reasons-quit-job-start-business/">Even the game of employee in a job you hate</a>, you chose to take that job you can say you “have” to work there for money, but that’s only because you didn’t start your own business. And you can say you couldn’t have started a business because you didn’t have the cash or the acumen, but that’s only because you didn’t spend the last decade saving and studying the business game.</p>
+<p>I played the corporate salesman game for a while for money, suits and status. I had the act down, the suit, the phone, the studied mannerisms, the corporate buzzwords, the appropriate objections, the right venues to take clients….but I hated every minute of it. I recognized that no matter how much money I made at that game, it wasn’t even close to worth it to have to wake up every day and do what I hate. .</p>
+<p>So I decided to play the personal development guru game and it’s been 100 times more fun. Building this business was the best decision I’ve made in the last decade, and I’m on pace to smash my sales income, not to mention that my income is now geoarbitraged in a country that’s a third of the price of Canada. And I’m only getting started, God willing I have the rest of my life to play this game, build my brand, and help as many guys as I can.</p>
+<p>Changing your games from bad to good is one of the best things you can do for yourself, especially the interpersonal games you play. In fact there is an entire school of thought called Transactional Analysis based around becoming aware of the games you and the people around you play. This is incredibly important, because once you can recognize a bad game, you can:</p>
+<p>1. Stop creating bad games for yourself and for others<br/>
+2. Refuse to play bad games that are offered to you<br/>
+3. Get rid of toxic people in your life who only want to play bad games</p>
+<p>Tolstoy in Anna Karenina rightfully said that:</p>
+<p>“Happy families are all alike; every unhappy family is unhappy in its own way.”</p>
+<p>And that quote, also known as the Anna Karenina principle applies to all people in all walks of life and all the games they play. There are maybe a handful of good games that make you happier, but there are a near infinite amount of games that make you and the people around you less happy. If you truly want to be happier, it’s your job to get rid of those games. To do that you need to know what a bad game is.</p>
+<p>The manual for games analysis is Eric Berne’s seminal book <a href="https://www.amazon.com/gp/product/B005C6E76U?pf_rd_p=d1f45e03-8b73-4c9a-9beb-4819111bef9a&amp;pf_rd_r=Z25PCJNEB21YRCXNNZNB">Games People Play</a>, which covers the basics of his philosophy known as Transactional Analysis as well as lists 100 games people. Or you can check out the <a href="http://www.maxmednik.com/blog/notes-on-games-people-play-by-eric-berne">bullet point summary here</a>.</p>
+<p>Here is a small list and chart <a href="http://changingminds.org/explanations/behaviors/games/common_games.htm">that I’ve taken from an excellent site</a>,, analyzing a few of the bad games people play as identified by TA. Take a look and see how many bad games you play now, and how many bad games other people are trying to play with you.</p>
+<div colspan="1" rowspan="1">
+<table>
+<tbody>
+<tr>
+<td colspan="1" rowspan="1"><strong><span>Game</span></strong></td>
+<td colspan="1" rowspan="1"><strong><span>Description</span></strong></td>
+<td colspan="1" rowspan="1"><span><strong>Real benefit</strong></span></td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1"><a href="http://changingminds.org/explanations/behaviors/games/stop_me_game.htm" target="_blank" rel="noopener noreferrer" shape="rect">Stop me if you can</a></td>
+<td colspan="1" rowspan="1">Damaging activity, for example using drugs.</td>
+<td colspan="1" rowspan="1">Gets attention, avoids responsibility</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">Blemish</td>
+<td colspan="1" rowspan="1">Finding fault with others. Being as picky as necessary</td>
+<td colspan="1" rowspan="1">Distracts attention from self</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1"><a href="http://changingminds.org/explanations/behaviors/games/clever_me_game.htm" target="_blank" rel="noopener noreferrer" shape="rect">Clever me</a></td>
+<td colspan="1" rowspan="1">Boasting about what you have done</td>
+<td colspan="1" rowspan="1">Get attention, sympathy, admiration</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">Courtroom</td>
+<td colspan="1" rowspan="1">Describe ‘logically’ how I am right and others are wrong</td>
+<td colspan="1" rowspan="1">Get support, sympathy and absolution</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">If it weren’t for you</td>
+<td colspan="1" rowspan="1">Blaming others for your non-achievements</td>
+<td colspan="1" rowspan="1">Absolution of guilt</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">I’m only trying to help</td>
+<td colspan="1" rowspan="1">Offering help then complaining when it is not accepted</td>
+<td colspan="1" rowspan="1">Controlling others</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">Let’s you and him fight</td>
+<td colspan="1" rowspan="1">Get others to fight for you</td>
+<td colspan="1" rowspan="1">Control of others, share of blame, friendship</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">Look how hard I’ve tried</td>
+<td colspan="1" rowspan="1">Put in lots of effort that intentionally does not succeed.</td>
+<td colspan="1" rowspan="1">Absolves oneself from responsibility.</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">Now I’ve got you (you son of a b*tch)</td>
+<td colspan="1" rowspan="1">Vents rage on someone and blames them for it</td>
+<td colspan="1" rowspan="1">Displaces anger. Absolves responsibility</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1"><a href="http://changingminds.org/explanations/behaviors/games/poor_me_game.htm" target="_blank" rel="noopener noreferrer" shape="rect">Poor me</a></td>
+<td colspan="1" rowspan="1">Display self as unlucky and helpless</td>
+<td colspan="1" rowspan="1">Sympathy and support</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">See what you made me do</td>
+<td colspan="1" rowspan="1">Blaming others for one’s own problems</td>
+<td colspan="1" rowspan="1">Absolution of responsibility, instilling guilt</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">Honestly</td>
+<td colspan="1" rowspan="1">Making empty promises</td>
+<td colspan="1" rowspan="1">Getting one’s way in the short-term</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">Uproar</td>
+<td colspan="1" rowspan="1">Violent argument with deliberate pressing of hot buttons</td>
+<td colspan="1" rowspan="1">Sustain attention, venting and displacing anger</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">Yes but…</td>
+<td colspan="1" rowspan="1">Providing objections to refuse help</td>
+<td colspan="1" rowspan="1">Maintenance of attention and control</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">Wooden leg</td>
+<td colspan="1" rowspan="1">Acquire a handicap, real or imagined and ham it up</td>
+<td colspan="1" rowspan="1">Sympathy, avoidance of responsibility</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>The bad games I’ve played in the past but don’t play anymore are:</strong></p>
+<ol>
+<li><strong>Courtroom:</strong> Where I would use my IQ and logic to bludgeon people in arguments, especially girlfriends</li>
+<li><strong>Now I’ve Got You:</strong> Where I would get revenge on people who wronged me, now I just get revenge through success</li>
+<li><strong>Uproar:</strong> When I would raise my voice to my mom as a teenager and sometimes as an adult to girlfriends, this is something I’ve put a lot of work into, and can proudly say that I’ve raised my voice 3 times in the last five years. Ideally I will raise my voice 0 times in the next five years.</li>
+</ol>
+<p><strong>The bad games I still play are:</strong></p>
+<ol>
+<li><strong>Blemish:</strong> Which is finding faults in others, part of this is because I have high standards for myself, so I have a gut level reaction to people who don’t take pride in operating at a high level. With that said I try to quickly reframe that with self censorship, humility and compassion. And although I might think something, I’m pretty good at keeping my negative thoughts about others to myself.</li>
+<li><strong>Clever Me:</strong> Also known as bragging, and I’ll admit I still do this with my friends, but in moderation, and my friends are kind enough to indulge me. Ultimately I don’t see it as a big problem, and I do the same for my friends, in fact I want to be around guys who are proud of their accomplishments and confident about their future.</li>
+</ol>
+<p>But for the most part I’ve done a pretty good job of uprooting and getting rid of my negative games. I’ve raised my voice maybe 3 times in the last five years, and I haven’t had a real argument with a friend since I can remember, and I rarely if ever send the angry text or email or end relationships dramatically. With that said, some women get dramatic with me at the end of a relationship, but I don’t agree to play the game, in fact that’s usually half the reason I wanted to stop seeing them.</p>
+<p>We’re all human, and it’s not about beating yourself up, instead it’s about getting rid of your bad games so you can be happier, and so you can make your people happier. It’s really worth your time to sit down and see what bad games you’re playing and how to change them.</p>
+
+<p>The first step in learning to play better games is to get rid of people who play bad games. For a good relationship to work, everyone needs to be on the same page, playing good games, but for relationships to go bad, it only takes one person playing bad games, because it’s impossible to co-create good games with someone who wants to play bad games.</p>
+<p>It’s a fact that one bad apple spoils the whole bunch, which is why it’s much easier to just remove toxic people from your life, instead of trying to change their behavior. With that said, no one is perfect, most people play some bad games, but when you’re dealing with a good person, a quick conversation can usually steer the relationship back on track.</p>
+<p>The second step is looking within, and taking responsibility for changing the bad games you play. In my industry, a lot of content creators try to <a href="https://revolutionarylifestyledesign.com/how-to-be-a-player-game-life-part-1/">teach guys how to be more “alpha”,</a> which is useful to a degree, but a better frame instead of trying to be more alpha, try to be a better leader, and a better player in the game of life. Start with happiness and look more towards creating experiences that make you happy, then trying to live up to some anonymous bloggers idea of what a man should be.</p>
+<p>We don’t live in the jungle anymore and true alpha behavior can easily end you up in jail. Not to mention the fact that alpha isn’t always available, if you landed a plum job as a hedge fund equities trader, trying to act like the alpha in that shark tank will get you fired within hours.</p>
+<p>I’ve made a lot more progress controlling my natural aggressive instincts, and transmuting them towards positive goals then I ever did indulging them. I went from the kid who would scream at his teammates for costing me a soccer game, to someone who almost never raises his voice, or creates dramatic situations. And every year I develop more emotional control, and more productive, positive ways to resolve conflicts.</p>
+<p>It’s become incredibly obvious to me, especially after close to a decade in sales, that you catch way more flies with honey, and that controlling your emotions, and doing things like not sending that angry email is incredibly important.</p>
+<p>Blame, shame, passive aggression, or even aggressive aggression are rarely the best ways to get what you want.</p>
+<p>Sure, sometimes you have to call attention to someone breaking the rules of a game you agreed to play or violating your boundaries. But you can almost always deliver criticism gently and in between two compliments, which is so much more effective.</p>
+<p>And sure, in the rare case of self defense, aggression is useful. But if you’re playing the game of life to the fullest, the fact that you have to defend yourself in a street fight, means you’ve already made a major mistake and got caught slipping.</p>
+<p>For the most part, you want to put effort into creating good games, and in times of conflict, you want to take a deep breath, not send that angry email, not raise your voice and think about how to create a positive solution.</p>
+<p>The ironic thing is, using restraint, creating positive solutions, and finding a way to give the other person what they want gets you what you want in the long run. And using blame, shame, and aggression to force a solution, often leads to you not getting what you want, or only getting what you want in the short term, and suffering the repercussions in the long term.</p>
+<p>In summary, all life is sales, every communication you make is selling some type of experience, even down to polite conversation with the checkout girl. You can choose to create positive games and sell a win/win experience for the people you interact with. Or you can chose to create losing games, pay no attention to what other people want, try and force results with blame, shame and aggression, and move through life like a bull in a china shop.</p>
+<p>The choice is yours, I recommend creating the best games you can, when you do, you and everyone around you becomes happier, and you get one step closer to living your best life every day of the week.</p>
+									</div>
+						
+					</article>
+	</main>
+				</div></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ACEA0AB7-7EC8-48D4-9811-E7C7EEADE7BB"><a href="https://medium.com/javarevisited/25-software-design-interview-questions-to-crack-any-programming-and-technical-interviews-4b8237942db0">25 Software Design Interview Questions to Crack Any Programming and Technical Interviews</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/javarevisited/25-software-design-interview-questions-to-crack-any-programming-and-technical-interviews-4b8237942db0">https://medium.com/javarevisited/25-software-design-interview-questions-to-crack-any-programming-and-technical-interviews-4b8237942db0</a></span><br />
+			<span class="d">Added: 2022-07-19 14:41:37.505720138 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Hello guys, If you have given any coding interview then you know that System design or Software design problems are an important part of programming job interviews, and if you want to do well, you…
+			
+				... (14300 chars. See <a href="javascript:toggle('bACEA0AB7-7EC8-48D4-9811-E7C7EEADE7BB');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="bACEA0AB7-7EC8-48D4-9811-E7C7EEADE7BB">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><div><article><div><div><p><h2 id="3862"><em>Frequently asked System Design Questions and links to useful resources</em></h2></p><figure><a href="https://click.linksynergy.com/deeplink?id=JVFxdTr9V80&amp;mid=39197&amp;murl=https%3A%2F%2Fwww.udemy.com%2Fcourse%2Fsystem-design-interview-prep%2F"></a></figure><p id="4e3f">Hello guys, If you have given any coding interview then you know that<strong> System design or Software design problems</strong> are an important part of programming job interviews, and if you want to do well, you must prepare this topic.</p><p id="01d1">In the past, when I shared my list of <a href="http://www.java67.com/2018/05/top-75-programming-interview-questions-answers.html" rel="noopener ugc nofollow" target="_blank">programming interview questions</a>, I have shared a couple of <a href="https://www.java67.com/2018/05/top-20-system-design-interview-questions-answers-programming.html" rel="noopener ugc nofollow" target="_blank">System design questions</a> but my readers kept asking me for more questions, as it is a hard topic to master, and more and more practice is needed.</p><p id="0d58">I had my own list of questions that I have collected from various interviews with friends and colleagues but I needed more questions for this article when I stumbled upon the <a href="https://www.educative.io/collection/5668639101419520/5649050225344512?affiliate_id=5073518643380224" rel="noopener ugc nofollow" target="_blank"><strong>Grokking System Design Interview</strong></a> course on Educative.</p><p id="1047">It’s like a godsend resource because it not only gives you a lot of System design question but also provide all the knowledge and tools you need to solve those questions.</p><p id="74ae">In other words, this course teaches you step by step how to proceed with designing a real-world system like Facebook, Twitter, Uber, etc.</p><p id="e22c">Also, there are not too many system design interview courses and resources you can look to prepare this topic. When I was searching I only find Grokking The System Design course by Educative and<strong> </strong><a href="https://click.linksynergy.com/deeplink?id=JVFxdTr9V80&amp;mid=39197&amp;murl=https%3A%2F%2Fwww.udemy.com%2Fcourse%2Fsystem-design-interview-prep%2F" rel="noopener ugc nofollow" target="_blank"><strong>Mastering the System Design Interview</strong></a> course on Udemy by Frank Kane, an Ex Amazon Hiring Manager.</p><p id="42d1">Other than that I didn’t find any online course which is completely focused on solving system design problems from top companies like <a href="https://javarevisited.blogspot.com/2016/01/top-20-amazon-and-google-programming-interview-questions.html" rel="noopener ugc nofollow" target="_blank">Amazon</a>, <a href="https://javarevisited.blogspot.com/2012/01/google-interview-questions-answers-top.html" rel="noopener ugc nofollow" target="_blank">Google</a>, <a href="https://javarevisited.blogspot.com/2015/12/30-microsoft-interview-questions-for-software-development-engineers.html#axzz5YWjgMMkL" rel="noopener ugc nofollow" target="_blank">Microsoft</a>, Apple, SalesForce, Flipcart, etc.</p><p id="63d4">When you combine this course with this list of questions you will have the best material to prepare for your <a rel="noopener" href="https://medium.com/javarevisited/10-best-system-design-courses-for-coding-interviews-949fd029ce65">System design interview</a>. You can also first try all these questions by yourself before joining the course or looking it my solution for some of the questions.</p><p id="9b7d">This works best only if you have some Coding experience and fundamental knowledge of Computer Science and Software Design. If you are a complete beginner in this area then I would suggest you first start with a fundamental course to learn basics like <a href="https://coursera.pxf.io/c/3294490/1164545/14726?u=https%3A%2F%2Fwww.coursera.org%2Flearn%2Fjava-programming-design-principles" rel="noopener ugc nofollow" target="_blank"><strong>Java Programming: Principles of Software Design</strong></a> on Coursera or the <a href="https://www.educative.io/courses/web-application-software-architecture-101?affiliate_id=5073518643380224" rel="noopener ugc nofollow" target="_blank"><strong>Web Application &amp; Software Architecture 101</strong></a> on The Educative Team itself.</p><p id="1c68">This course will not only teach you how to solve a real-world problem using Java with multiple classes but also software design which is not just coding but also involves logical thinking and design, which is very important for becoming a successful Software Developer.</p><p id="09bb">Without any further ado, here is the list of some of the most popular System design or Object-oriented analysis and design questions to crack any programming job interview.</p><p id="2a0e"><strong>1. How do you design the Vending Machine in Java?</strong> (<a href="http://javarevisited.blogspot.sg/2016/06/design-vending-machine-in-java.html#axzz4sZVwtCgs" rel="noopener ugc nofollow" target="_blank">solution</a>)<br/>You need to write code to implement a Vending machine that has a bunch of products like chocolates, candy, cold-drink, and accept some coins like Nickle, Dime, Quarter, Cent, etc. Make sure you insert a coin, get a product back, and get your chance back. Also, write the Unit test to demonstrate that these common use cases work. If you get stuck you can read my two-part articles (<a href="http://javarevisited.blogspot.sg/2016/06/design-vending-machine-in-java.html#axzz4sZVwtCgs" rel="noopener ugc nofollow" target="_blank">part1</a> and <a href="http://javarevisited.blogspot.sg/2016/06/java-object-oriented-analysis-and-design-vending-machine-part-2.html" rel="noopener ugc nofollow" target="_blank">part 2</a>) about solving these classical system design questions.</p><p id="9a8d"><strong>2. How do you design a URL Shortening service like goo.gl or bit.ly?</strong> (<a href="https://www.educative.io/courses/grokking-the-system-design-interview/m2ygV4E81AR?affiliate_id=5073518643380224" rel="noopener ugc nofollow" target="_blank">solution</a>)<br/>This one is another common System design question. You have given a (typically) long URL, how would you design a service that would generate a shorter and unique alias for it? If you are not familiar with URL shortener service have a look at some of the popular ones like goo.gl from Google and bit.ly which is used by Twitter.</p><p id="070d">Make sure to provide database schema and rationale behind some design decisions like how long you keep the data, how to get stats and analytics etc. If you get stuck, you can follow the solution given on <a href="https://www.educative.io/collection/5668639101419520/5649050225344512?affiliate_id=5073518643380224" rel="noopener ugc nofollow" target="_blank"><strong>Grokking the System Design Interview</strong></a> course on Educative.</p><figure><a href="https://www.educative.io/collection/5668639101419520/5649050225344512?affiliate_id=5073518643380224"></a></figure></div><div><p id="7cac"><strong>3. How do you design a traffic control system?</strong><br/>A classical system design question from old age which is still popular. Make sure you know how to transition from one state to another like RED to GREEN and from GREEN to ORANGE to RED etc.</p><figure><a href="https://dev.to/javinpaul/10-skills-java-programmer-can-learn-to-accelerate-their-career-3nlh"></a><figcaption>Photo by <a href="https://unsplash.com/@harshaldesai?utm_source=medium&amp;utm_medium=referral" rel="noopener ugc nofollow" target="_blank">Harshal Desai</a> on <a href="https://unsplash.com?utm_source=medium&amp;utm_medium=referral" rel="noopener ugc nofollow" target="_blank">Unsplash</a></figcaption></figure><p id="64eb"><strong>4. How to design a limit order book for trading systems?</strong> (<a href="https://javarevisited.blogspot.sg/2017/03/2-practical-data-structure-algorithm-interview-questions-java.html" rel="noopener ugc nofollow" target="_blank">solution</a>)<br/>A limit order book is used in stock exchanges to match a buy order with a sell order based on price and time priority. How would you go about that? Which data structure you will use? Remember, the speed of matching is key and also the reliability.</p><p id="051f">If you need a refresher on Data Structure then you can check out <a href="https://click.linksynergy.com/deeplink?id=JVFxdTr9V80&amp;mid=39197&amp;murl=https%3A%2F%2Fwww.udemy.com%2Fcourse%2Flearn-data-structure-algorithms-with-java-interview%2F" rel="noopener ugc nofollow" target="_blank"><strong>Data Structure and Algorithm in Java</strong></a> course and If you feel stuck you can check out my solution here.</p><p id="02f1"><strong>5. How do you design a website like Pastebin?</strong><br/>Pastebin allows you to paste text or code and then share a link to that code anywhere you want. It’s not an online code editor but you can use this to store any kind of text.</p><h2 id="64e1"><strong>6. How would you create your own Instagram?</strong> (<a href="https://www.educative.io/courses/grokking-the-system-design-interview/m2yDVZnQ8lG?affiliate_id=5073518643380224" rel="noopener ugc nofollow" target="_blank">solution</a>)</h2><p id="141f">Instagram is a photo-sharing application that provides some custom filters to enhance your photo quality. Your application should have photo upload functionality, tagging photos for search, and some basic filters. If you could add share or social network that could be great.</p><p id="69e9">Btw, if you stuck, you can see the <a href="https://www.educative.io/courses/grokking-the-system-design-interview/m2yDVZnQ8lG?affiliate_id=5073518643380224" rel="noopener ugc nofollow" target="_blank">free solution</a> provided on the Educative Grokking System design course as well.</p><figure><a href="https://www.educative.io/courses/grokking-the-system-design-interview/m2yDVZnQ8lG?affiliate_id=5073518643380224"></a></figure></div><div><p id="b4a6"><strong>7. How do you design global file sharing and storage apps like Google Drive or Dropbox?</strong><br/>These are used to store and share files, photos, and other media. How do you go about designing things like allowing users to upload/view/search/share files or photos? track permissions for file sharing, and allow multiple users to edit the same document?</p><p id="4bdb">If you like YouTube video, here is a nice one which will teach you how to design a Dropbox or Google Drive or any other document hosting solution:</p><figure></figure></div><div><h2 id="fda1"><strong>8. How do you design a chat application like WhatsApp or Facebook Messenger? [</strong><a href="https://bytebytego.com/courses/system-design-interview/design-a-chat-system?fpr=javarevisited" rel="noopener ugc nofollow" target="_blank"><strong>Solution</strong></a><strong>]</strong></h2><p id="e5f0">You have surely used WhatsApp and Facebook, right? No? If not let me tell you that a chat application allows you to send messages to your friend. It’s a point to point connection.</p><p id="9df0">You keep a friend list and see their status and chat with them. In WhatsApp, you can also connect groups but that is for advanced and experienced developers. At a minimum, you should provide a design to keep a friend list and send and receive messages from them.</p><p id="0f29">If you need some tips then I suggest you check out <a href="https://click.linksynergy.com/deeplink?id=JVFxdTr9V80&amp;mid=39197&amp;murl=https%3A%2F%2Fwww.udemy.com%2Fcourse%2Frocking-system-design%2F" rel="noopener ugc nofollow" target="_blank"><strong>Rocking System Design Course</strong></a> on Udemy, where you will find a whole case study to solve this problem.</p></div><div><p id="a164"><strong>9. How do you design a Twitter Clone?</strong><br/>Twitter is a popular messaging service that lets you broadcast your messages to all your followers. You tweet and your followers see those messages, they can like or retweet.</p><p id="2e02">Make sure you implement common features like followers, hashtag, tweet, delete, etc. If you going nowhere and stuck, you can follow the solution on <a href="https://www.educative.io/collection/5668639101419520/5649050225344512?affiliate_id=5073518643380224" rel="noopener ugc nofollow" target="_blank"><strong>System Design Interviews: Grokking the System Design Interview</strong></a>.</p><figure><a href="https://www.educative.io/collection/5668639101419520/5649050225344512?affiliate_id=5073518643380224"></a></figure></div><div><p id="50f0"><strong>10. How to design a global video streaming service like YouTube or Netflix? [</strong><a href="https://bytebytego.com/courses/system-design-interview/design-youtube?fpr=javarevisited" rel="noopener ugc nofollow" target="_blank"><strong>Solution</strong></a><strong>]<br/></strong>While designing a video streaming service like Netflix or YouTube key thing is smooth streaming and buffering and functioning over low bandwidth connection, how do you manage those challenges.</p><p id="9549">You can check out this <a href="https://www.java67.com/2019/09/top-5-courses-to-learn-system-design.html" rel="noopener ugc nofollow" target="_blank">system design course</a> to learn how to deal with such problems. Alex Xu has explained how to design YouTube as part of his <a href="https://bytebytego.com?fpr=javarevisited" rel="noopener ugc nofollow" target="_blank"><strong>System design Interview Course</strong></a> and you can access this lesson for free.</p></div><div><p id="b9dd"><strong>11. How to design an ATM machine?</strong><br/>An ATM machine allows a user to deposit and withdraw cash. It also allows a user to see his balance. How do you design such a system? What are your main challenges?</p><p id="d36b">12. How do you design an API Rate Limiter?</p><p id="8ce5">13. How do you design Twitter Search?</p><p id="8717"><strong>14. How to design a Web Crawler like Google?</strong><br/>A Web Crawler goes to a website and crawl all link and index them e.g. Google so that they can later appear in a search result. A Crawler can also use for searching a particular file in a set of directories, how do you design such things? What are the main challenges?</p><p id="06f7">You can try this problem yourself first but if you stuck then you can also join this <a href="https://www.tryexponent.com/courses/system-design-interview?ref=javinpaul2" rel="noopener ugc nofollow" target="_blank"><strong>System Design Course by Exponent</strong></a> to see the solution for not just this question but also other popular System design questions like designing YouTube, TikTok, Facebook Messenger and more.</p></div><div><p id="e381"><strong>15. How to design Facebook’s Newsfeed? What kind of Algorithm will you use?</strong><br/>The newsfeed is an important part of Facebook which allows a user to see what’s happening around his world which includes friends and families, the pages he has liked, the group he has followed, and of-course the Facebook Ads.</p><p id="95c8">The job of the Newsfeed algorithm is to show messages which are most important for the user and which can generate high engagement. Obviously, messages from friends and family should take priority.</p><p id="81b9">If you feel not going anywhere and stuck, you can follow the solution on <a href="https://www.educative.io/collection/5668639101419520/5649050225344512?affiliate_id=5073518643380224" rel="noopener ugc nofollow" target="_blank"><strong>System Design Interviews: Grokking the System Design Interview</strong></a>.</p><figure><a href="https://www.educative.io/collection/5668639101419520/5649050225344512?affiliate_id=5073518643380224"></a></figure></div><div><p id="a57a"><strong>16. How to design Yelp or Nearby Friends?</strong></p><p id="5475">This is another popular <a href="https://javarevisited.blogspot.com/2022/06/system-design-interview-question-answer.html" rel="noopener ugc nofollow" target="_blank">System design question</a> which is asked during Coding interviews . If you don’t know Yelp is a rating service which also uses your location to recommend best shops and restaurant.</p><p id="f54e"><strong>17. How to design a global ride-hailing service like Uber, Grab, or Ola backend?</strong><br/>Uber and Ola are two of the most popular ride-hailing services, it brings both drivers and passengers together. How do you go about designing to allow a passenger to see nearby taxis and book them?</p><p id="8c84"><strong>18. How to design BookMyShow?</strong><br/>A website that allows you to book cinema and event tickets. This is actually an Indian startup that is doing well.</p><h2 id="51a7"><strong>19. How to design a social network + message board service sites like Quora, Reddit, or HackerNews?</strong></h2><p id="eedc">Reddit, Quora, and HackerNews are some of the most popular social network sites where users can post questions or share links. Other users can answer questions or comment on the shared links.</p><h2 id="8da3"><strong>20. How do you design an application like Airbnb?</strong></h2><p id="7d42">It allows some users to upload rooms for rent and other users to rent them. Some of the features are only available to admins, publishers, and subscribers.</p><p id="486e"><strong>21. How do you design an Elevator of the Lift system?<br/></strong>We All know about Elevators and Lift as most of us use it. You might have seen them in pairs and in some big office buildings you can see 3 to 4 lifts. You need to design software for that so that it can reach use quickly on different levels. You can assume you have two lifts and a 10-floor building.</p><p id="e19c">Here is a nice Youtube video which explains the solution to this <a href="https://dzone.com/articles/21-object-oriented-and-system-design-problems-to-p" rel="noopener ugc nofollow" target="_blank">popular system design interview question</a>, you can watch it right here.</p><figure></figure><p id="8830"><strong>22. How would you go about designing an e-commerce website like Amazon or Flipkart at scale?</strong></p><p id="ee6d"><strong>23. How would you go about designing the e-commerce website using microservices, how will you handle transactions?</strong></p><p id="88eb"><strong>24. How would you design a Parking Lot system? (solved)<br/></strong>This is an interesting problem and asked for companies like Amazon, Google, Apple, and other FAANG companies.</p><p id="e379">You should cover the following use cases</p><ol><li id="4b6d">Give a user ticket when he enters</li><li id="3be7">Generate price when the user exits.</li></ol><p id="a72c">Here is a nice YouTube video that explains this problem and the solution. They also discuss APIs, Database models, and database choice. they also discuss on how to make it distributed. We also discuss concurrency. You can also checkout this <a href="http://System Design Interview Course" rel="noopener ugc nofollow" target="_blank"><strong>System Design Interview Course by Exponent</strong></a><strong> </strong>to learn how to solve these kind of System design question during interview.</p><figure></figure><p id="1f9c"><strong>24. Create an autocomplete feature like word suggestions on search engines? Scale it to millions of users?</strong></p><p id="126f"><strong>25. How would you go about creating a feed posting on a social network like Facebook, Instagram, Twitter, LinkedIn, etc?</strong></p><p id="2028">If you need some guidance then I suggest you check out <a href="https://click.linksynergy.com/deeplink?id=JVFxdTr9V80&amp;mid=39197&amp;murl=https%3A%2F%2Fwww.udemy.com%2Fcourse%2Fpreparing-for-system-design-interviews%2F" rel="noopener ugc nofollow" target="_blank"><strong>Preparing for the System Design Interview</strong></a> Course on Udemy, where Rajat Mehta has a whole case study to solve this problem. You will also learn about high-level design, low-level design, and Database design in this masterpiece.</p><figure><a href="https://click.linksynergy.com/deeplink?id=JVFxdTr9V80&amp;mid=39197&amp;murl=https%3A%2F%2Fwww.udemy.com%2Fcourse%2Fpreparing-for-system-design-interviews%2F"></a></figure><p id="1146">That’s all about some of the <strong>frequently asked System Design Interview Questions for Java Programmers</strong>. Btw, these questions are not just useful for Java Programmers but also for <a href="https://hackernoon.com/top-5-courses-to-learn-python-in-2020-best-of-lot-bdq3y42" rel="noopener ugc nofollow" target="_blank">Python</a>, <a href="https://dev.to/javinpaul/top-10-courses-to-learn-c-in-depth-best-of-lot-1k7" rel="noopener ugc nofollow" target="_blank">C++</a>, <a rel="noopener" href="https://medium.com/javarevisited/top-5-java-online-courses-for-beginners-best-of-lot-1e1e240a758">Java</a>, and <a href="https://www.java67.com/2018/02/5-free-ruby-and-rails-courses-to-learn-online.html" rel="noopener ugc nofollow" target="_blank">Ruby</a> Programmers. These questions are actually independent of programming language and test your software design and architecture skill.</p><p id="0938">If you need some more resources like online courses and guides and a few more questions to practice then you can check out these online courses and book to further sharpen your knowledge and crack any System design interviews.</p><ol><li id="f52f"><a href="https://click.linksynergy.com/deeplink?id=JVFxdTr9V80&amp;mid=39197&amp;murl=https%3A%2F%2Fwww.udemy.com%2Fcourse%2Fsystem-design-interview-prep%2F" rel="noopener ugc nofollow" target="_blank"><strong>Mastering System Design Interview on Udemy</strong></a></li><li id="ae43"><a href="https://coursera.pxf.io/c/3294490/1164545/14726?u=https%3A%2F%2Fwww.coursera.org%2Fspecializations%2Fsoftware-design-architecture" rel="noopener ugc nofollow" target="_blank">Software Design and Architecture Specialization</a></li><li id="aa6e"><a href="https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF/?tag=javamysqlanta-20" rel="noopener ugc nofollow" target="_blank"><strong>System Design Interview — An insider’s guide by Alex Xu</strong></a><strong> [Best Book]</strong></li><li id="33d2"><a href="https://www.tryexponent.com/courses/system-design-interview?ref=javinpaul2" rel="noopener ugc nofollow" target="_blank"><strong>System Design Course by Exponent</strong></a></li><li id="381d"><a href="http://www.amazon.com/Cracking-Coding-Interview-6th-Edition/dp/0984782850/?tag=javamysqlanta-20" rel="noopener ugc nofollow" target="_blank">Cracking the Code Interview — 189 Problems with Solutions</a></li><li id="d7b5"><a href="https://bytebytego.com?fpr=javarevisited" rel="noopener ugc nofollow" target="_blank"><strong>System Design Interview course by Alex Xu on ByteByteGo</strong></a></li><li id="f5c2"><a href="https://github.com/donnemartin/system-design-primer/blob/master/README.md" rel="noopener ugc nofollow" target="_blank">The System Design Primer on Github</a></li><li id="d583"><a href="https://www.educative.io/courses/web-application-software-architecture-101?affiliate_id=5073518643380224" rel="noopener ugc nofollow" target="_blank"><strong>Web Application &amp; Software Architecture 101</strong></a></li><li id="da63"><a href="https://www.educative.io/collection/5668639101419520/5649050225344512?affiliate_id=5073518643380224" rel="noopener ugc nofollow" target="_blank">Grokking System Design Interview</a> Course on Educative</li></ol><p id="81cd">Other <strong>Java Design Patterns tutorials</strong> you may like</p><ul><li id="fa4e">My favorite courses to learn Software Architecture (<a rel="noopener" href="https://medium.com/javarevisited/top-5-courses-to-learn-software-architecture-in-2020-best-of-lot-5d34ebc52e9">courses</a>)</li><li id="6e63">5 Free Courses to learn Object Oriented Programming (<a href="http://www.java67.com/2018/02/5-free-object-oriented-programming-online-courses.html" rel="noopener ugc nofollow" target="_blank">courses</a>)</li><li id="0435">Difference between Factory and Dependency Injection Pattern? (<a href="https://javarevisited.blogspot.com/2015/06/difference-between-dependency-injection.html" rel="noopener ugc nofollow" target="_blank">answer</a>)</li><li id="8e0d">Top 5 Courses to learn Microservices in Java with Spring (<a rel="noopener" href="https://medium.com/javarevisited/top-5-courses-to-learn-microservices-in-java-and-spring-framework-e9fed1ba804d">courses</a>)</li><li id="9ef5">How to create thread-safe Singleton in Java? (<a href="http://javarevisited.blogspot.sg/2012/12/how-to-create-thread-safe-singleton-in-java-example.html#axzz5EAUtcsud" rel="noopener ugc nofollow" target="_blank">example</a>)</li><li id="f8b0">How to implement the Strategy Design Pattern in Java? (<a href="https://javarevisited.blogspot.com/2015/07/strategy-design-pattern-and-open-closed-principle-java-example.html" rel="noopener ugc nofollow" target="_blank">example</a>)</li><li id="7d54">Difference between Factory and AbstractFactory Pattern? (<a href="http://javarevisited.blogspot.sg/2012/12/how-to-create-thread-safe-singleton-in-java-example.html#axzz5EAUtcsud" rel="noopener ugc nofollow" target="_blank">example</a>)</li><li id="4b16">18 Java Design Pattern Interview Questions with Answers (<a href="http://www.java67.com/2012/09/top-10-java-design-pattern-interview-question-answer.html" rel="noopener ugc nofollow" target="_blank">list</a>)</li><li id="2b86">Difference between State and Strategy Design Pattern in Java? (<a href="http://javarevisited.blogspot.sg/2014/04/difference-between-state-and-strategy-design-pattern-java.html" rel="noopener ugc nofollow" target="_blank">answer</a>)</li><li id="edb4">Top 5 Courses to learn Design Patterns in Java (<a href="https://javarevisited.blogspot.com/2018/02/top-5-java-design-pattern-courses-for-developers.html" rel="noopener ugc nofollow" target="_blank">courses</a>)</li><li id="4254">5 Free Courses to learn Data Structure and Algorithms (<a href="https://javarevisited.blogspot.com/2018/01/top-5-free-data-structure-and-algorithm-courses-java--c-programmers.html" rel="noopener ugc nofollow" target="_blank">courses</a>)</li><li id="6f9f">Top 5 Courses to learn Software Design and Architecture (<a href="https://dev.to/javinpaul/5-best-courses-to-learn-software-architecture-and-system-design-for-programmers-1879" rel="noopener ugc nofollow" target="_blank">dev.to</a>)</li></ul><p id="5a53">Thanks for reading this article so far. If you like these Software design and System Design interview questions then please share them with your friends and colleagues. If you have any questions or feedback then please drop a note.</p><p id="8d71"><strong>P.S.-</strong> If you are looking for some free courses to learn Design Pattern and Software Architecture, I also suggest you check out the <a href="http://bit.ly/java-design-patterns-tutorial" rel="noopener ugc nofollow" target="_blank"><strong>Java Design Patterns and Architecture</strong></a> course by John Purcell on Udemy. It’s completely free, all you need to do is create an Udemy account to access this course.</p><blockquote><p id="94e0">And, if you are not a Medium member then I highly recommend you to join Medium and read great stories like this from great authors on different field. You can <strong>join Medium </strong><a rel="noopener" href="https://medium.com/@somasharma_81597/membership"><strong>here</strong></a></p></blockquote></div></div></article></div></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+<section>
+<h2 id="saveme">Random expired <a href="javascript:toggle('olsaveme');">&#177;</a></h2>
+<div>2 links selected from 91 expired links</div>
+<ol id="olsaveme">
+
+<li>
+	<article>
+		<h3 id="907C0700-41D9-4113-A04C-AE82EAB79A78"><a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/">How to Get Into SRE – Alice Goldfuss</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/">https://blog.alicegoldfuss.com/how-to-get-into-sre/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:57:27.926506996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">My personal guide.
+			
+				(Open <a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8392AB94-0594-43D2-ABA5-AAC5B24AE254"><a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/">Mercurial&#39;s Journey to and Reflections on Python 3</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/">https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/</a></span><br />
+			<span class="d">Added: 2020-01-22 03:10:36.542356967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Mercurial 5.2 was released on November 5, 2019. It is the first version of Mercurial that supports Python 3. This milestone comes nearly 11 years after Python 3.0 was first released on December 3, 2008. Speaking as a mai
+			
+				(Open <a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+<section>
+<h2 id="expired">Expired <a href="javascript:toggle('olexpired');">&#177;</a></h2>
+<div>91 links expired today Tue, Mar. 7, 2023</div>
+<ol id="olexpired">
+
+<li>
+	<article>
+		<h3 id="E48D0031-178B-4DF4-B201-DD97C41FEF33"><a href="https://blog.close.com/subject-lines/">Sales email subject lines: 50&#43; tips, examples, and biggest mistakes</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://blog.close.com/subject-lines/">https://blog.close.com/subject-lines/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:56:34.453863143 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Find out about the best ways to write subject lines for your cold sales emails to improve your open and response rates! This post is here to help you craft a subject line that appeals to your customers &amp; is relevant to y
+			
+				(Open <a href="https://blog.close.com/subject-lines/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9E769276-C043-4327-BD56-16F07A66B4E4"><a href="https://en.wikipedia.org/wiki/User_space">User space</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://en.wikipedia.org/wiki/User_space">https://en.wikipedia.org/wiki/User_space</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.471538066 &#43;0000 UTC</span>
+		</div>
+		<p class="p">For the term &#34;user space&#34; as used in Wikipedia, see Wikipedia:User pages. &#34;Kernel space&#34; redirects here. For the mathematical definition, see Null space. This article needs additional citations for verification. Please h
+			
+				(Open <a href="https://en.wikipedia.org/wiki/User_space" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="772B3693-3D94-48A4-BB74-9A7F81FA0B09"><a href="https://twitter.com/9to5mac/status/1499129510238822400">Tweet from @9to5mac</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://twitter.com/9to5mac/status/1499129510238822400">https://twitter.com/9to5mac/status/1499129510238822400</a></span><br />
+			<span class="d">Added: 2022-03-02 22:32:45.797072887 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Don’t miss what’s happening People on Twitter are the first to know. Log in Sign up Did someone say … cookies? Twitter and its partners use cookies to provide you with a better, safer and faster service and to support ou
+			
+				(Open <a href="https://twitter.com/9to5mac/status/1499129510238822400" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2734B0B4-57F1-4687-AEB9-4D99A82A7E10"><a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b">Optimizing Distributed Joins: The Case of Google Cloud Spanner and DataStax Astra DB | by DataStax | Building the Open Data Stack | Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b">https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b</a></span><br />
+			<span class="d">Added: 2022-01-30 07:55:11.117269992 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this post, learn how relational and NoSQL databases, Google Cloud Spanner and DataStax Astra DB, optimize distributed joins for real-time applications. Distributed joins are commonly considered to…
+			
+				(Open <a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5E2F906D-29F5-4863-8F9F-1A8B82E40BBC"><a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/">Data Caching Across Microservices in a Serverless Architecture</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/">https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472444057 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Organizations are re-architecting their traditional monolithic applications to incorporate microservices. This helps them gain agility and scalability and accelerate time-to-market for new features. Each microser
+			
+				(Open <a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ACBA973D-AC13-4337-9A13-E797707FEB37"><a href="https://learn.particular.net/users/sign_in">Online education by Particular Software</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://learn.particular.net/users/sign_in">https://learn.particular.net/users/sign_in</a></span><br />
+			<span class="d">Added: 2021-06-20 03:02:37.519088983 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Skip to main content Online education by Particular Software Toggle menu MENU Welcome Back! EMAIL PASSWORD REMEMBER ME Forgot Password? If you are a human, ignore this field SIGN IN Create a new account HOME SUPPOR
+			
+				(Open <a href="https://learn.particular.net/users/sign_in" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B5E085CD-4922-4DC1-A965-78EC343CD945"><a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/">How to Talk about Consistency and Isolation in Distributed DBs</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/">https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/</a></span><br />
+			<span class="d">Added: 2022-02-15 11:04:48.938548088 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The SQL standard defines isolation levels, but we don&#39;t have a great vocabulary for talking about consistency levels, and how these two things interact.
+			
+				(Open <a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="59872DBD-46DE-4E72-B527-A2F8EB3AA488"><a href="https://saucecode.bar/posts/06-using-www-authenticate.html">using www-authenticate for user authentication</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://saucecode.bar/posts/06-using-www-authenticate.html">https://saucecode.bar/posts/06-using-www-authenticate.html</a></span><br />
+			<span class="d">Added: 2022-03-04 13:14:28.720092058 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This article explains how to use the www-authenticate header to handle user authentication without any client side code.
+			
+				(Open <a href="https://saucecode.bar/posts/06-using-www-authenticate.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="80084756-28D3-4781-89C8-484C9A746F00"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww">What&#39;s in a Good Error Message?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww">https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:39.613649845 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F36CF381-606E-45C7-9147-C680660ADD3C"><a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html">How to Read a Wine Label, in 12 Easy Lessons - The New York Times</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html">https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html</a></span><br />
+			<span class="d">Added: 2020-10-03 22:10:30.001008987 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The wine shop can be intimidating, with so many different styles of labeling. Here’s help in decoding a dozen basic types.
+			
+				(Open <a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B2CCAF5A-EEB8-4EDC-8899-08081B84FA71"><a href="http://akkartik.name/post/literate-programming">Literate programming: Knuth is doing it wrong</a></h3>
+		<div class="byline">
+			<span class="u"><a href="http://akkartik.name/post/literate-programming">http://akkartik.name/post/literate-programming</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472525119 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Oct 3, 2014 Literate programming: Knuth is doing it wrong Literate programming advocates this: Order your code for others to read, not for the compiler. Beautifully typeset your code so one can curl up in bed to read it
+			
+				(Open <a href="http://akkartik.name/post/literate-programming" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="46FFB2D8-317B-462D-AD71-4069DCB717F0"><a href="https://nesslabs.com/mind-garden">You and your mind garden</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://nesslabs.com/mind-garden">https://nesslabs.com/mind-garden</a></span><br />
+			<span class="d">Added: 2022-03-02 14:00:01.643723011 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In French, “cultiver son jardin intérieur” means to tend to your internal garden—to take care of your mind. The garden metaphor is particularly apt: taking care of your mind involves cultivating your curiosity (the seeds
+			
+				(Open <a href="https://nesslabs.com/mind-garden" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="86B34871-F4BB-44A0-804A-56556B12F3CB"><a href="https://twitter.com/alexxubyte/status/1491821606422781975">https://twitter.com/alexxubyte/status/1491821606422781975</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://twitter.com/alexxubyte/status/1491821606422781975">https://twitter.com/alexxubyte/status/1491821606422781975</a></span><br />
+			<span class="d">Added: 2022-02-13 22:20:38.556627035 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://twitter.com/alexxubyte/status/1491821606422781975" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="7C68C329-A59A-4F8D-B795-0D61911878FA"><a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/">This is What a Large-Scale Cloud Adoption Program Looks Like</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/">https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/</a></span><br />
+			<span class="d">Added: 2022-02-03 20:01:26.464634895 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Dio Rettori discusses some of the lessons learned, challenges, and considerations of large-scale adoption for JPMorgan Chase.
+			
+				(Open <a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F83B3D52-4909-4EF8-937B-23C9D6A73ADD"><a href="https://news.ycombinator.com/item?id=24814687">7 days ago</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://news.ycombinator.com/item?id=24814687">https://news.ycombinator.com/item?id=24814687</a></span><br />
+			<span class="d">Added: 2020-10-25 06:28:36.088758945 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This article has a large gap in the story: it ignores sensor data sources, which are both the highest velocity and highest volume data models by multiple orders of magnitude. They have become ubiquitous in diverse, mediu
+			
+				(Open <a href="https://news.ycombinator.com/item?id=24814687" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B894AE2E-3C5E-4941-A8C5-769BD2531CB5"><a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained">DataHub: Popular metadata architectures explained | LinkedIn Engineering</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained">https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained</a></span><br />
+			<span class="d">Added: 2020-12-19 19:18:08.410096168 &#43;0000 UTC</span>
+		</div>
+		<p class="p">When I started my journey at LinkedIn ten years ago, the company was just beginning to experience extreme growth in the volume, variety, and velocity of our data. Over the next few years, my colleagues and I in LinkedIn’
+			
+				(Open <a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="71A6CC9C-0133-45CF-BBBF-5E2288680954"><a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming">Beyond Microservices: Streams, State and Scalability</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming">https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming</a></span><br />
+			<span class="d">Added: 2022-01-29 21:51:51.795267105 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Gwen Shapira talks about how microservices evolved in the last few years, based on experience gained while working with companies using Apache Kafka to update their application architecture.
+			
+				(Open <a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ECFE519B-F709-4FDC-98D0-E0F643810B47"><a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea">Production Oriented Development - Paul Osman - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea">https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea</a></span><br />
+			<span class="d">Added: 2020-01-30 02:45:22.718299865 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Code working in production is the only thing that matters. Teams should optimize for delivering code to production as quickly as possible.
+			
+				(Open <a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F2F1740F-A682-49BD-A7CE-106B9CF488BF"><a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/">https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/">https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/</a></span><br />
+			<span class="d">Added: 2022-02-27 21:14:32.595848083 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Basically, sake comprises rice, water, and the fermenting agent called koji, resulting in an alcoholic level that usually sits between 13 and 16 percent. And you might be interested to know that the rice used is differen
+			
+				(Open <a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="973CCA37-0F8A-4370-B2D7-A2670EB77CCA"><a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e">Immutable Collections in Java using Sealed Types</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e">https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e</a></span><br />
+			<span class="d">Added: 2020-11-22 19:50:09.498816967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">JDK 15 was released on September 15, 2020. JEP 360 Sealed Types was included as a preview feature in this release. Sealed Types is part of Project Amber. Sealed classes or interfaces can be used to…
+			
+				(Open <a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5DD11538-E58D-4C23-BFF0-3214A458CD8D"><a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/">A Complete Guide To Mechanical Keyboards</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/">https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:42.818650007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this article, we dive into the possibilities of mechanical keyboards. The different layouts, switch types and even keycap material. Strap yourself in — this will be a deep dive!
+			
+				(Open <a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8E8307BD-6D30-437E-8F22-D01A691B58B6"><a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6">https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6">https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6</a></span><br />
+			<span class="d">Added: 2021-02-16 03:18:15.004760026 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="6FDB0B3D-9B1A-44C9-B337-58081D1DC392"><a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html">Journey into Observability: Reading material | Mads Hartmann</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html">https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html</a></span><br />
+			<span class="d">Added: 2020-01-19 20:02:56.259206056 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I’ve been reading up on observability over the last three months. In this post I have organized the material into a sort of recommended reading order. It doesn’t reflect the order in which I read it, but I think this ord
+			
+				(Open <a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="391136C2-FBE9-4E59-864E-C07E8F6CFEAA"><a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html">Yann Herklotz - Introduction to Luhmann&#39;s Zettelkasten</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html">https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html</a></span><br />
+			<span class="d">Added: 2020-12-22 18:34:28.277521133 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to my blog! I am a final year student studying Electronic and Information Engineering at Imperial 
+			
+				(Open <a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D0EF149F-0350-4016-8C7B-C7A62E82732E"><a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/">How to put machine learning models into production</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/">https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/</a></span><br />
+			<span class="d">Added: 2020-10-25 06:32:53.718122005 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Data scientists excel at creating models that represent and predict real-world data, but effectively deploying machine learning models is more of an art than science. Deployment requires skills more commonly found in sof
+			
+				(Open <a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="7AC1A3D3-2E66-4317-8C48-EDD600870093"><a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb">pytudes/Probability.ipynb at main · norvig/pytudes · GitHub</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb">https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb</a></span><br />
+			<span class="d">Added: 2021-06-20 03:01:48.03035593 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Python programs, usually short, of considerable difficulty, to perfect particular skills. - pytudes/Probability.ipynb at main · norvig/pytudes
+			
+				(Open <a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="94E868CC-FAF2-4068-B1AF-FB2A8134350B"><a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/">Stay Interviews (the opposite of Exit Interviews) – Mike Crittenden</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/">https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/</a></span><br />
+			<span class="d">Added: 2021-06-14 02:24:17.310279846 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Exit Interviews ask why people are leaving, and Stay Interviews ask why they keep working here.
+			
+				(Open <a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2F682234-9E4F-4889-8029-5376E9ECC042"><a href="https://commoncog.com/blog/accelerated-expertise/">Accelerated Expertise</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://commoncog.com/blog/accelerated-expertise/">https://commoncog.com/blog/accelerated-expertise/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.470912933 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A summary of Accelerated Expertise, the best book on accelerating training programs we have today.
+			
+				(Open <a href="https://commoncog.com/blog/accelerated-expertise/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="63ED09BD-BE6F-4FFA-A955-002EAED9172F"><a href="https://queue.acm.org/detail.cfm?id=3415014">Data on the Outside vs. Data on the Inside - ACM Queue</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://queue.acm.org/detail.cfm?id=3415014">https://queue.acm.org/detail.cfm?id=3415014</a></span><br />
+			<span class="d">Added: 2020-11-16 03:29:09.615636825 &#43;0000 UTC</span>
+		</div>
+		<p class="p">August 2, 2020 Pat Helland Recently, there has been a lot of interest in services. These can be microservices or just services. In each case, the service provides a function with its own code and data, and opera
+			
+				(Open <a href="https://queue.acm.org/detail.cfm?id=3415014" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="E4FE0219-C276-4423-8FAD-2FA657B9810F"><a href="https://learnwardleymapping.com/book/">The Book</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://learnwardleymapping.com/book/">https://learnwardleymapping.com/book/</a></span><br />
+			<span class="d">Added: 2022-02-25 15:09:41.99259901 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This is the story of Simon Wardley. Follow his journey from bumbling and confused CEO lost in the headlights of change to someone with a vague idea of what they&#39;re doing.
+			
+				(Open <a href="https://learnwardleymapping.com/book/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4287DD39-F68F-4AFE-A728-00534EB7B5AD"><a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/">VPE and CTO - the first 90 days –</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/">https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/</a></span><br />
+			<span class="d">Added: 2020-11-16 02:47:12.523211002 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I put this mind map together a few years ago after a discussion about what a new VP of Engineering or CTO should think about in their first 90 days in a new role. It’s a map of the areas I believe every new technical le
+			
+				(Open <a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="34BB5A22-51FE-4F9A-92EA-E765615BFF5A"><a href="https://orionmagazine.org/article/on-memory-and-survival/">Orion Magazine - On Memory and Survival</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://orionmagazine.org/article/on-memory-and-survival/">https://orionmagazine.org/article/on-memory-and-survival/</a></span><br />
+			<span class="d">Added: 2022-03-01 16:53:36.376021862 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I could blame it on a lot of things. On my education, or lack thereof, on the reasons why I still can’t spell worth a damn.
+			
+				(Open <a href="https://orionmagazine.org/article/on-memory-and-survival/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="546C87AF-7B7A-4689-A830-C7B9A7294144"><a href="https://joelhooks.com/digital-garden">🌱 My blog is a digital garden, not a blog</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://joelhooks.com/digital-garden">https://joelhooks.com/digital-garden</a></span><br />
+			<span class="d">Added: 2022-03-02 13:59:56.193624973 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The phrase &#34;digital garden&#34; is a metaphor for thinking about writing and creating that focuses less on the resulting &#34;showpiece&#34; and more on the process, care, and craft it takes to get there. While not everybody has or 
+			
+				(Open <a href="https://joelhooks.com/digital-garden" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="88E9BAF9-01A6-4774-BE3E-EE928BAD13B0"><a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector">How to choose the best Java garbage collector</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector">https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector</a></span><br />
+			<span class="d">Added: 2022-02-14 08:25:45.931617021 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Improve Java application performance by choosing the best garbage collector for your application&#39;s throughput, latency, and footprint requirements.
+			
+				(Open <a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="A9B0816E-8809-4588-A4FD-F484F9AFD28B"><a href="https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/">What is Developer Experience? a roundup of links and goodness</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/">https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/</a></span><br />
+			<span class="d">Added: 2022-03-04 13:03:31.506291866 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I recently contributed to a series of fireside chats hosted by LaunchDarkly. One of the themes that we discussed was Developer Experience, and how to improve it. I was asked by one of the attendees at the EMEA event (vid
+			
+				(Open <a href="https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B1366A5D-4A71-4FFB-A922-4668D7DCA093"><a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg">Our Journey with Quarkus</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg">https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:36.351290941 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Quarkus truly appears to be the smartest possible solution, in our experience.
+			
+				(Open <a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D473BC81-57FE-451F-BB84-6DAF4A34B7F5"><a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1">Testing in Production, the safe way</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1">https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1</a></span><br />
+			<span class="d">Added: 2020-01-25 21:07:09.173211097 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this post, I hope to explore different forms of “testing in production”, when each form of testing is the most beneficial as well as how to test services in production in a safe way. However…
+			
+				(Open <a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F03A6943-3161-48A5-B1CF-3414B76490C6"><a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/">Fairness in multi-tenant systems</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/">https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:29:26.916128158 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Building fairness into multitenant systems to provide predictable performance and availability
+			
+				(Open <a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="51CBA16F-BF3D-4093-874C-C8439FE0B7F3"><a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team">How to Handle a Disagreement on Your Team</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team">https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team</a></span><br />
+			<span class="d">Added: 2021-06-20 02:47:40.929359912 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Rely on your mediation skills, not your authority.
+			
+				(Open <a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D1EBDE68-DFE3-4116-BCDD-51C0188E30E3"><a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/">On Call Shouldn’t Suck: A Guide For Managers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/">https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/</a></span><br />
+			<span class="d">Added: 2020-10-05 02:45:04.299745082 &#43;0000 UTC</span>
+		</div>
+		<p class="p">https://twitter.com/mipsytipsy/status/1309604622554640384 There are few engineering topics that provoke as much heated commentary as oncall. Everybody has a strong opinion. So let me say straight up that there are few if
+			
+				(Open <a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3A96B38D-9B04-467E-B292-D0FA97557140"><a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/">The 40 Best Questions to Ask in an Interview — How to Go Deeper Than “What’s the Culture Like?”</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/">https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/</a></span><br />
+			<span class="d">Added: 2020-10-25 06:33:15.182893991 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Candidates need to sidestep common interview questions. Here are the best questions to ask in an interview.
+			
+				(Open <a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="49A40D1A-BD4E-4076-8E2A-C174F80F9187"><a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">1.3. Productivity</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">https://dave.cheney.net/practical-go/presentations/qcon-china.html</a></span><br />
+			<span class="d">Added: 2022-03-01 15:35:47.325203895 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Design is the art of arranging code to work today, and be changeable forever. — Sandi Metz The last underlying principle I want to highlight is productivity. Developer productivity is a sprawling topic but it boils 
+			
+				(Open <a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5BE3BDE4-6B27-4A2A-8384-233AC1C72BCF"><a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/">Reddit - Dive into anything</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/">https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/</a></span><br />
+			<span class="d">Added: 2022-03-06 18:19:36.222723007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">3.9m members in the programming community. Computer Programming
+			
+				(Open <a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="FB97E69F-BBE9-4DE4-BAFC-8A5C428228B2"><a href="https://bitfieldconsulting.com/golang/career">A career ending mistake — Bitfield Consulting</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://bitfieldconsulting.com/golang/career">https://bitfieldconsulting.com/golang/career</a></span><br />
+			<span class="d">Added: 2022-02-22 19:53:33.374945163 &#43;0000 UTC</span>
+		</div>
+		<p class="p">As software engineers, we&#39;re constantly making detailed, elaborate plans for computers to execute. Isn&#39;t it weird that we rarely give a moment&#39;s thought to the program for our own careers?
+			
+				(Open <a href="https://bitfieldconsulting.com/golang/career" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="EAB90B18-87D1-4B09-90C4-C78525EDF920"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter">What&#39;s in a Good Error Message?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter">https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.473227024 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="6209073B-4370-479B-B60E-1E5281B21CF6"><a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202">GPS</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202">https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202</a></span><br />
+			<span class="d">Added: 2022-01-30 13:45:06.893004894 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Interactive article explaining how GPS works.
+			
+				(Open <a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="38884C26-1CBF-4F39-863B-1297059B7970"><a href="https://news.ycombinator.com/item?id=24786778">How to put machine learning models into production | Hacker News</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://news.ycombinator.com/item?id=24786778">https://news.ycombinator.com/item?id=24786778</a></span><br />
+			<span class="d">Added: 2020-10-25 06:32:57.345412969 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Hacker News new | past | comments | ask | show | jobs | submit login How to put machine learning models into production (stackoverflow.blog) 120 points by Aaronmacaron 8 days ago | hide | past | favorite | 34 comments 
+			
+				(Open <a href="https://news.ycombinator.com/item?id=24786778" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ACC6DB41-087D-41C5-B177-EA627EA5ACCD"><a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/">Don&#39;t make yourself redundant</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/">https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/</a></span><br />
+			<span class="d">Added: 2020-10-05 02:44:52.821810007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">When splitting big teams into two smaller teams, don&#39;t make yourself redundant. Instead, try this advice to remain impactful.
+			
+				(Open <a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D2659AD7-1452-45F7-B2F0-074737CE8D7A"><a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/">CRISP: Critical Path Analysis for Microservice Architectures</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/">https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/</a></span><br />
+			<span class="d">Added: 2022-01-17 21:33:09.414513111 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Uber’s backend is an exemplar of microservice architecture. Each microservice is a small, individually deployable program performing a specific business logic (operation). The microservice architecture is a type of distr
+			
+				(Open <a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3719A1C9-84AE-480A-9732-F3296BFC4C4B"><a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F">https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F">https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F</a></span><br />
+			<span class="d">Added: 2021-02-16 03:19:16.030979156 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="1803FA34-0EF0-4D37-9429-A2738C72A3AF"><a href="https://iximiuz.com/en/posts/computer-networking-101/">Computer Networking Basics For Developers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://iximiuz.com/en/posts/computer-networking-101/">https://iximiuz.com/en/posts/computer-networking-101/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.473012924 &#43;0000 UTC</span>
+		</div>
+		<p class="p">What is a LAN? What is a network segment? Ethernet collision domains vs broadcast domains. How network switches work? How to send IP packets? VLAN vs VXLAN.
+			
+				(Open <a href="https://iximiuz.com/en/posts/computer-networking-101/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="153D61E7-394F-4E25-837F-1107CAB96E59"><a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do">What TPMs Do and What Software Engineers Can Learn From Them</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do">https://newsletter.pragmaticengineer.com/p/what-tpms-do</a></span><br />
+			<span class="d">Added: 2022-02-18 06:47:30.013221979 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A deep dive with five Technical Program Managers (TPM) on what the role is, how it evolved, and how engineers and managers can benefit from working with TPMs.
+			
+				(Open <a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3B6CB96B-63A5-4747-AC87-D5A7D936D80B"><a href="https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/">The Seven Habits That Lead to Happiness in Old Age - The Atlantic</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/">https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/</a></span><br />
+			<span class="d">Added: 2022-02-23 08:31:30.785979986 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Your well-being is like a retirement account: The sooner you invest, the greater your returns will be.
+			
+				(Open <a href="https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3E615600-2B6D-426F-AC56-F9BFB4D9D251"><a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5">Failure Modes and Continuous Resilience</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5">https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:51.419013977 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A resilient system continues to operate successfully in the presence of failures. There are many possible failure modes, and each exercises a different aspect of resilience. The system needs to…
+			
+				(Open <a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="92BC21DB-94BA-41EA-AA2C-EB25CF574795"><a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter">“A damn stupid thing to do”—the origins of C</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter">https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter</a></span><br />
+			<span class="d">Added: 2020-12-14 01:06:14.395256996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Today, C may be a lingua franca among programmers. This is its (abridged) history.
+			
+				(Open <a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="A2C05C7C-A5E7-46B1-B47A-1D5BD53DF6FE"><a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/">Partitioning GitHub’s relational databases to handle scale</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/">https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/</a></span><br />
+			<span class="d">Added: 2021-09-28 19:04:08.894801139 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In 2019, to meet growth and availability challenges, we set a plan in motion to improve our tooling and ability to partition relational databases.
+			
+				(Open <a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="32992F5F-AE2D-455C-9220-5F745266AB66"><a href="http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf">‎cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf</a></h3>
+		<div class="byline">
+			<span class="u"><a href="http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf">http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf</a></span><br />
+			<span class="d">Added: 2022-03-02 14:02:11.560539007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="29A95F3A-14F0-4423-A688-FEA34B9FFD35"><a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/">Copying Better: How To Acquire The Tacit Knowledge of Experts</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/">https://commoncog.com/blog/how-to-learn-tacit-knowledge/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.470806121 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Much of expertise is tacit: that is, it cannot be captured through words alone. We look at techniques to learn the tacit knowledge of experts.
+			
+				(Open <a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4A4DBD31-E21E-404F-B4FC-D3A89081A97F"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg">What&#39;s in a Good Error Message? - Gunnar Morling</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg">https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg</a></span><br />
+			<span class="d">Added: 2022-02-03 19:43:27.72410798 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="0005A9E5-FB73-4470-89CF-362DD0D1D1AC"><a href="https://convey.earth/conversation?id=48">Convey</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://convey.earth/conversation?id=48">https://convey.earth/conversation?id=48</a></span><br />
+			<span class="d">Added: 2022-02-04 18:50:33.62513113 &#43;0000 UTC</span>
+		</div>
+		<p class="p">2022 February 01 16:21 stuartscott 1473754¤ 1240149¤ You may have noticed that the January edition of the Convey Digest looks a little different from the previous ones - the color scheme is now based on the dominant
+			
+				(Open <a href="https://convey.earth/conversation?id=48" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="247F00C1-71D9-49B2-AB91-47B4F826AF14"><a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/">What does it mean to listen on a port?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/">https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/</a></span><br />
+			<span class="d">Added: 2022-02-14 08:25:41.701181888 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This story explores some concepts in computer networking, inspired by Michael Nielsen’s idea of discovery fiction. Code samples can also be found in this repo. Excerpts use openbsd-flavoured netcat on Debian Linux; behvi
+			
+				(Open <a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9782E34D-D67B-4446-8904-A043590EBF92"><a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32">https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32">https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32</a></span><br />
+			<span class="d">Added: 2021-03-07 04:00:02.018476009 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Troubleshooting in Kubernetes can be a daunting task. In this article you will learn how to diagnose issues in Pods, Services and Ingress.
+			
+				(Open <a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4104A599-BB8C-4079-8C3A-12D8CE067A5F"><a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337">Why it’s difficult to build teams in high growth organisations | by Jason Yip | Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337">https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337</a></span><br />
+			<span class="d">Added: 2021-06-14 02:39:32.210827827 &#43;0000 UTC</span>
+		</div>
+		<p class="p">By “high growth”, I mean in terms of employee count and roughly doubling or more every year. Even at slower growth rates, some of the phenomena I’ll describe may be relevant. The only option where…
+			
+				(Open <a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9ADC0870-B6F9-4DC0-B898-CB7A43899238"><a href="https://johnnyrodgers.is/building-a-modern-home">building a modern home - Johnny Rodgers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://johnnyrodgers.is/building-a-modern-home">https://johnnyrodgers.is/building-a-modern-home</a></span><br />
+			<span class="d">Added: 2022-02-03 19:47:25.927577018 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Personal site of Johnny Rodgers, technology designer from Vancouver.
+			
+				(Open <a href="https://johnnyrodgers.is/building-a-modern-home" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4EAE9D5E-8762-44E9-B560-8FA66CB88E48"><a href="https://lena-voita.github.io/nlp_course/word_embeddings.html">Distributional Semantics</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://lena-voita.github.io/nlp_course/word_embeddings.html">https://lena-voita.github.io/nlp_course/word_embeddings.html</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.471920967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">To capture meaning of words in their vectors, we first need to define the notion of meaning that can be used in practice. For this, let us try to understand how we, humans, get to know which w
+			
+				(Open <a href="https://lena-voita.github.io/nlp_course/word_embeddings.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F62EDE75-F797-47AD-AF47-54C9AF7B905D"><a href="https://iximiuz.com/en/posts/container-networking-is-simple/">Container Networking Is Simple!</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://iximiuz.com/en/posts/container-networking-is-simple/">https://iximiuz.com/en/posts/container-networking-is-simple/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472911834 &#43;0000 UTC</span>
+		</div>
+		<p class="p">How container networking works under the hood? Setting up docker-like container networking from scratch. Bonus: podman rootless container networking explained.
+			
+				(Open <a href="https://iximiuz.com/en/posts/container-networking-is-simple/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5F308D40-0FB6-4409-AAF0-868CA46D76FE"><a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/">Analyzing data stored in Amazon DocumentDB (with MongoDB compatibility) using Amazon Sagemaker | AWS Machine Learning Blog</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/">https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:46:07.911393165 &#43;0000 UTC</span>
+		</div>
+		<p class="p">{ &#34;id&#34;: &#34;13469392114&#34;, &#34;type&#34;: &#34;PullRequestEvent&#34;, &#34;actor&#34;: { &#34;id&#34;: 33526713, &#34;login&#34;: &#34;arjkesh&#34;, &#34;display_login&#34;: &#34;arjkesh&#34;, &#34;gravatar_id&#34;: &#34;&#34;, &#34;url&#34;: &#34;https://api.github.com/users/arjkesh&#34;, 
+			
+				(Open <a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2E46DBFF-90BB-4B14-9DF6-C0388D62032A"><a href="https://www.theobservereffect.org/tobi.html">The Observer Effect – Tobi Lütke</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theobservereffect.org/tobi.html">https://www.theobservereffect.org/tobi.html</a></span><br />
+			<span class="d">Added: 2020-12-19 19:09:05.707730054 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to the third interview on &#39;The Observer Effect&#39;. We are lucky to have one of the most interesting founders in technology and commerce - Tobi Lütke, Founder and CEO of Shopify. This interview was
+			
+				(Open <a href="https://www.theobservereffect.org/tobi.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="907C0700-41D9-4113-A04C-AE82EAB79A78"><a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/">How to Get Into SRE – Alice Goldfuss</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/">https://blog.alicegoldfuss.com/how-to-get-into-sre/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:57:27.926506996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">My personal guide.
+			
+				(Open <a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4B341D85-649C-4D5A-8551-31BDE28AC022"><a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5">Failure Modes and Continuous Resilience - adrian cockcroft - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5">https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5</a></span><br />
+			<span class="d">Added: 2020-01-19 05:29:02.044257164 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A resilient system continues to operate successfully in the presence of failures. There are many possible failure modes, and each exercises a different aspect of resilience. The system needs to…
+			
+				(Open <a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="AB81D5DF-D925-4E10-AACF-204FEC720356"><a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html">Introduction to AWS Lake Formation - Build a Secure Data Lake in Days | AWS Online Tech Talks</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html">https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:37.371964931 &#43;0000 UTC</span>
+		</div>
+		<p class="p">AWS Lake Formation (coming soon) will make it easy to set up a secure data lake in days. With AWS Lake Formation, you will be able to ingest, catalog, clean, transform, and secure your data, and make it available for ana
+			
+				(Open <a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="0F9CA482-5026-4D25-81CD-86B801F145C1"><a href="https://kg.dev/thoughts/be-anonymous">Be anonymous</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://kg.dev/thoughts/be-anonymous">https://kg.dev/thoughts/be-anonymous</a></span><br />
+			<span class="d">Added: 2022-02-21 10:38:02.598958969 &#43;0000 UTC</span>
+		</div>
+		<p class="p">My website.
+			
+				(Open <a href="https://kg.dev/thoughts/be-anonymous" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="C5840C97-8A47-412B-9619-757E22D1F358"><a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md">resilience-engineering/intro.md at master · lorin/resilience-engineering · GitHub</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md">https://github.com/lorin/resilience-engineering/blob/master/intro.md</a></span><br />
+			<span class="d">Added: 2021-02-14 06:48:24.060963153 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Resilience engineering papers. Contribute to lorin/resilience-engineering development by creating an account on GitHub.
+			
+				(Open <a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="22C9D369-7D87-417E-8241-0FF77B96719B"><a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c">Health, Availability, Debuggability - Observability&#43; - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c">https://medium.com/observability/health-availability-debuggability-5b0ab300b35c</a></span><br />
+			<span class="d">Added: 2020-01-19 20:02:51.116274833 &#43;0000 UTC</span>
+		</div>
+		<p class="p">As we collect various observability signals from systems, it fosters a new conversation around the classification of the signals. There is a significant discussion on observability signals and even…
+			
+				(Open <a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="CE1D160C-9BD4-44F6-8701-5FC512623AD8"><a href="https://www.spakhm.com/p/how-to-get-promoted">How to get promoted</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.spakhm.com/p/how-to-get-promoted">https://www.spakhm.com/p/how-to-get-promoted</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:23.689921855 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Almost everyone who does great work toils in relative obscurity. Performance reviews are social fiction. How do people really advance through the corporate hierarchy?
+			
+				(Open <a href="https://www.spakhm.com/p/how-to-get-promoted" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8D47E7AE-E2D1-4F5E-ADA2-D5C5AE91FCD6"><a href="https://www.defmacro.org/2015/02/25/startup-ideas.html">How to pick startup ideas</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.defmacro.org/2015/02/25/startup-ideas.html">https://www.defmacro.org/2015/02/25/startup-ideas.html</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:12.827280998 &#43;0000 UTC</span>
+		</div>
+		<p class="p">One of the most important things I learned from running a startup is that on a macro scale the innovation market is efficient. If the market conditions allow for a startup to arise, it’s overwhelmingly probable that mult
+			
+				(Open <a href="https://www.defmacro.org/2015/02/25/startup-ideas.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="35BF825E-8A1E-4AFD-8277-ECAE794900FC"><a href="https://danluu.com/cache-incidents/">A decade of major cache incidents at Twitter</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://danluu.com/cache-incidents/">https://danluu.com/cache-incidents/</a></span><br />
+			<span class="d">Added: 2022-02-12 22:04:41.532500028 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I&#39;m trying some experimental tiers on Patreon to see if I can get to substack-like levels of financial support for this blog without moving to substack! A decade of major cache incidents at Twitter This was co-authored 
+			
+				(Open <a href="https://danluu.com/cache-incidents/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="243783C4-C897-490D-80E6-182A4DC7ACE6"><a href="https://opensource.com/article/21/11/cluster-logging-kubernetes">What you need to know about cluster logging in Kubernetes</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://opensource.com/article/21/11/cluster-logging-kubernetes">https://opensource.com/article/21/11/cluster-logging-kubernetes</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.47310996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Explore how different container logging patterns in Kubernetes work.
+			
+				(Open <a href="https://opensource.com/article/21/11/cluster-logging-kubernetes" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="08E03994-02F2-415B-AD40-3AA908CFAC16"><a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw">Java sockets I/O: blocking, non-blocking and asynchronous</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw">https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:24.146421909 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="371B741A-360B-457A-8E22-8714499A4D51"><a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/">A Short, Simple Introduction to Information Theory – Ryan Moulton&#39;s Articles</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/">https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:28:49.101143836 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Information Theory is one of the most useful things for Computer Scientists to understand about statistics, and it&#39;s deeply related to things we do every day. If you are comfortable writing code but sometimes intimidated
+			
+				(Open <a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="EF99A6E9-8C52-4FAD-9BC3-5475BE7B7660"><a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/">Reproducible Builds in Java</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/">https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/</a></span><br />
+			<span class="d">Added: 2022-02-06 13:01:06.832920074 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Reproducible builds are a set of software development practices that create an independently-verifiable path from source to binary code.https://reproducible-builds.org/Reproducible builds are important and provide benefi
+			
+				(Open <a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="152B5455-0C2E-4CE5-BEF5-3FB5BD06D088"><a href="https://cate.blog/2021/08/09/on-being-strategic/">On Being “Strategic”</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://cate.blog/2021/08/09/on-being-strategic/">https://cate.blog/2021/08/09/on-being-strategic/</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:09.864347934 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Ages ago, a work colleague / friend offered me the following piece of advice: “We need to make sure you’re seen as strategic”. I’ve thought about it a lot ever since. It was the first time I realised I was on the edge
+			
+				(Open <a href="https://cate.blog/2021/08/09/on-being-strategic/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8392AB94-0594-43D2-ABA5-AAC5B24AE254"><a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/">Mercurial&#39;s Journey to and Reflections on Python 3</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/">https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/</a></span><br />
+			<span class="d">Added: 2020-01-22 03:10:36.542356967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Mercurial 5.2 was released on November 5, 2019. It is the first version of Mercurial that supports Python 3. This milestone comes nearly 11 years after Python 3.0 was first released on December 3, 2008. Speaking as a mai
+			
+				(Open <a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="16A89C55-2E46-46B7-9186-8DFB400E402C"><a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints">Overview ¶</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints">https://pkg.go.dev/cmd/go#hdr-Build_constraints</a></span><br />
+			<span class="d">Added: 2022-03-01 15:15:14.106298923 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Go is a tool for managing Go source code.
+			
+				(Open <a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5A02A461-03F0-4D93-8258-0A95A98CA773"><a href="https://arxiv.org/pdf/2104.00087.pdf"></a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://arxiv.org/pdf/2104.00087.pdf">https://arxiv.org/pdf/2104.00087.pdf</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:56.06173706 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://arxiv.org/pdf/2104.00087.pdf" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="744F225B-D881-4600-964F-BC976DE3B9CD"><a href="https://www.youtube.com/watch?v=93_3CxCl_eI">YOW! 2019 - Josh Long - The Reactive Revolution - YouTube</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.youtube.com/watch?v=93_3CxCl_eI">https://www.youtube.com/watch?v=93_3CxCl_eI</a></span><br />
+			<span class="d">Added: 2021-06-20 02:38:51.257305145 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Share your videos with friends, family, and the world
+			
+				(Open <a href="https://www.youtube.com/watch?v=93_3CxCl_eI" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="92BCE160-6EB4-43DE-AB20-676C1A7E492B"><a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/">How to Work with Emotions</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/">https://www.lionsroar.com/forum-how-to-work-with-emotions/</a></span><br />
+			<span class="d">Added: 2020-01-20 07:48:57.201634883 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Sharon Salzberg, Judith Simmer-Brown, John Tarrant, and Dzogchen Ponlop Rinpoche discuss skillful and unskillful involvement with emotions, offering new perspectives on how to think about and engage with our emotional li
+			
+				(Open <a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="67794E53-71A0-40A7-AA58-B74BBEDC96C1"><a href="https://www.defmacro.org/2014/10/03/engman.html">44 engineering management lessons</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.defmacro.org/2014/10/03/engman.html">https://www.defmacro.org/2014/10/03/engman.html</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:17.431499004 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to engineering management. It’s fun, it’s exhausting, it’s rewarding — but most importantly it’s new! What worked for you before won’t work now. You’ll have to acquire a new set of skills, and shed some bad habit
+			
+				(Open <a href="https://www.defmacro.org/2014/10/03/engman.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2183E3CB-5AD3-4D96-95E5-6A57D58BAC2D"><a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/">A categorized list of all Java and JVM features since JDK 8 to 16 - Advanced Web Machinery</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/">https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:11.951596021 &#43;0000 UTC</span>
+		</div>
+		<p class="p">From Java 8 to 17
+			
+				(Open <a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5E528535-D488-45A0-B0D7-5C7EE9F45269"><a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/">Emerging Architectures for Modern Data Infrastructure</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/">https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:28:58.590971946 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Software systems are increasingly based on data, rather than code. And a new class of tools and technologies have emerged to process data for both analytics and operational AI/ ML.
+			
+				(Open <a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3B292186-F7D4-4BAE-9514-894D386456D9"><a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw">What’s the size of the project?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw">https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:43.753388881 &#43;0000 UTC</span>
+		</div>
+		<p class="p">scc --exclude-dir docs/book ─────────────────────────────────────────────────────────────────────────────── Language Files Lines Blanks Comments Code Complexity ────────────────────────────────
+			
+				(Open <a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+</body>
+</html>

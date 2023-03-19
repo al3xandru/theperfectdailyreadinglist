@@ -1,0 +1,2661 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Reading list for Thu, Mar. 2, 2023</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com"> 
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+	<link href="https://fonts.googleapis.com/css2?family=Josefin+Slab:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+	<link href="style.css" rel="stylesheet">
+	<script>
+function toggle(id) {
+	var el = document.getElementById(id);
+	el.style.display = (el.style.display == "none" || el.style.display == "") ? "block" : "none";
+}
+	</script>
+</head>
+<body>
+<h1>Reading list for Thu, Mar. 2, 2023</h1>
+<header>
+<div>Total: 541 from which: 3 suggested today and 84 expired</div>
+<nav>
+Jump to: 
+
+	<a href="#today">Today&#39;s reading list</a> | 
+
+	<a href="#saveme">Random expired</a> | 
+
+	<a href="#expired">Expired</a> | 
+
+</nav>
+</header>
+
+<section>
+<h2 id="today">Today&#39;s reading list <a href="javascript:toggle('oltoday');">&#177;</a></h2>
+<div>3 links selected from 457 today Thu, Mar. 2, 2023</div>
+<ol id="oltoday">
+
+<li>
+	<article>
+		<h3 id="CF65A1F1-A5BF-4276-B934-69AC81F7B58E"><a href="https://tip.golang.org/ref/mem">The Go Memory Model</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://tip.golang.org/ref/mem">https://tip.golang.org/ref/mem</a></span><br />
+			<span class="d">Added: 2023-01-19 12:08:36.749217033 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Table of ContentsIntroductionAdviceInformal OverviewMemory ModelImplementation Restrictions for Programs Containing Data RacesSynchronizationInitializationGoroutine creationGoroutine destructionChannel communicationLocks
+			
+				... (22515 chars. See <a href="javascript:toggle('bCF65A1F1-A5BF-4276-B934-69AC81F7B58E');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="bCF65A1F1-A5BF-4276-B934-69AC81F7B58E">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><div>
+  
+
+
+<article>
+
+
+
+
+
+
+
+
+
+<h2>Version of June 6, 2022</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 id="introduction">Introduction</h2>
+
+<p>
+The Go memory model specifies the conditions under which
+reads of a variable in one goroutine can be guaranteed to
+observe values produced by writes to the same variable in a different goroutine.
+</p>
+
+
+<h3 id="advice">Advice</h3>
+
+<p>
+Programs that modify data being simultaneously accessed by multiple goroutines
+must serialize such access.
+</p>
+
+<p>
+To serialize access, protect the data with channel operations or other synchronization primitives
+such as those in the <a href="https://tip.golang.org/pkg/sync/"><code>sync</code></a>
+and <a href="https://tip.golang.org/pkg/sync/atomic/"><code>sync/atomic</code></a> packages.
+</p>
+
+<p>
+If you must read the rest of this document to understand the behavior of your program,
+you are being too clever.
+</p>
+
+<p>
+Don&#39;t be clever.
+</p>
+
+<h3 id="overview">Informal Overview</h3>
+
+<p>
+Go approaches its memory model in much the same way as the rest of the language,
+aiming to keep the semantics simple, understandable, and useful.
+This section gives a general overview of the approach and should suffice for most programmers.
+The memory model is specified more formally in the next section.
+</p>
+
+<p>
+A <em>data race</em> is defined as
+a write to a memory location happening concurrently with another read or write to that same location,
+unless all the accesses involved are atomic data accesses as provided by the <code>sync/atomic</code> package.
+As noted already, programmers are strongly encouraged to use appropriate synchronization
+to avoid data races.
+In the absence of data races, Go programs behave as if all the goroutines
+were multiplexed onto a single processor.
+This property is sometimes referred to as DRF-SC: data-race-free programs
+execute in a sequentially consistent manner.
+</p>
+
+<p>
+While programmers should write Go programs without data races,
+there are limitations to what a Go implementation can do in response to a data race.
+An implementation may always react to a data race by reporting the race and terminating the program.
+Otherwise, each read of a single-word-sized or sub-word-sized memory location
+must observe a value actually written to that location (perhaps by a concurrent executing goroutine)
+and not yet overwritten.
+These implementation constraints make Go more like Java or JavaScript,
+in that most races have a limited number of outcomes,
+and less like C and C++, where the meaning of any program with a race
+is entirely undefined, and the compiler may do anything at all.
+Go&#39;s approach aims to make errant programs more reliable and easier to debug,
+while still insisting that races are errors and that tools can diagnose and report them.
+</p>
+
+<h2 id="model">Memory Model</h2>
+
+<p>
+The following formal definition of Go&#39;s memory model closely follows
+the approach presented by Hans-J. Boehm and Sarita V. Adve in
+“<a href="https://www.hpl.hp.com/techreports/2008/HPL-2008-56.pdf">Foundations of the C++ Concurrency Memory Model</a>”,
+published in PLDI 2008.
+The definition of data-race-free programs and the guarantee of sequential consistency
+for race-free programs are equivalent to the ones in that work.
+</p>
+
+<p>
+The memory model describes the requirements on program executions,
+which are made up of goroutine executions,
+which in turn are made up of memory operations.
+</p>
+
+<p>
+A <i>memory operation</i> is modeled by four details:
+</p>
+<ul>
+<li>its kind, indicating whether it is an ordinary data read, an ordinary data write,
+or a <i>synchronizing operation</i> such as an atomic data access,
+a mutex operation, or a channel operation,
+</li><li>its location in the program,
+</li><li>the memory location or variable being accessed, and
+</li><li>the values read or written by the operation.
+</li></ul>
+<p>
+Some memory operations are <i>read-like</i>, including read, atomic read, mutex lock, and channel receive.
+Other memory operations are <i>write-like</i>, including write, atomic write, mutex unlock, channel send, and channel close.
+Some, such as atomic compare-and-swap, are both read-like and write-like.
+</p>
+
+<p>
+A <i>goroutine execution</i> is modeled as a set of memory operations executed by a single goroutine.
+</p>
+
+<p>
+<b>Requirement 1</b>:
+The memory operations in each goroutine must correspond to a correct sequential execution of that goroutine,
+given the values read from and written to memory.
+That execution must be consistent with the <i>sequenced before</i> relation,
+defined as the partial order requirements set out by the <a href="https://tip.golang.org/ref/spec">Go language specification</a>
+for Go&#39;s control flow constructs as well as the <a href="https://tip.golang.org/ref/spec#Order_of_evaluation">order of evaluation for expressions</a>.
+</p>
+
+<p>
+A Go <i>program execution</i> is modeled as a set of goroutine executions,
+together with a mapping <i>W</i> that specifies the write-like operation that each read-like operation reads from.
+(Multiple executions of the same program can have different program executions.)
+</p>
+
+<p>
+<b>Requirement 2</b>:
+For a given program execution, the mapping <i>W</i>, when limited to synchronizing operations,
+must be explainable by some implicit total order of the synchronizing operations
+that is consistent with sequencing and the values read and written by those operations.
+</p>
+
+<p>
+The <i>synchronized before</i> relation is a partial order on synchronizing memory operations,
+derived from <i>W</i>.
+If a synchronizing read-like memory operation <i>r</i>
+observes a synchronizing write-like memory operation <i>w</i>
+(that is, if <i>W</i>(<i>r</i>) = <i>w</i>),
+then <i>w</i> is synchronized before <i>r</i>.
+Informally, the synchronized before relation is a subset of the implied total order
+mentioned in the previous paragraph,
+limited to the information that <i>W</i> directly observes.
+</p>
+
+<p>
+The <i>happens before</i> relation is defined as the transitive closure of the
+union of the sequenced before and synchronized before relations.
+</p>
+
+<p>
+<b>Requirement 3</b>:
+For an ordinary (non-synchronizing) data read <i>r</i> on a memory location <i>x</i>,
+<i>W</i>(<i>r</i>) must be a write <i>w</i> that is <i>visible</i> to <i>r</i>,
+where visible means that both of the following hold:
+
+</p><ol>
+<li><i>w</i> happens before <i>r</i>.
+</li><li><i>w</i> does not happen before any other write <i>w&#39;</i> (to <i>x</i>) that happens before <i>r</i>.
+</li></ol>
+
+<p>
+A <i>read-write data race</i> on memory location <i>x</i>
+consists of a read-like memory operation <i>r</i> on <i>x</i>
+and a write-like memory operation <i>w</i> on <i>x</i>,
+at least one of which is non-synchronizing,
+which are unordered by happens before
+(that is, neither <i>r</i> happens before <i>w</i>
+nor <i>w</i> happens before <i>r</i>).
+</p>
+
+<p>
+A <i>write-write data race</i> on memory location <i>x</i>
+consists of two write-like memory operations <i>w</i> and <i>w&#39;</i> on <i>x</i>,
+at least one of which is non-synchronizing,
+which are unordered by happens before.
+</p>
+
+<p>
+Note that if there are no read-write or write-write data races on memory location <i>x</i>,
+then any read <i>r</i> on <i>x</i> has only one possible <i>W</i>(<i>r</i>):
+the single <i>w</i> that immediately precedes it in the happens before order.
+</p>
+
+<p>
+More generally, it can be shown that any Go program that is data-race-free,
+meaning it has no program executions with read-write or write-write data races,
+can only have outcomes explained by some sequentially consistent interleaving
+of the goroutine executions.
+(The proof is the same as Section 7 of Boehm and Adve&#39;s paper cited above.)
+This property is called DRF-SC.
+</p>
+
+<p>
+The intent of the formal definition is to match
+the DRF-SC guarantee provided to race-free programs
+by other languages, including C, C++, Java, JavaScript, Rust, and Swift.
+</p>
+
+<p>
+Certain Go language operations such as goroutine creation and memory allocation
+act as synchronization operations.
+The effect of these operations on the synchronized-before partial order
+is documented in the “Synchronization” section below.
+Individual packages are responsible for providing similar documentation
+for their own operations.
+</p>
+
+<h2 id="restrictions">Implementation Restrictions for Programs Containing Data Races</h2>
+
+<p>
+The preceding section gave a formal definition of data-race-free program execution.
+This section informally describes the semantics that implementations must provide
+for programs that do contain races.
+</p>
+
+<p>
+First, any implementation can, upon detecting a data race,
+report the race and halt execution of the program.
+Implementations using ThreadSanitizer
+(accessed with “<code>go</code> <code>build</code> <code>-race</code>”)
+do exactly this.
+</p>
+
+<p>
+Otherwise, a read <i>r</i> of a memory location <i>x</i>
+that is not larger than a machine word must observe
+some write <i>w</i> such that <i>r</i> does not happen before <i>w</i>
+and there is no write <i>w&#39;</i> such that <i>w</i> happens before <i>w&#39;</i>
+and <i>w&#39;</i> happens before <i>r</i>.
+That is, each read must observe a value written by a preceding or concurrent write.
+</p>
+
+<p>
+Additionally, observation of acausal and “out of thin air” writes is disallowed.
+</p>
+
+<p>
+Reads of memory locations larger than a single machine word
+are encouraged but not required to meet the same semantics
+as word-sized memory locations,
+observing a single allowed write <i>w</i>.
+For performance reasons,
+implementations may instead treat larger operations
+as a set of individual machine-word-sized operations
+in an unspecified order.
+This means that races on multiword data structures
+can lead to inconsistent values not corresponding to a single write.
+When the values depend on the consistency
+of internal (pointer, length) or (pointer, type) pairs,
+as can be the case for interface values, maps,
+slices, and strings in most Go implementations,
+such races can in turn lead to arbitrary memory corruption.
+</p>
+
+<p>
+Examples of incorrect synchronization are given in the
+“Incorrect synchronization” section below.
+</p>
+
+<p>
+Examples of the limitations on implementations are given in the
+“Incorrect compilation” section below.
+</p>
+
+<h2 id="synchronization">Synchronization</h2>
+
+<h3 id="init">Initialization</h3>
+
+<p>
+Program initialization runs in a single goroutine,
+but that goroutine may create other goroutines,
+which run concurrently.
+</p>
+
+<p>
+If a package <code>p</code> imports package <code>q</code>, the completion of
+<code>q</code>&#39;s <code>init</code> functions happens before the start of any of <code>p</code>&#39;s.
+</p>
+
+<p>
+The completion of all <code>init</code> functions is synchronized before
+the start of the function <code>main.main</code>.
+</p>
+
+<h3 id="go">Goroutine creation</h3>
+
+<p>
+The <code>go</code> statement that starts a new goroutine
+is synchronized before the start of the goroutine&#39;s execution.
+</p>
+
+<p>
+For example, in this program:
+</p>
+
+<pre>var a string
+
+func f() {
+	print(a)
+}
+
+func hello() {
+	a = &#34;hello, world&#34;
+	go f()
+}
+</pre>
+
+<p>
+calling <code>hello</code> will print <code>&#34;hello, world&#34;</code>
+at some point in the future (perhaps after <code>hello</code> has returned).
+</p>
+
+<h3 id="goexit">Goroutine destruction</h3>
+
+<p>
+The exit of a goroutine is not guaranteed to be synchronized before
+any event in the program.
+For example, in this program:
+</p>
+
+<pre>var a string
+
+func hello() {
+	go func() { a = &#34;hello&#34; }()
+	print(a)
+}
+</pre>
+
+<p>
+the assignment to <code>a</code> is not followed by
+any synchronization event, so it is not guaranteed to be
+observed by any other goroutine.
+In fact, an aggressive compiler might delete the entire <code>go</code> statement.
+</p>
+
+<p>
+If the effects of a goroutine must be observed by another goroutine,
+use a synchronization mechanism such as a lock or channel
+communication to establish a relative ordering.
+</p>
+
+<h3 id="chan">Channel communication</h3>
+
+<p>
+Channel communication is the main method of synchronization
+between goroutines.  Each send on a particular channel
+is matched to a corresponding receive from that channel,
+usually in a different goroutine.
+</p>
+
+<p>
+A send on a channel is synchronized before the completion of the
+corresponding receive from that channel.
+</p>
+
+<p>
+This program:
+</p>
+
+<pre>var c = make(chan int, 10)
+var a string
+
+func f() {
+	a = &#34;hello, world&#34;
+	c &lt;- 0
+}
+
+func main() {
+	go f()
+	&lt;-c
+	print(a)
+}
+</pre>
+
+<p>
+is guaranteed to print <code>&#34;hello, world&#34;</code>.  The write to <code>a</code>
+is sequenced before the send on <code>c</code>, which is synchronized before
+the corresponding receive on <code>c</code> completes, which is sequenced before
+the <code>print</code>.
+</p>
+
+<p>
+The closing of a channel is synchronized before a receive that returns a zero value
+because the channel is closed.
+</p>
+
+<p>
+In the previous example, replacing
+<code>c &lt;- 0</code> with <code>close(c)</code>
+yields a program with the same guaranteed behavior.
+</p>
+
+<p>
+A receive from an unbuffered channel is synchronized before the completion of
+the corresponding send on that channel.
+</p>
+
+<p>
+This program (as above, but with the send and receive statements swapped and
+using an unbuffered channel):
+</p>
+
+<pre>var c = make(chan int)
+var a string
+
+func f() {
+	a = &#34;hello, world&#34;
+	&lt;-c
+}
+
+func main() {
+	go f()
+	c &lt;- 0
+	print(a)
+}
+</pre>
+
+<p>
+is also guaranteed to print <code>&#34;hello, world&#34;</code>.  The write to <code>a</code>
+is sequenced before the receive on <code>c</code>, which is synchronized before
+the corresponding send on <code>c</code> completes, which is sequenced
+before the <code>print</code>.
+</p>
+
+<p>
+If the channel were buffered (e.g., <code>c = make(chan int, 1)</code>)
+then the program would not be guaranteed to print
+<code>&#34;hello, world&#34;</code>.  (It might print the empty string,
+crash, or do something else.)
+</p>
+
+<p>
+The <i>k</i>th receive on a channel with capacity <i>C</i> is synchronized before the completion of the <i>k</i>+<i>C</i>th send from that channel completes.
+</p>
+
+<p>
+This rule generalizes the previous rule to buffered channels.
+It allows a counting semaphore to be modeled by a buffered channel:
+the number of items in the channel corresponds to the number of active uses,
+the capacity of the channel corresponds to the maximum number of simultaneous uses,
+sending an item acquires the semaphore, and receiving an item releases
+the semaphore.
+This is a common idiom for limiting concurrency.
+</p>
+
+<p>
+This program starts a goroutine for every entry in the work list, but the
+goroutines coordinate using the <code>limit</code> channel to ensure
+that at most three are running work functions at a time.
+</p>
+
+<pre>var limit = make(chan int, 3)
+
+func main() {
+	for _, w := range work {
+		go func(w func()) {
+			limit &lt;- 1
+			w()
+			&lt;-limit
+		}(w)
+	}
+	select{}
+}
+</pre>
+
+<h3 id="locks">Locks</h3>
+
+<p>
+The <code>sync</code> package implements two lock data types,
+<code>sync.Mutex</code> and <code>sync.RWMutex</code>.
+</p>
+
+<p>
+For any <code>sync.Mutex</code> or <code>sync.RWMutex</code> variable <code>l</code> and <i>n</i> &lt; <i>m</i>,
+call <i>n</i> of <code>l.Unlock()</code> is synchronized before call <i>m</i> of <code>l.Lock()</code> returns.
+</p>
+
+<p>
+This program:
+</p>
+
+<pre>var l sync.Mutex
+var a string
+
+func f() {
+	a = &#34;hello, world&#34;
+	l.Unlock()
+}
+
+func main() {
+	l.Lock()
+	go f()
+	l.Lock()
+	print(a)
+}
+</pre>
+
+<p>
+is guaranteed to print <code>&#34;hello, world&#34;</code>.
+The first call to <code>l.Unlock()</code> (in <code>f</code>) is synchronized
+before the second call to <code>l.Lock()</code> (in <code>main</code>) returns,
+which is sequenced before the <code>print</code>.
+</p>
+
+<p>
+For any call to <code>l.RLock</code> on a <code>sync.RWMutex</code> variable <code>l</code>,
+there is an <i>n</i> such that the <i>n</i>th call to <code>l.Unlock</code>
+is synchronized before the return from <code>l.RLock</code>,
+and the matching call to <code>l.RUnlock</code> is synchronized before the return from call <i>n</i>+1 to <code>l.Lock</code>.
+</p>
+
+<p>
+A successful call to <code>l.TryLock</code> (or <code>l.TryRLock</code>)
+is equivalent to a call to <code>l.Lock</code> (or <code>l.RLock</code>).
+An unsuccessful call has no synchronizing effect at all.
+As far as the memory model is concerned,
+<code>l.TryLock</code> (or <code>l.TryRLock</code>)
+may be considered to be able to return false
+even when the mutex <i>l</i> is unlocked.
+</p>
+
+<h3 id="once">Once</h3>
+
+<p>
+The <code>sync</code> package provides a safe mechanism for
+initialization in the presence of multiple goroutines
+through the use of the <code>Once</code> type.
+Multiple threads can execute <code>once.Do(f)</code> for a particular <code>f</code>,
+but only one will run <code>f()</code>, and the other calls block
+until <code>f()</code> has returned.
+</p>
+
+<p>
+The completion of a single call of <code>f()</code> from <code>once.Do(f)</code>
+is synchronized before the return of any call of <code>once.Do(f)</code>.
+</p>
+
+<p>
+In this program:
+</p>
+
+<pre>var a string
+var once sync.Once
+
+func setup() {
+	a = &#34;hello, world&#34;
+}
+
+func doprint() {
+	once.Do(setup)
+	print(a)
+}
+
+func twoprint() {
+	go doprint()
+	go doprint()
+}
+</pre>
+
+<p>
+calling <code>twoprint</code> will call <code>setup</code> exactly
+once.
+The <code>setup</code> function will complete before either call
+of <code>print</code>.
+The result will be that <code>&#34;hello, world&#34;</code> will be printed
+twice.
+</p>
+
+<h3 id="atomic">Atomic Values</h3>
+
+<p>
+The APIs in the <a href="https://tip.golang.org/pkg/sync/atomic/"><code>sync/atomic</code></a>
+package are collectively “atomic operations”
+that can be used to synchronize the execution of different goroutines.
+If the effect of an atomic operation <i>A</i> is observed by atomic operation <i>B</i>,
+then <i>A</i> is synchronized before <i>B</i>.
+All the atomic operations executed in a program behave as though executed
+in some sequentially consistent order.
+</p>
+
+<p>
+The preceding definition has the same semantics as C++’s sequentially consistent atomics
+and Java’s <code>volatile</code> variables.
+</p>
+
+<h3 id="finalizer">Finalizers</h3>
+
+<p>
+The <a href="https://tip.golang.org/pkg/runtime/"><code>runtime</code></a> package provides
+a <code>SetFinalizer</code> function that adds a finalizer to be called when
+a particular object is no longer reachable by the program.
+A call to <code>SetFinalizer(x, f)</code> is synchronized before the finalization call <code>f(x)</code>.
+</p>
+
+<h3 id="more">Additional Mechanisms</h3>
+
+<p>
+The <code>sync</code> package provides additional synchronization abstractions,
+including <a href="https://tip.golang.org/pkg/sync/#Cond">condition variables</a>,
+<a href="https://tip.golang.org/pkg/sync/#Map">lock-free maps</a>,
+<a href="https://tip.golang.org/pkg/sync/#Pool">allocation pools</a>,
+and
+<a href="https://tip.golang.org/pkg/sync/#WaitGroup">wait groups</a>.
+The documentation for each of these specifies the guarantees it
+makes concerning synchronization.
+</p>
+
+<p>
+Other packages that provide synchronization abstractions
+should document the guarantees they make too.
+</p>
+
+
+<h2 id="badsync">Incorrect synchronization</h2>
+
+<p>
+Programs with races are incorrect and
+can exhibit non-sequentially consistent executions.
+In particular, note that a read <i>r</i> may observe the value written by any write <i>w</i>
+that executes concurrently with <i>r</i>.
+Even if this occurs, it does not imply that reads happening after <i>r</i>
+will observe writes that happened before <i>w</i>.
+</p>
+
+<p>
+In this program:
+</p>
+
+<pre>var a, b int
+
+func f() {
+	a = 1
+	b = 2
+}
+
+func g() {
+	print(b)
+	print(a)
+}
+
+func main() {
+	go f()
+	g()
+}
+</pre>
+
+<p>
+it can happen that <code>g</code> prints <code>2</code> and then <code>0</code>.
+</p>
+
+<p>
+This fact invalidates a few common idioms.
+</p>
+
+<p>
+Double-checked locking is an attempt to avoid the overhead of synchronization.
+For example, the <code>twoprint</code> program might be
+incorrectly written as:
+</p>
+
+<pre>var a string
+var done bool
+
+func setup() {
+	a = &#34;hello, world&#34;
+	done = true
+}
+
+func doprint() {
+	if !done {
+		once.Do(setup)
+	}
+	print(a)
+}
+
+func twoprint() {
+	go doprint()
+	go doprint()
+}
+</pre>
+
+<p>
+but there is no guarantee that, in <code>doprint</code>, observing the write to <code>done</code>
+implies observing the write to <code>a</code>.  This
+version can (incorrectly) print an empty string
+instead of <code>&#34;hello, world&#34;</code>.
+</p>
+
+<p>
+Another incorrect idiom is busy waiting for a value, as in:
+</p>
+
+<pre>var a string
+var done bool
+
+func setup() {
+	a = &#34;hello, world&#34;
+	done = true
+}
+
+func main() {
+	go setup()
+	for !done {
+	}
+	print(a)
+}
+</pre>
+
+<p>
+As before, there is no guarantee that, in <code>main</code>,
+observing the write to <code>done</code>
+implies observing the write to <code>a</code>, so this program could
+print an empty string too.
+Worse, there is no guarantee that the write to <code>done</code> will ever
+be observed by <code>main</code>, since there are no synchronization
+events between the two threads.  The loop in <code>main</code> is not
+guaranteed to finish.
+</p>
+
+<p>
+There are subtler variants on this theme, such as this program.
+</p>
+
+<pre>type T struct {
+	msg string
+}
+
+var g *T
+
+func setup() {
+	t := new(T)
+	t.msg = &#34;hello, world&#34;
+	g = t
+}
+
+func main() {
+	go setup()
+	for g == nil {
+	}
+	print(g.msg)
+}
+</pre>
+
+<p>
+Even if <code>main</code> observes <code>g != nil</code> and exits its loop,
+there is no guarantee that it will observe the initialized
+value for <code>g.msg</code>.
+</p>
+
+<p>
+In all these examples, the solution is the same:
+use explicit synchronization.
+</p>
+
+<h2 id="badcompiler">Incorrect compilation</h2>
+
+<p>
+The Go memory model restricts compiler optimizations as much as it does Go programs.
+Some compiler optimizations that would be valid in single-threaded programs are not valid in all Go programs.
+In particular, a compiler must not introduce writes that do not exist in the original program,
+it must not allow a single read to observe multiple values,
+and it must not allow a single write to write multiple values.
+</p>
+
+<p>
+All the following examples assume that `*p` and `*q` refer to
+memory locations accessible to multiple goroutines.
+</p>
+
+<p>
+Not introducing data races into race-free programs means not moving
+writes out of conditional statements in which they appear.
+For example, a compiler must not invert the conditional in this program:
+</p>
+
+<pre>*p = 1
+if cond {
+	*p = 2
+}
+</pre>
+
+<p>
+That is, the compiler must not rewrite the program into this one:
+</p>
+
+<pre>*p = 2
+if !cond {
+	*p = 1
+}
+</pre>
+
+<p>
+If <code>cond</code> is false and another goroutine is reading <code>*p</code>,
+then in the original program, the other goroutine can only observe any prior value of <code>*p</code> and <code>1</code>.
+In the rewritten program, the other goroutine can observe <code>2</code>, which was previously impossible.
+</p>
+
+<p>
+Not introducing data races also means not assuming that loops terminate.
+For example, a compiler must in general not move the accesses to <code>*p</code> or <code>*q</code>
+ahead of the loop in this program:
+</p>
+
+<pre>n := 0
+for e := list; e != nil; e = e.next {
+	n++
+}
+i := *p
+*q = 1
+</pre>
+
+<p>
+If <code>list</code> pointed to a cyclic list,
+then the original program would never access <code>*p</code> or <code>*q</code>,
+but the rewritten program would.
+(Moving `*p` ahead would be safe if the compiler can prove `*p` will not panic;
+moving `*q` ahead would also require the compiler proving that no other
+goroutine can access `*q`.)
+</p>
+
+<p>
+Not introducing data races also means not assuming that called functions
+always return or are free of synchronization operations.
+For example, a compiler must not move the accesses to <code>*p</code> or <code>*q</code>
+ahead of the function call in this program
+(at least not without direct knowledge of the precise behavior of <code>f</code>):
+</p>
+
+<pre>f()
+i := *p
+*q = 1
+</pre>
+
+<p>
+If the call never returned, then once again the original program
+would never access <code>*p</code> or <code>*q</code>, but the rewritten program would.
+And if the call contained synchronizing operations, then the original program
+could establish happens before edges preceding the accesses
+to <code>*p</code> and <code>*q</code>, but the rewritten program would not.
+</p>
+
+<p>
+Not allowing a single read to observe multiple values means
+not reloading local variables from shared memory.
+For example, a compiler must not discard <code>i</code> and reload it
+a second time from <code>*p</code> in this program:
+</p>
+
+<pre>i := *p
+if i &lt; 0 || i &gt;= len(funcs) {
+	panic(&#34;invalid function index&#34;)
+}
+... complex code ...
+// compiler must NOT reload i = *p here
+funcs[i]()
+</pre>
+
+<p>
+If the complex code needs many registers, a compiler for single-threaded programs
+could discard <code>i</code> without saving a copy and then reload
+<code>i = *p</code> just before
+<code>funcs[i]()</code>.
+A Go compiler must not, because the value of <code>*p</code> may have changed.
+(Instead, the compiler could spill <code>i</code> to the stack.)
+</p>
+
+<p>
+Not allowing a single write to write multiple values also means not using
+the memory where a local variable will be written as temporary storage before the write.
+For example, a compiler must not use <code>*p</code> as temporary storage in this program:
+</p>
+
+<pre>*p = i + *p/2
+</pre>
+
+<p>
+That is, it must not rewrite the program into this one:
+</p>
+
+<pre>*p /= 2
+*p += i
+</pre>
+
+<p>
+If <code>i</code> and <code>*p</code> start equal to 2,
+the original code does <code>*p = 3</code>,
+so a racing thread can read only 2 or 3 from <code>*p</code>.
+The rewritten code does <code>*p = 1</code> and then <code>*p = 3</code>,
+allowing a racing thread to read 1 as well.
+</p>
+
+<p>
+Note that all these optimizations are permitted in C/C++ compilers:
+a Go compiler sharing a back end with a C/C++ compiler must take care
+to disable optimizations that are invalid for Go.
+</p>
+
+<p>
+Note that the prohibition on introducing data races
+does not apply if the compiler can prove that the races
+do not affect correct execution on the target platform.
+For example, on essentially all CPUs, it is valid to rewrite
+</p>
+
+<pre>n := 0
+for i := 0; i &lt; m; i++ {
+	n += *shared
+}
+</pre>
+
+into:
+
+<pre>n := 0
+local := *shared
+for i := 0; i &lt; m; i++ {
+	n += local
+}
+</pre>
+
+<p>
+provided it can be proved that <code>*shared</code> will not fault on access,
+because the potential added read will not affect any existing concurrent reads or writes.
+On the other hand, the rewrite would not be valid in a source-to-source translator.
+</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>
+Go programmers writing data-race-free programs can rely on
+sequentially consistent execution of those programs,
+just as in essentially all other modern programming languages.
+</p>
+
+<p>
+When it comes to programs with races,
+both programmers and compilers should remember the advice:
+don&#39;t be clever.
+</p>
+
+
+
+</article>
+
+
+
+</div></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D0A78EE9-4C27-4A20-A915-2B02787DE2E4"><a href="https://www.climbing.com/gear/best-beginner-climbing-shoes/">A Beginner’s Guide to Climbing Shoes</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.climbing.com/gear/best-beginner-climbing-shoes/">https://www.climbing.com/gear/best-beginner-climbing-shoes/</a></span><br />
+			<span class="d">Added: 2023-02-17 15:10:40.110327959 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Climbing shoes are very different from street shoes. Let&#39;s save you from the mistakes that most first-time buyers make.
+			
+				... (26391 chars. See <a href="javascript:toggle('bD0A78EE9-4C27-4A20-A915-2B02787DE2E4');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="bD0A78EE9-4C27-4A20-A915-2B02787DE2E4">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><div data-inject-ads="" data-inject-ads-options="{ &#34;markup&#34;: [&#34;&lt;div class=&#39;js-ad js-hide-elements js-visible-signed-out js-scroll-load c-ad--inline&#39; data-child-zone=&#39;in-content-leaderboard-clm&#39; data-size=&#39;[\&#34;fluid\&#34;,[300,50],[300,100],[728,90],[320,50],[320,100],[468,60],[300,250],[1,1]]&#39; data-size-map=&#39;[[[1145,0],[\&#34;fluid\&#34;,[728,90],[468,60],[1,1]]],[[850,0],[\&#34;fluid\&#34;,[468,60],[1,1]]],[[0,0],[\&#34;fluid\&#34;,[300,250],[320,100],[300,100],[320,50],[300,50],[1,1]]]]&#39; data-hide-elements=&#39;.o-banner-ad__vertical .js-ad&#39;&gt;&lt;/div&gt;&#34;], &#34;filter&#34;: { &#34;nextExceptions&#34;: &#34;img, blockquote, div&#34;, &#34;nextContainsExceptions&#34;: &#34;img, blockquote, a.btn, a.o-button&#34;} }">
+              
+  <p>
+      Enjoy unlimited access to Climbing’s award-winning features, in-depth interviews, and expert training advice. 
+      <a href="https://www.climbing.com/outsideplus" data-analytics-event="click" data-analytics-data="{&#34;name&#34;:&#34;Element Clicked&#34;,&#34;props&#34;:{&#34;destination_url&#34;:&#34;/outsideplus&#34;,&#34;domain&#34;:&#34;&lt;&lt;analytics_vars.domain&gt;&gt;&#34;,&#34;name&#34;:&#34;in-content-cta&#34;,&#34;type&#34;:&#34;link&#34;}}">Subscribe here</a>.
+    </p>
+                    
+  
+      
+      
+
+      
+      <p><span id="section_1">Section divider</span></p><h2><strong>Part 1. “You just wasted a hundred bucks, dude.” </strong></h2>
+<p>On Columbus Day Weekend, 2004, my father took me to the Eastern Mountain Sports in West Lebanon, New Hampshire, to buy my first pair of climbing shoes. I was 15 years old and was not yet a “real climber.” Having toproped outside once and spent a few hours traversing my school’s wooden wall in my sneakers, I knew I was interested in climbing, but I had never led a route, never set foot in a commercial gym, and had no idea what terms like <em>drop knee</em> or <em>heel hook</em> or <em>crimp</em> meant.</p>
+<p>The result? I stood before the shoe rack, perplexed by strange names like “Muira” and “Moccasym” and “Anasazi Velcro.” Aside from simple basics like color, I couldn’t tell the shoes apart and had no idea that some were stiff while others were soft, that some were aggressively downturned while others were flat, and that these different attributes made them excel at different aspects of the sport.</p>
+<p>Eventually a lanky young shoe-salesman with blond dreadlocks stepped up and asked me what kind of climbing I wanted to do (“The adventure kind!” I replied), then helped me into a pair of Five Ten Asyms—blue ones, upturned in the front, stiff as boards.</p>
+<p>Not knowing any better, I sized my Asyms like sneakers: snug but with enough spare room in the toe that I wouldn’t bruise my toenails when walking downhill and loose enough so that I could wear them with a pair of wool socks when it got cold. I was happy with them. Psyched. But when I returned to school on Monday and proudly showed them to the friend who’d just introduced me to climbing, he shook his head sadly.</p>
+<p>“You just wasted a hundred bucks, dude,” he said.</p>
+<p>“They’re tens!” I responded defensively. “Same size as my sneakers.”</p>
+<p>“Try climbing in them,” my friend said. “You’ll see.”</p>
+<p>I tried. They were about six-sizes too large and designed for long days on smear-intensive big walls, not bouldering indoors and sport climbing on steep schist. After five or six weeks of grumpy denial, I returned to EMS for my second pair of climbing shoes.</p>
+<p>As it turns out, my experience was not unusual. Beginner climbers, like beginner cyclists and beginner backpackers, are often forced to make financial decisions without the kind of background knowledge that helps them make informed purchases. In hopes of saving a few of you from the mistakes that I made, I’ve put together this in-depth primer into climbing shoes. It’ll tell you everything you need to know about the different shapes and functions of climbing shoes, and makes some recommendations for a first-time pair.</p>
+
+      <p><span id="section_2">Section divider</span></p><h2><strong>Part II. What do beginners need to know about climbing shoes?</strong></h2>
+<p>Deciding what kind of shoe is best for you is a bit like trying to decide what kind of cake you’d choose if you could eat only one type of desert for the rest of your days. That’s because climbing shoes are generally designed for specific styles of climbing. For steep roofs and caves, you want soft, aggressive shoes; for vertical granite you want stiffer, flatter shoes with great edging support; for cracks, something supple and bendy is ideal. “All-arounders” don’t really exist in the world of performance climbing shoes, which is why <em>most </em>experienced cross-disciplinary climbers (climbers who trad climb, boulder, and sport climb, for instance) own multiple pairs. To complicate things, climbers also have different body types and climbing styles, both of which influence shoe decisions.</p>
+<p>That said, you need to start somewhere. And since, as a beginner, you’re still learning (a) the basics of body position and footwork and (b) what kind of shoe will best compliment your climbing style, you’re better off going for a shoe that’ll perform adequately across disciplines and won’t break the bank. Once you’ve worked on your technique and learned to use your feet, you’ll be better able to appreciate the niche benefits of performance shoes and better equipped to make purchasing decisions.</p>
+<p>Four things you need to know about shoe design.</p>
+<h3>1. Flat Shoes vs. downturned shoes.</h3>
+<figure id="attachment_84019"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/FLAT-V.-DOWNTURN-scaled.jpg" alt="" width="2560" height="1550"/></figure>
+<p><em>Flat shoes. </em>Designed for slabs and vertical walls, where you’re often supporting most of your body weight from tiny edges that you stand on with your big toes, flat shoes are—as they sound—flat-soled. People generally size them so that their toes aren’t totally crumpled up (as they are in aggressively downturned shoes). Most flat shoes are pretty stiff—the stiffer they are, the easier it is to stand on tiny edges—but some, like the classic <a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Ffive-ten-niad-moccasym-climbing-shoe" target="_blank" rel="noopener">Five Ten Moccasym</a> (listed below), are very soft (flexibility allows them to torque well into cracks and smear well on slabs). Because they’re often more comfortable, flat shoes are popular with beginners and kids—but they’re not great on steeper climbs, and if you intend to do a lot of bouldering or steeper sport climbing, you might be better off going with a slightly downturned shoe.</p>
+<p><em>Downturned shoes. </em>Meant for overhanging climbs, downturned shoes have a bird-beaked shape and are often (though not always) pretty soft. Softness gives the climber more sensitivity in the toes, whereas stiffness provides support and makes it easier to generate power through the toes. Unless you exclusively climb on slabby or vertical terrain, you will eventually want a pair of downturned shoes.</p>
+<p>Downturn ranges from slightly downturned to moderately downturned to aggressively downturned.</p>
+<figure id="attachment_84025"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/downturn-4-scaled.jpg" alt="" width="2560" height="1460"/></figure>
+<p>Slightly and moderately downturned shoes are workhorses—probably the closest thing to true all-arounders; stiffer ones (like the Muira VS, listed below) perform well on vertical terrain but can also toe into crimps and pockets on steeper walls; softer ones (like Tenaya’s Mastia) have the sensitivity to excel on smears while not sacrificing performance on steeper walls. Extremely downturned shoes, on the other hand, are more exclusively designed for toeing in on extreme overhangs.</p>
+<h3>2. Stiff shoes vs. soft shoes</h3>
+<p>Stiff shoes can be either flat (like the TC Pro) or downturned (like the Katana). Their rigid midsoles help support your foot, allowing you to stand on smaller holds and making it easier to generate power through your toes. There are two downsides to stiff shoes: (1) they’re harder to manipulate with your feet, (2) they lack the sensitivity (the ability to conform your shoe around what you’re standing on) of soft shoes.</p>
+<p>Soft shoes, meanwhile, can also be either flat like the <a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Ffive-ten-niad-moccasym-climbing-shoe" target="_blank" rel="noopener">Five Ten Moccasym</a> or downturned like <a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fscarpa-furia-s-climbing-shoe-mens" target="_blank" rel="noopener">Scarpa’s Furia</a>. Soft, flat shoes are great for crack climbing, while soft downturned shoes are great for steep walls and indoor climbing, where smearing on volumes is commonly required; but neither excel on vertical edging.</p>
+<h3><strong>3. Asymmetrical shoes</strong></h3>
+<p>Just about all climbing shoes are a little asymmetrical, which which we mean that they skew medially, allowing you to drive more pressure (and therefor power) through the big toe. The more the tip of the shoe skews inwardly away from the center line, the more asymmetrical the shoe. Flat shoes are generally more symmetrical than downturned shoes. The purpose of the asymmetry is to keep your toes in a crimp position, which helps with digging into holds on steep routes and, with some models, help support you on small holds on vertical terrain.</p>
+<figure id="attachment_84022"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/asymmetry-2-scaled.jpg" alt="" width="2560" height="1464"/></figure>
+<h3><strong>4. </strong>Closure Systems</h3>
+<p>Newer climbers are often surprised to learn that closure systems—generally divided into three categories: laces, Velcro, and slippers—are more than just a preferred way of fastening a climbing shoe to the foot; they actually change the nature of that shoe’s performance.</p>
+<p><em>Laceups. </em>Laceups allow the wearer to customize the way the shoe flexes or doesn’t. But they aren’t great for toe-hooking and they take longer to put on and take off.</p>
+<p><em>Slippers.</em> These tend to be soft and conform tightly to your feet. These shoes are generally good for gym climbing and steep boulders—and if they’re flat, for cracks—but they often do less well on slabbier and vertical terrain, where supported edging is the name of the game. The drawbacks: (1) you have to size them quite small because you can’t adjust them; (2) heelhook too aggressively and it’s pretty easy to pull your shoe off. This is why many newer slippers have a single high Velcro strap near the ankle.</p>
+<p><em>Velcro. </em>The benefit of Velcro: it’s more supportive and customizable than a slipper but easier to get on and off than a laceup. The drawback? These straps tend to get in the way when you’re toehooking—which is why a more slipper-like shoe is often preferable when intense toehooks are required. As a beginner, don’t worry about this drawback too much.</p>
+
+      <p><span id="section_3">Section divider</span></p><h2><strong>Part III. Some FAQs about First-Time Shoes</strong></h2>
+<h2><strong><em>What kind of shoe is right for me?</em></strong></h2>
+<p><em>G</em>enerally speaking, A first-time shoe is doing its job if it allows you to have fun while learning the basics of footwork and body position. To maximize this learning process, find yourself a flat-ish shoe with plenty of midsole support and then size them down one or two sizes off your street shoe: you want them to feel snug, maybe even a bit too snug, but not painful. Remember that all climbing shoes—but especially leather ones—stretch with wear. Shoes that fit perfectly when first purchased will feel a bit too big after a few weeks of use. In time, as you try various disciplines and hone your technique, you may want to upgrade to a shoe that’s specifically designed for the types of climbing you do. Boulderers might get a pair of uber-aggressive slippers; sport climbers might buy some aggressive yet supportive shoes equally suited to vertical edging and steeper walls; and trad climbers might go for shoes that twist well into cracks.</p>
+<p>Want to learn more about what type of shoe is best for you, check out pro climber Paige Claassen’s <a href="https://www.climbing.com/gear/how-to-choose-the-best-climbing-shoe/">excellent flowchart</a> on this subject.</p>
+<p><strong><em>How should I size my shoes?</em></strong></p>
+<p>Many highly aggressive climbing shoes are designed to be sized uncomfortably tight, but as a beginner, discomfort is working to your disadvantage. You’ll improve faster if you can move around on rock (or plastic) without thinking about how uncomfortable your feet feel. That said, comfort isn’t king. Your first shoes should be <em>just a bit too tight</em>—and incomparably tighter than your street shoes. Your big toe should reach the very end of the toebox (tip: clip your nails short), but your toes shouldn’t curl all the way up unless you’re in a hyper-downturned shoe. If your toes are super scrunched, or if the arch of your foot is cramping, or if you’re feeling pins and needles in your feet, or if you can’t get your heel all the way down in the heelcup—well, if any of that’s happening, try a half-size larger until you have a snug fit that’s also close to comfortable. Also, there should not be air pockets under your arch or around your heel. Take note of the material. Leather shoes stretch more than synthetic materials. Shoes with rubber strips over the top of the shoe stretch less than shoes without them.</p>
+<p>(Note that things are different with many performance shoes, which can take some wrangling to get into. Your foot may not drop all the way into the heelcup during initial break-in phase. And you might not be able to get them on without feeling like you’re about to bust a tendon yanking on the pull tabs. These shoes are <em>not </em>great for beginners and often require an extended break in period, often involving chilling on the couch in your shoes trying to stretch them out.)</p>
+<p><strong><em>How much money should I spend?</em></strong></p>
+<p>The shoes listed below range in price from $85<strong> </strong>to $185—which is relatively cheap as far as climbing shoes go. But when thinking about how much you want to spend on your first pair of climbing shoes, here are a few things to consider:</p>
+<p><em>You don’t need a sports car. </em>Giving a pair of hyper-aggressive $200 bouldering slippers to a beginner is a bit like giving a Ferrari to newly licensed 16-year-old: You’re likely to climb holes into your soles long before you accrue the skills required to fully take advantage of the shoes.</p>
+<p><em>Your first shoe might not last you very long.</em> The longevity of your climbing shoes largely reflects the quality of your footwork and the type of climbing you’re doing. Real rock is more abrasive than plastic; sharply striated schist is more abrasive than glacially polished granite; etc. For this reason, most beginners are better off starting out with a cheaper shoe that they can learn on without worrying too much about the price tag.</p>
+<p>That said…</p>
+<p><em>You will progress beyond your first shoe. </em>Most beginners don’t stay beginners, and this means that many climbers advance beyond the functionality of their first climbing shoes long before those shoes break down. For this reason, if you think that climbing might become a consistent part of your weekly schedule, it’s not a bad idea to do one of two things: (a) either shop sales and buy a cheap (or even used) first pair of shoes with the knowledge that you’ll probably want to buy a sleeker shoe in the near future; or (b) spend a little bit more money and get a pair of shoes that you can progress into.</p>
+<p><strong><em>What are the five most common mistakes beginners make when purchasing their first climbing shoes?</em></strong></p>
+<ol>
+<li><em>Wearing socks.</em> Climbing shoes aren’t meant to be worn with socks. The shoes should be <em>far </em>too tight for that.</li>
+<li><em>Sizing for comfort.</em> Though foot discomfort is not a virtuous end-unto-itself (as some climbers believe), comfort isn’t the chief metric with which you should purchase climbing shoes. Instead, think about what kind of climbing you want to do and what type of body and foot type you have.</li>
+<li><em>Buying the cheapest shoe</em>. If you’re a beginner and don’t know how much climbing you’ll actually do, it makes sense to buy a cheaper shoe. But if you’ve climbed enough to know that climbing might become an important part of your life, you’re probably better off taking the time to find a more intermediate pair of climbing shoes that you can grow into—and this will require spending some money.</li>
+<li><em>Buying the most expensive shoe</em>. When you first start climbing, your footwork is (alas) going to be terrible. And terrible footwork (double alas) often decreases the lifetime of your shoe. Beginners can plan on wearing through their first pair of shoes far faster than more advanced climbers, so you’re better off getting a cheaper shoe and working on your technique before forking over $200+.</li>
+<li><em>Listening to the store clerk who does not climb</em>. Remember my sorry tale from 2004? Well, it’s a common one. While your random outdoor gear store employee in 2022 is far more likely to have rock climbed than they were in 2004, it’s still probably prudent to ask the salesperson how much climbing they’ve done, and what kind, when purchasing shoes. If they don’t have much experience, don’t treat their word as bible. (Chances are that your local climbing gym sells shoes; they’re a great resource.)</li>
+</ol>
+<p>Check out this article, “<a href="https://www.climbing.com/gear/the-climbing-magazine-rock-shoe-buyers-guide/">The Rock Shoe Bible</a>” by Climbing’s Editor-in-Chief, Matt Samet, to learn more about shoe terminology, sizing, and history.</p>
+
+      <p><span id="section_4">Section divider</span></p><h2><strong>Part IV. The Best Shoes for Beginners</strong></h2>
+<figure id="attachment_84096"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/Black-Diamond.jpeg" alt="" width="1198" height="968"/></figure>
+<h3><strong>Black Diamond Momentum</strong></h3>
+<p>An excellent shoe for those wanting an all-around, comfortable, quality shoe, at a good price point, with sound construction. Our reviewer: “For a beginner climber, the Momentum is excellent, and with a tag of $89.95, the price is right. The shoes have enough performance to take you from 5.6 to 5.11 on any type of route, and, for a soft, slipper-like flat last, they edge decently, mainly due to the rather straight profile on the inside of the shoe, which lets your big toe do all the work. Because of a nice long arch on the outside rand, the backstepping ability of the shoe is generous.”</p>
+<p>Fit: our reviewer fit the Momentum in his street-shoe size and it was spot on.</p>
+<p>Price: $89.95 (often on sale)</p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fblack-diamond-momentum-climbing-shoe-womens" target="_blank" rel="noopener">Buy the women’s Momentum on Backcountry.com</a></p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fblack-diamond-momentum-climbing-shoe-mens" target="_blank" rel="noopener">Buy the men’s Momentum on backcountry.com</a></p>
+<p>*</p>
+<figure id="attachment_84097"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/Butora.jpeg" alt="" width="1196" height="888"/></figure>
+<h3><strong>Butora Endeavor</strong></h3>
+<p><strong> </strong>As the one-stop shop of Butora’s shoe line, the Endeavor is a durable, medium-stiff, medium-flex, sticky-rubber kick that is at home on vertical, slabby, and even slightly overhanging terrain. The Endeavor provides great performance without requiring downsizing (i.e. pain). The dirtbag-friendly price makes this an excellent option for a gym or mileage shoe. Although, as with most shoes on this list, <a href="https://www.climbing.com/gear/review-butora-endeavor-climbing-shoe/">our reviewer</a> noted that “Although it’s good at everything, it doesn’t particularly excel at anything.”</p>
+<p>Fit: Available in both wide and narrow fits.</p>
+<p><em>Price: $109.99</em></p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fbutora-endeavor-climbing-shoe-wide-fit-womens" target="_blank" rel="noopener">Buy the women’s wide fit Endeavor on backcountry.com</a></p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fbutora-endeavor-climbing-shoe-tight-fit-womens" target="_blank" rel="noopener">Buy the women’s narrow fit Endeavor on backcountry.com</a></p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=d1fc1e69-7ef9-4d28-b8c0-64743fc06ad6&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.avantlink.com%2Fclick.php%3Ftt%3Dcl%26merchant_id%3Db5770911-39dc-46ac-ba0f-b49dbb30c5c7%26website_id%3D944e9154-0ed1-416a-8172-b6ca9fc1f2aa%26url%3Dhttps%253A%252F%252Fwww.backcountry.com%252Fbutora-endeavor-climbing-shoe-tight-fit-mens" target="_blank" rel="noopener">Buy the men’s tight fit Endeavor on Backcountry.com</a></p>
+<p>*</p>
+<figure id="attachment_84098"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/Evolve-Defy.jpeg" alt="" width="1200" height="788"/></figure>
+<h3><strong>Evolv Defy</strong></h3>
+<p>The Defy (and its women’s version, the <a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fevolv-elektra-climbing-shoe-2009-womens">Elektra</a>) is a remarkably comfortable shoe that performs well for jamming, smearing, and edging. With a perforated, synthetic upper, nylon lining, and padded tongue, it almost feels like you’re wearing socks. The flat, slightly asymmetric last is soft and sensitive, yet a half-midsole provides some edging power. Like most all-day shoes, the Defy doesn’t excel at anything, but at the end of a long day, your feet will be thankful for the comfort. They also perform well on bouldering.</p>
+<p>Price: $89</p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fevolv-defy-climbing-shoe-2009" target="_blank" rel="noopener">Buy the Evolve Defy on Backcountry.com</a></p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fevolv-elektra-climbing-shoe-2009-womens" target="_blank" rel="noopener">Buy the Evolve Elektra on Backcountry.com</a></p>
+<p>*</p>
+<figure id="attachment_84215"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/niad.jpeg" alt="" width="1198" height="1008"/></figure>
+<h3>Five Ten Niad Moccasym</h3>
+<p>For decades, the Five Ten Moccasym has been the shoe of choice for elite crack climbers, but it’s also a great beginner shoe. It’s got a soft flat rand and is great for smearing and torquing into cracks. Recent updates to the shoe (rubber over the big toe) make it more functional for beginners likely to climb in the gym. Note: these shoes stretch a lot once you start breaking them in, so make sure you size them tight.</p>
+<p>Price: $124.95</p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Ffive-ten-niad-moccasym-climbing-shoe" target="_blank" rel="noopener">Buy the Five Ten Moccasym on Backcountry.com</a></p>
+<p>*</p>
+<figure id="attachment_84099"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/Mythos.jpeg" alt="" width="1199" height="689"/></figure>
+<h3><strong>La sportive Mythos Eco</strong></h3>
+<p>Since 1991, the Mythos has been a genre-bending climbing shoe. In those 15 years, climbers have used the comfortable shoe for every style of climbing from boulders to plastic. Several years ago, it got a green upgrade, becoming the Mythos Eco. It uses 95% recycled components—the rubber is basically made from rubber floor scraps—but, aside from earthy colors, its performance is indistinguishable from the original shoe.</p>
+<p>How does it perform? The Mythos is stiff at first, but that first impression is misleading. Climb in the shoe and it softens, eventually reaching a stasis where it still has enough stability to edge but is soft and sensitive enough to feel out micro bumps. A former editor here did the first ascents of numerous 5.14s wearing the Mythos, pushing off insecure nothings as if they were ladder rungs. (<a href="https://www.climbing.com/gear/la-sportiva-mythos-eco-maximum-performance-minimal-carbon-footprint/">Read our review</a>.)</p>
+<p>Price: $145</p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fla-sportiva-mythos-eco-climbing-shoe-mens" target="_blank" rel="noopener">Buy the Men’s Mythos Eco on Backcountry.com</a></p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fla-sportiva-mythos-eco-climbing-shoe-womens" target="_blank" rel="noopener">Buy the Women’s Mythos Eco on Backcountry.com</a></p>
+<p>*</p>
+<figure id="attachment_84100"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/tarantulace.jpeg" alt="" width="1198" height="1039"/></figure>
+<h3><strong>La Sportiva Tarantulace</strong></h3>
+<p>One of the cheapest shoes on this list and, consequently, one of the best-selling climbing shoes in the U.S., the Tarantulace is a comfort first shoe with an unlined leather upper, a mildly asymmetric shape, a stiff last, and a relatively roomy toe-box. The uppers are leather, so they’ll stretch with time, and the soles are thick (5mm of FriXion rubber), which increases the chance that you’ll learn good footwork before burning all the way through the rubber. If you’re buying shoes to go up big walls, prioritizing all-day comfort and durability makes sense. But it does come at the direct expense of performance. The stiff toebox is famously insensitive, making it hard to <em>feel</em> the things you’re standing on, and the stiff, flat last hurts its performance on steeper walls. So if you’re looking to sport climb or boulder (either in the gym or outside) it might be worth going for something a bit more performance oriented.</p>
+<p>Price: $85</p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fla-sportiva-tarantulace-climbing-shoe-womens" target="_blank" rel="noopener">Buy the Women’s Tarantulace on Backcountry.com</a></p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fla-sportiva-tarantulace-climbing-shoe" target="_blank" rel="noopener">Buy the Men’s Tarantulace on Backcountry.com</a></p>
+<p>*</p>
+<figure id="attachment_84101"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/Kudo.jpeg" alt="" width="1195" height="1002"/></figure>
+<h3><strong>La Sportiva Kubo</strong></h3>
+<p>Moderately asymmetrical and moderately downturned, the Kubo is an intermediate shoe whose comfort and versatility might be particularly attractive to beginners. They’re one of the few shoes on this list with top-of-the-toe rubber—which helps for toe-hooking. The cons? First, it’s a bit pricier than most beginner models. Second, versatility comes at the expense of specialization: this shoe is great if you’re interested in doing it all, but if you’re specializing in a discipline, you might be better off getting a more focused shoe. Third, the thinner rubber (4mm) gives the shoe more sensitivity but means that it’ll wear down faster—unless you’ve already got good footwork. Comes in men’s and women’s models.</p>
+<p>Price: $150</p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fla-sportiva-kubo-climbing-shoe-womens" target="_blank" rel="noopener">Buy the women’s Kubo on Backcountry.com</a></p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fla-sportiva-kubo-climbing-shoe">Buy the men’s Kubo on Backcountry.com</a></p>
+<p>*</p>
+<figure id="attachment_84102"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/red-chili-circuit.jpeg" alt="" width="1200" height="831"/></figure>
+<h3><strong>Red Chili Circuit VCR</strong></h3>
+<p>Named for the bouldering circuits in Fontainebleau, where climbers move through the boulders doing numerous (often moderate) problems, the Circuit VCR takes a fresh tack when it comes to beginners shoes: while still emphasizing all-day comfort common for beginner shoes, they’ve built a shoe designed for boulders. It’s got double-velcro closure system and is particularly suitable for beginners who anticipate spending most of their first few months or years in the gym. Oh, and the hemp footbed is both antibacterial and odor-blocking: so sweat all you want.</p>
+<p>Price: $94.95</p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fred-chili-circuit-vcr-climbing-shoe">Buy the Circuit VCR on Backcountry.com</a></p>
+<p>*</p>
+<figure id="attachment_84103"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/Scarpa-Reflex.jpeg" alt="" width="1199" height="731"/></figure>
+<h3><strong>Scarpa Reflex V</strong></h3>
+<p>The Reflex V is a flat-lasted Velcro designed for all day wear. A sturdy, well-made shoe with two Velcro straps, the Reflex V has leather uppers that conform to your foot plus a solid, symmetric footbed that ensures a relaxed feel. The Reflex V doesn’t perform remarkably well on tiny holds or overhangs; nor do they have a much sensitivity or edging power; so beginners who aspire to progress quickly through the grades would do well to pick a more aggressive shoe to start with. But if value and comfort are your priorities, these kicks are a great choice.</p>
+<p>Price: $115</p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fscarpa-reflex-v-climbing-shoe">Buy the men’s Reflex on Backcountry.com</a></p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fscarpa-reflex-v-climbing-shoe-womens">Buy the women’s Reflex on Backcountry.com</a></p>
+<p>*</p>
+<figure id="attachment_84118"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/tanta-2.jpeg" alt="" width="1199" height="1018"/></figure>
+<h3>Tenaya Tanta</h3>
+<p>Expressively designed to be a climber’s second shoe purchase, the Tanta is a subtly downturned shoe that’ll help introduce you to a more aggressive shoe while not breaking your feet or forcing you to specialize too much. It’s moderately sensitive and <em>very </em>comfortable, ideal for all-day wear or traditional multi-pitch routes with their varied terrain.</p>
+<p>Price: $99.95</p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Ftenaya-tanta-climbing-shoe-mens" target="_blank" rel="noopener">Buy the Tanta on Backcountry.com</a></p>
+
+      <p><span id="section_5">Section divider</span></p><h2><strong>Part V. Leveling up </strong></h2>
+<p>The following shoes are <em>examples</em> of more intermediate / advanced models that could also prove suitable for first-time shoe buyers. This is, as above, far from a complete list.</p>
+<figure id="attachment_84104"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/Muira-VS.jpeg" alt="" width="1196" height="1038"/></figure>
+<h3><strong>La Sportiva Muira VS</strong></h3>
+<p>This Velcro version of the classic Muria has become a classic of its own: A “high performance” shoe that excels across disciplines, the Muria VS has become a go-to for beginners and experts alike. (Watch this video of elite British tradster Hazel Findlay <a href="https://www.climbing.com/videos/hazel-findlay-climbs-dangerous-trad-route-pembroke/">styling a dangerous 5.13c</a> in her Muiras.) As one of our early reviewers noted, the Muira VS is an all-around tool that will “improve every climber’s performance, no matter what discipline they are into… [it] just works well in all climbing applications. Who wouldn’t want that?” It excels on dime-edges, heel hooks, and finger cracks—but is also downturned and soft enough to do well on steeper terrain. The shoe does stretch (it’s a leather upper) but not excessively. Size it tight—but not insanely so.</p>
+<p><em>Features:</em> It has La Sportival’s patented P3 midsole, an asymmetric and downturned last, Dentex lining (no lining underfoot), leather upper, and 4mm Vibram XS Grip2 rubber, and three Velcro straps that attach in opposite directions, wrapping the shoe to the shape of your foot. Also available in a low-volume / women’s version.</p>
+<p>Price: $185</p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fla-sportiva-miura-vs-climbing-shoe" target="_blank" rel="noopener">Buy the men’s Muira VS on Backcountry.com</a></p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fla-sportiva-miura-vs-vibram-xs-grip2-climbing-shoe-womens" target="_blank" rel="noopener">Buy the women’s Muira V on Backcountry.com</a></p>
+<p>*</p>
+<figure id="attachment_84105"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/Skwama.jpeg" alt="" width="1200" height="1068"/></figure>
+<h3><strong>La Sportiva Skwama</strong></h3>
+<p>Winner of the editor’s choice award in 2017, our editors described the Skwama thus: “These shoes are sort of the paradox of the high-end shoe world: elite performance but comfortable to wear; easy to get on in a slipper design, stiff for toeing-in but soft and sensitive for smearing.” A true all-arounder that (depending on how you size them) can excel on boulders and sport routes, edgy face climbs, crack climbs, comp boulders, or lazy jaunts up the big walls, the Skwama is a high-performance slipper hybrid that truly delivers as a sensitive and powerful shoe with a slightly lower price tag and higher comfort factor than many in its class.</p>
+<p>The only complaint? These are performance shoes: they require two or three sessions (at minimum) to break in. (<a href="https://www.rockandice.com/gear/gear-reviews/hardgoods/climbing-shoes/la-sportiva-skwama/">Read the full review here</a>.)</p>
+<p>Price: $180<strong> </strong></p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fla-sportiva-skwama-climbing-shoe-mens" target="_blank" rel="noopener">Buy the men’s Skwama on Backcountry.com</a></p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fla-sportiva-skwama-climbing-shoe-womens" target="_blank" rel="noopener">Buy the women’s Skwama on Backcountry.com</a></p>
+<p>*</p>
+<figure id="attachment_84106"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/Quantic.jpeg" alt="" width="1198" height="1030"/></figure>
+<h3>Scarpa Quantic</h3>
+<p>The Quantic is “a medium/high-end all-arounder that does everything laudably well, is comfy and light (13.4 ounces, size 40.5), and given its softness (epic smearing!) does almost better in the gym than on rock.” The last is relaxed but pointy and precise—and the shoes are sensitive and excel on slightly overhanging terrain. For vertical or slabby micro-edging in, you might want something stiffer. These were built by legendary Scarpa shoe designer Heinz Mariacher with the intention of offering “a multi-purpose performance shoe, a mix of lightness, sensitivity, and good precision,” representing a step up into more advanced footwear for newer or intermediate climbers. [Read our Review]</p>
+<p>Price: $159</p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fscarpa-quantic-climbing-shoe" target="_blank" rel="noopener">Buy the men’s Quantic on Backcountry.com</a></p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fscarpa-quantic-climbing-shoe-womens" target="_blank" rel="noopener">Buy the women’s Quantic on Backcountry.com</a></p>
+<p>*</p>
+<figure id="attachment_84107"><img loading="lazy" src="https://www.climbing.com/wp-content/uploads/2022/05/Veloce.jpeg" alt="" width="1198" height="848"/></figure>
+<p><strong>Scarpa Veloce</strong></p>
+<p>Once upon a time, beginners started climbing on ropes, toproping outside or in the gym where stiffer, flatter shoes made sense. Today, however, most climbers start inside, and most emphasize bouldering—which means, perhaps, that it’s time to re-evaluate what actually makes a good beginners shoe. That’s the line of thinking with Scarpa’s Veloce, a soft gym shoe geared toward intermediate climbers wanting sensitivity and advanced climbers who want their shoes to be comfortable enough that they can wear them for long sessions. The mildly downturned Veloce is a soft flexible training friend. Comfort is off the charts, and the Veloces smear/hook/glom like demons, though you may crave greater support on jibs. <a href="https://www.climbing.com/gear/2020-gym-training-kit-scarpa-veloce-review/">Read the full review</a>. It was one of our top gear picks of 2020.</p>
+<p>Price: <em>$129</em></p>
+<p><a href="https://www.backcountry.com/scarpa-veloce-climbing-shoe-womens" target="_blank" rel="noopener">Buy the men’s Veloce on backcountry.com</a></p>
+<p><a href="https://www.avantlink.com/click.php?tt=cl&amp;merchant_id=b5770911-39dc-46ac-ba0f-b49dbb30c5c7&amp;website_id=944e9154-0ed1-416a-8172-b6ca9fc1f2aa&amp;url=https%3A%2F%2Fwww.backcountry.com%2Fscarpa-veloce-climbing-shoe-womens">Buy the women’s Veloce on backcountry.com</a></p>
+
+
+      
+
+  
+          
+  
+      
+              
+      
+                    
+    </div></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="96F869AF-C620-4EEB-BAEB-E5478F434A6F"><a href="https://kaizenwaytowellness.com/">The Kaizen Way</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://kaizenwaytowellness.com/">https://kaizenwaytowellness.com/</a></span><br />
+			<span class="d">Added: 2023-01-01 13:46:58.127275943 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Are you looking for a new approach to health? Do you want to finally get the results you have been hoping for? How do you find a practitioner that is willing to try a different approach and guide you through your journey
+			
+				... (729 chars. See <a href="javascript:toggle('b96F869AF-C620-4EEB-BAEB-E5478F434A6F');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="b96F869AF-C620-4EEB-BAEB-E5478F434A6F">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><div data-node="5ae9436a658c3">
+	
+<p><span>Are you looking for a new approach to health? Do you want to finally get the results you have been hoping for? How do you find a practitioner that is willing to try a different approach and guide you through your journey? You found us! We have answers!</span></p>
+<p><span>Dr. Tomas and Dr. Laura welcome you!! At The Kaizen Way to Wellness-A Wellness Way Affiliate, we utilize a unique approach to assess and treat your concerns. Throughout our 19 years of practice, it has become all too common to hear patients complain of nagging health issues that their doctors are unable to find answers for. Or worse yet, they are told ‘nothing is wrong’!</span></p>
+<p><span>We discover the ROOT CAUSE of your health issues, unravel your symptoms and watch your health improve!</span></p>
+</div></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+<section>
+<h2 id="saveme">Random expired <a href="javascript:toggle('olsaveme');">&#177;</a></h2>
+<div>2 links selected from 84 expired links</div>
+<ol id="olsaveme">
+
+<li>
+	<article>
+		<h3 id="EAB90B18-87D1-4B09-90C4-C78525EDF920"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter">What&#39;s in a Good Error Message?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter">https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.473227024 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="AB81D5DF-D925-4E10-AACF-204FEC720356"><a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html">Introduction to AWS Lake Formation - Build a Secure Data Lake in Days | AWS Online Tech Talks</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html">https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:37.371964931 &#43;0000 UTC</span>
+		</div>
+		<p class="p">AWS Lake Formation (coming soon) will make it easy to set up a secure data lake in days. With AWS Lake Formation, you will be able to ingest, catalog, clean, transform, and secure your data, and make it available for ana
+			
+				(Open <a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+<section>
+<h2 id="expired">Expired <a href="javascript:toggle('olexpired');">&#177;</a></h2>
+<div>84 links expired today Thu, Mar. 2, 2023</div>
+<ol id="olexpired">
+
+<li>
+	<article>
+		<h3 id="0F9CA482-5026-4D25-81CD-86B801F145C1"><a href="https://kg.dev/thoughts/be-anonymous">Be anonymous</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://kg.dev/thoughts/be-anonymous">https://kg.dev/thoughts/be-anonymous</a></span><br />
+			<span class="d">Added: 2022-02-21 10:38:02.598958969 &#43;0000 UTC</span>
+		</div>
+		<p class="p">My website.
+			
+				(Open <a href="https://kg.dev/thoughts/be-anonymous" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="92BC21DB-94BA-41EA-AA2C-EB25CF574795"><a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter">“A damn stupid thing to do”—the origins of C</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter">https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter</a></span><br />
+			<span class="d">Added: 2020-12-14 01:06:14.395256996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Today, C may be a lingua franca among programmers. This is its (abridged) history.
+			
+				(Open <a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2734B0B4-57F1-4687-AEB9-4D99A82A7E10"><a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b">Optimizing Distributed Joins: The Case of Google Cloud Spanner and DataStax Astra DB | by DataStax | Building the Open Data Stack | Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b">https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b</a></span><br />
+			<span class="d">Added: 2022-01-30 07:55:11.117269992 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this post, learn how relational and NoSQL databases, Google Cloud Spanner and DataStax Astra DB, optimize distributed joins for real-time applications. Distributed joins are commonly considered to…
+			
+				(Open <a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="86B34871-F4BB-44A0-804A-56556B12F3CB"><a href="https://twitter.com/alexxubyte/status/1491821606422781975">https://twitter.com/alexxubyte/status/1491821606422781975</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://twitter.com/alexxubyte/status/1491821606422781975">https://twitter.com/alexxubyte/status/1491821606422781975</a></span><br />
+			<span class="d">Added: 2022-02-13 22:20:38.556627035 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://twitter.com/alexxubyte/status/1491821606422781975" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ACC6DB41-087D-41C5-B177-EA627EA5ACCD"><a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/">Don&#39;t make yourself redundant</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/">https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/</a></span><br />
+			<span class="d">Added: 2020-10-05 02:44:52.821810007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">When splitting big teams into two smaller teams, don&#39;t make yourself redundant. Instead, try this advice to remain impactful.
+			
+				(Open <a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="08E03994-02F2-415B-AD40-3AA908CFAC16"><a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw">Java sockets I/O: blocking, non-blocking and asynchronous</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw">https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:24.146421909 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8392AB94-0594-43D2-ABA5-AAC5B24AE254"><a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/">Mercurial&#39;s Journey to and Reflections on Python 3</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/">https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/</a></span><br />
+			<span class="d">Added: 2020-01-22 03:10:36.542356967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Mercurial 5.2 was released on November 5, 2019. It is the first version of Mercurial that supports Python 3. This milestone comes nearly 11 years after Python 3.0 was first released on December 3, 2008. Speaking as a mai
+			
+				(Open <a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="153D61E7-394F-4E25-837F-1107CAB96E59"><a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do">What TPMs Do and What Software Engineers Can Learn From Them</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do">https://newsletter.pragmaticengineer.com/p/what-tpms-do</a></span><br />
+			<span class="d">Added: 2022-02-18 06:47:30.013221979 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A deep dive with five Technical Program Managers (TPM) on what the role is, how it evolved, and how engineers and managers can benefit from working with TPMs.
+			
+				(Open <a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F62EDE75-F797-47AD-AF47-54C9AF7B905D"><a href="https://iximiuz.com/en/posts/container-networking-is-simple/">Container Networking Is Simple!</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://iximiuz.com/en/posts/container-networking-is-simple/">https://iximiuz.com/en/posts/container-networking-is-simple/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472911834 &#43;0000 UTC</span>
+		</div>
+		<p class="p">How container networking works under the hood? Setting up docker-like container networking from scratch. Bonus: podman rootless container networking explained.
+			
+				(Open <a href="https://iximiuz.com/en/posts/container-networking-is-simple/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="0005A9E5-FB73-4470-89CF-362DD0D1D1AC"><a href="https://convey.earth/conversation?id=48">Convey</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://convey.earth/conversation?id=48">https://convey.earth/conversation?id=48</a></span><br />
+			<span class="d">Added: 2022-02-04 18:50:33.62513113 &#43;0000 UTC</span>
+		</div>
+		<p class="p">2022 February 01 16:21 stuartscott 1473754¤ 1240149¤ You may have noticed that the January edition of the Convey Digest looks a little different from the previous ones - the color scheme is now based on the dominant
+			
+				(Open <a href="https://convey.earth/conversation?id=48" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ACBA973D-AC13-4337-9A13-E797707FEB37"><a href="https://learn.particular.net/users/sign_in">Online education by Particular Software</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://learn.particular.net/users/sign_in">https://learn.particular.net/users/sign_in</a></span><br />
+			<span class="d">Added: 2021-06-20 03:02:37.519088983 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Skip to main content Online education by Particular Software Toggle menu MENU Welcome Back! EMAIL PASSWORD REMEMBER ME Forgot Password? If you are a human, ignore this field SIGN IN Create a new account HOME SUPPOR
+			
+				(Open <a href="https://learn.particular.net/users/sign_in" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F36CF381-606E-45C7-9147-C680660ADD3C"><a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html">How to Read a Wine Label, in 12 Easy Lessons - The New York Times</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html">https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html</a></span><br />
+			<span class="d">Added: 2020-10-03 22:10:30.001008987 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The wine shop can be intimidating, with so many different styles of labeling. Here’s help in decoding a dozen basic types.
+			
+				(Open <a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D0EF149F-0350-4016-8C7B-C7A62E82732E"><a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/">How to put machine learning models into production</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/">https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/</a></span><br />
+			<span class="d">Added: 2020-10-25 06:32:53.718122005 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Data scientists excel at creating models that represent and predict real-world data, but effectively deploying machine learning models is more of an art than science. Deployment requires skills more commonly found in sof
+			
+				(Open <a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="247F00C1-71D9-49B2-AB91-47B4F826AF14"><a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/">What does it mean to listen on a port?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/">https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/</a></span><br />
+			<span class="d">Added: 2022-02-14 08:25:41.701181888 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This story explores some concepts in computer networking, inspired by Michael Nielsen’s idea of discovery fiction. Code samples can also be found in this repo. Excerpts use openbsd-flavoured netcat on Debian Linux; behvi
+			
+				(Open <a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="80084756-28D3-4781-89C8-484C9A746F00"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww">What&#39;s in a Good Error Message?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww">https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:39.613649845 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3A96B38D-9B04-467E-B292-D0FA97557140"><a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/">The 40 Best Questions to Ask in an Interview — How to Go Deeper Than “What’s the Culture Like?”</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/">https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/</a></span><br />
+			<span class="d">Added: 2020-10-25 06:33:15.182893991 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Candidates need to sidestep common interview questions. Here are the best questions to ask in an interview.
+			
+				(Open <a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B894AE2E-3C5E-4941-A8C5-769BD2531CB5"><a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained">DataHub: Popular metadata architectures explained | LinkedIn Engineering</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained">https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained</a></span><br />
+			<span class="d">Added: 2020-12-19 19:18:08.410096168 &#43;0000 UTC</span>
+		</div>
+		<p class="p">When I started my journey at LinkedIn ten years ago, the company was just beginning to experience extreme growth in the volume, variety, and velocity of our data. Over the next few years, my colleagues and I in LinkedIn’
+			
+				(Open <a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="973CCA37-0F8A-4370-B2D7-A2670EB77CCA"><a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e">Immutable Collections in Java using Sealed Types</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e">https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e</a></span><br />
+			<span class="d">Added: 2020-11-22 19:50:09.498816967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">JDK 15 was released on September 15, 2020. JEP 360 Sealed Types was included as a preview feature in this release. Sealed Types is part of Project Amber. Sealed classes or interfaces can be used to…
+			
+				(Open <a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="7AC1A3D3-2E66-4317-8C48-EDD600870093"><a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb">pytudes/Probability.ipynb at main · norvig/pytudes · GitHub</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb">https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb</a></span><br />
+			<span class="d">Added: 2021-06-20 03:01:48.03035593 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Python programs, usually short, of considerable difficulty, to perfect particular skills. - pytudes/Probability.ipynb at main · norvig/pytudes
+			
+				(Open <a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D1EBDE68-DFE3-4116-BCDD-51C0188E30E3"><a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/">On Call Shouldn’t Suck: A Guide For Managers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/">https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/</a></span><br />
+			<span class="d">Added: 2020-10-05 02:45:04.299745082 &#43;0000 UTC</span>
+		</div>
+		<p class="p">https://twitter.com/mipsytipsy/status/1309604622554640384 There are few engineering topics that provoke as much heated commentary as oncall. Everybody has a strong opinion. So let me say straight up that there are few if
+			
+				(Open <a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="1803FA34-0EF0-4D37-9429-A2738C72A3AF"><a href="https://iximiuz.com/en/posts/computer-networking-101/">Computer Networking Basics For Developers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://iximiuz.com/en/posts/computer-networking-101/">https://iximiuz.com/en/posts/computer-networking-101/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.473012924 &#43;0000 UTC</span>
+		</div>
+		<p class="p">What is a LAN? What is a network segment? Ethernet collision domains vs broadcast domains. How network switches work? How to send IP packets? VLAN vs VXLAN.
+			
+				(Open <a href="https://iximiuz.com/en/posts/computer-networking-101/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="E4FE0219-C276-4423-8FAD-2FA657B9810F"><a href="https://learnwardleymapping.com/book/">The Book</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://learnwardleymapping.com/book/">https://learnwardleymapping.com/book/</a></span><br />
+			<span class="d">Added: 2022-02-25 15:09:41.99259901 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This is the story of Simon Wardley. Follow his journey from bumbling and confused CEO lost in the headlights of change to someone with a vague idea of what they&#39;re doing.
+			
+				(Open <a href="https://learnwardleymapping.com/book/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="EAB90B18-87D1-4B09-90C4-C78525EDF920"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter">What&#39;s in a Good Error Message?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter">https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.473227024 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8E8307BD-6D30-437E-8F22-D01A691B58B6"><a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6">https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6">https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6</a></span><br />
+			<span class="d">Added: 2021-02-16 03:18:15.004760026 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="152B5455-0C2E-4CE5-BEF5-3FB5BD06D088"><a href="https://cate.blog/2021/08/09/on-being-strategic/">On Being “Strategic”</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://cate.blog/2021/08/09/on-being-strategic/">https://cate.blog/2021/08/09/on-being-strategic/</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:09.864347934 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Ages ago, a work colleague / friend offered me the following piece of advice: “We need to make sure you’re seen as strategic”. I’ve thought about it a lot ever since. It was the first time I realised I was on the edge
+			
+				(Open <a href="https://cate.blog/2021/08/09/on-being-strategic/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F83B3D52-4909-4EF8-937B-23C9D6A73ADD"><a href="https://news.ycombinator.com/item?id=24814687">7 days ago</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://news.ycombinator.com/item?id=24814687">https://news.ycombinator.com/item?id=24814687</a></span><br />
+			<span class="d">Added: 2020-10-25 06:28:36.088758945 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This article has a large gap in the story: it ignores sensor data sources, which are both the highest velocity and highest volume data models by multiple orders of magnitude. They have become ubiquitous in diverse, mediu
+			
+				(Open <a href="https://news.ycombinator.com/item?id=24814687" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5E2F906D-29F5-4863-8F9F-1A8B82E40BBC"><a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/">Data Caching Across Microservices in a Serverless Architecture</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/">https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472444057 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Organizations are re-architecting their traditional monolithic applications to incorporate microservices. This helps them gain agility and scalability and accelerate time-to-market for new features. Each microser
+			
+				(Open <a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4A4DBD31-E21E-404F-B4FC-D3A89081A97F"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg">What&#39;s in a Good Error Message? - Gunnar Morling</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg">https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg</a></span><br />
+			<span class="d">Added: 2022-02-03 19:43:27.72410798 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3B6CB96B-63A5-4747-AC87-D5A7D936D80B"><a href="https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/">The Seven Habits That Lead to Happiness in Old Age - The Atlantic</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/">https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/</a></span><br />
+			<span class="d">Added: 2022-02-23 08:31:30.785979986 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Your well-being is like a retirement account: The sooner you invest, the greater your returns will be.
+			
+				(Open <a href="https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2E46DBFF-90BB-4B14-9DF6-C0388D62032A"><a href="https://www.theobservereffect.org/tobi.html">The Observer Effect – Tobi Lütke</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theobservereffect.org/tobi.html">https://www.theobservereffect.org/tobi.html</a></span><br />
+			<span class="d">Added: 2020-12-19 19:09:05.707730054 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to the third interview on &#39;The Observer Effect&#39;. We are lucky to have one of the most interesting founders in technology and commerce - Tobi Lütke, Founder and CEO of Shopify. This interview was
+			
+				(Open <a href="https://www.theobservereffect.org/tobi.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="391136C2-FBE9-4E59-864E-C07E8F6CFEAA"><a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html">Yann Herklotz - Introduction to Luhmann&#39;s Zettelkasten</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html">https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html</a></span><br />
+			<span class="d">Added: 2020-12-22 18:34:28.277521133 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to my blog! I am a final year student studying Electronic and Information Engineering at Imperial 
+			
+				(Open <a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B1366A5D-4A71-4FFB-A922-4668D7DCA093"><a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg">Our Journey with Quarkus</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg">https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:36.351290941 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Quarkus truly appears to be the smartest possible solution, in our experience.
+			
+				(Open <a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="71A6CC9C-0133-45CF-BBBF-5E2288680954"><a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming">Beyond Microservices: Streams, State and Scalability</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming">https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming</a></span><br />
+			<span class="d">Added: 2022-01-29 21:51:51.795267105 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Gwen Shapira talks about how microservices evolved in the last few years, based on experience gained while working with companies using Apache Kafka to update their application architecture.
+			
+				(Open <a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4B341D85-649C-4D5A-8551-31BDE28AC022"><a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5">Failure Modes and Continuous Resilience - adrian cockcroft - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5">https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5</a></span><br />
+			<span class="d">Added: 2020-01-19 05:29:02.044257164 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A resilient system continues to operate successfully in the presence of failures. There are many possible failure modes, and each exercises a different aspect of resilience. The system needs to…
+			
+				(Open <a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4104A599-BB8C-4079-8C3A-12D8CE067A5F"><a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337">Why it’s difficult to build teams in high growth organisations | by Jason Yip | Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337">https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337</a></span><br />
+			<span class="d">Added: 2021-06-14 02:39:32.210827827 &#43;0000 UTC</span>
+		</div>
+		<p class="p">By “high growth”, I mean in terms of employee count and roughly doubling or more every year. Even at slower growth rates, some of the phenomena I’ll describe may be relevant. The only option where…
+			
+				(Open <a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="EF99A6E9-8C52-4FAD-9BC3-5475BE7B7660"><a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/">Reproducible Builds in Java</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/">https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/</a></span><br />
+			<span class="d">Added: 2022-02-06 13:01:06.832920074 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Reproducible builds are a set of software development practices that create an independently-verifiable path from source to binary code.https://reproducible-builds.org/Reproducible builds are important and provide benefi
+			
+				(Open <a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="A2C05C7C-A5E7-46B1-B47A-1D5BD53DF6FE"><a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/">Partitioning GitHub’s relational databases to handle scale</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/">https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/</a></span><br />
+			<span class="d">Added: 2021-09-28 19:04:08.894801139 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In 2019, to meet growth and availability challenges, we set a plan in motion to improve our tooling and ability to partition relational databases.
+			
+				(Open <a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="C5840C97-8A47-412B-9619-757E22D1F358"><a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md">resilience-engineering/intro.md at master · lorin/resilience-engineering · GitHub</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md">https://github.com/lorin/resilience-engineering/blob/master/intro.md</a></span><br />
+			<span class="d">Added: 2021-02-14 06:48:24.060963153 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Resilience engineering papers. Contribute to lorin/resilience-engineering development by creating an account on GitHub.
+			
+				(Open <a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="744F225B-D881-4600-964F-BC976DE3B9CD"><a href="https://www.youtube.com/watch?v=93_3CxCl_eI">YOW! 2019 - Josh Long - The Reactive Revolution - YouTube</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.youtube.com/watch?v=93_3CxCl_eI">https://www.youtube.com/watch?v=93_3CxCl_eI</a></span><br />
+			<span class="d">Added: 2021-06-20 02:38:51.257305145 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Share your videos with friends, family, and the world
+			
+				(Open <a href="https://www.youtube.com/watch?v=93_3CxCl_eI" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="35BF825E-8A1E-4AFD-8277-ECAE794900FC"><a href="https://danluu.com/cache-incidents/">A decade of major cache incidents at Twitter</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://danluu.com/cache-incidents/">https://danluu.com/cache-incidents/</a></span><br />
+			<span class="d">Added: 2022-02-12 22:04:41.532500028 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I&#39;m trying some experimental tiers on Patreon to see if I can get to substack-like levels of financial support for this blog without moving to substack! A decade of major cache incidents at Twitter This was co-authored 
+			
+				(Open <a href="https://danluu.com/cache-incidents/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5E528535-D488-45A0-B0D7-5C7EE9F45269"><a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/">Emerging Architectures for Modern Data Infrastructure</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/">https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:28:58.590971946 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Software systems are increasingly based on data, rather than code. And a new class of tools and technologies have emerged to process data for both analytics and operational AI/ ML.
+			
+				(Open <a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="67794E53-71A0-40A7-AA58-B74BBEDC96C1"><a href="https://www.defmacro.org/2014/10/03/engman.html">44 engineering management lessons</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.defmacro.org/2014/10/03/engman.html">https://www.defmacro.org/2014/10/03/engman.html</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:17.431499004 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to engineering management. It’s fun, it’s exhausting, it’s rewarding — but most importantly it’s new! What worked for you before won’t work now. You’ll have to acquire a new set of skills, and shed some bad habit
+			
+				(Open <a href="https://www.defmacro.org/2014/10/03/engman.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ECFE519B-F709-4FDC-98D0-E0F643810B47"><a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea">Production Oriented Development - Paul Osman - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea">https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea</a></span><br />
+			<span class="d">Added: 2020-01-30 02:45:22.718299865 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Code working in production is the only thing that matters. Teams should optimize for delivering code to production as quickly as possible.
+			
+				(Open <a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="49A40D1A-BD4E-4076-8E2A-C174F80F9187"><a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">1.3. Productivity</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">https://dave.cheney.net/practical-go/presentations/qcon-china.html</a></span><br />
+			<span class="d">Added: 2022-03-01 15:35:47.325203895 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Design is the art of arranging code to work today, and be changeable forever. — Sandi Metz The last underlying principle I want to highlight is productivity. Developer productivity is a sprawling topic but it boils 
+			
+				(Open <a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="CE1D160C-9BD4-44F6-8701-5FC512623AD8"><a href="https://www.spakhm.com/p/how-to-get-promoted">How to get promoted</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.spakhm.com/p/how-to-get-promoted">https://www.spakhm.com/p/how-to-get-promoted</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:23.689921855 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Almost everyone who does great work toils in relative obscurity. Performance reviews are social fiction. How do people really advance through the corporate hierarchy?
+			
+				(Open <a href="https://www.spakhm.com/p/how-to-get-promoted" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="6209073B-4370-479B-B60E-1E5281B21CF6"><a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202">GPS</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202">https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202</a></span><br />
+			<span class="d">Added: 2022-01-30 13:45:06.893004894 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Interactive article explaining how GPS works.
+			
+				(Open <a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9E769276-C043-4327-BD56-16F07A66B4E4"><a href="https://en.wikipedia.org/wiki/User_space">User space</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://en.wikipedia.org/wiki/User_space">https://en.wikipedia.org/wiki/User_space</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.471538066 &#43;0000 UTC</span>
+		</div>
+		<p class="p">For the term &#34;user space&#34; as used in Wikipedia, see Wikipedia:User pages. &#34;Kernel space&#34; redirects here. For the mathematical definition, see Null space. This article needs additional citations for verification. Please h
+			
+				(Open <a href="https://en.wikipedia.org/wiki/User_space" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F03A6943-3161-48A5-B1CF-3414B76490C6"><a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/">Fairness in multi-tenant systems</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/">https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:29:26.916128158 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Building fairness into multitenant systems to provide predictable performance and availability
+			
+				(Open <a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2F682234-9E4F-4889-8029-5376E9ECC042"><a href="https://commoncog.com/blog/accelerated-expertise/">Accelerated Expertise</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://commoncog.com/blog/accelerated-expertise/">https://commoncog.com/blog/accelerated-expertise/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.470912933 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A summary of Accelerated Expertise, the best book on accelerating training programs we have today.
+			
+				(Open <a href="https://commoncog.com/blog/accelerated-expertise/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F2F1740F-A682-49BD-A7CE-106B9CF488BF"><a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/">https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/">https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/</a></span><br />
+			<span class="d">Added: 2022-02-27 21:14:32.595848083 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Basically, sake comprises rice, water, and the fermenting agent called koji, resulting in an alcoholic level that usually sits between 13 and 16 percent. And you might be interested to know that the rice used is differen
+			
+				(Open <a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D473BC81-57FE-451F-BB84-6DAF4A34B7F5"><a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1">Testing in Production, the safe way</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1">https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1</a></span><br />
+			<span class="d">Added: 2020-01-25 21:07:09.173211097 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this post, I hope to explore different forms of “testing in production”, when each form of testing is the most beneficial as well as how to test services in production in a safe way. However…
+			
+				(Open <a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="88E9BAF9-01A6-4774-BE3E-EE928BAD13B0"><a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector">How to choose the best Java garbage collector</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector">https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector</a></span><br />
+			<span class="d">Added: 2022-02-14 08:25:45.931617021 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Improve Java application performance by choosing the best garbage collector for your application&#39;s throughput, latency, and footprint requirements.
+			
+				(Open <a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="94E868CC-FAF2-4068-B1AF-FB2A8134350B"><a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/">Stay Interviews (the opposite of Exit Interviews) – Mike Crittenden</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/">https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/</a></span><br />
+			<span class="d">Added: 2021-06-14 02:24:17.310279846 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Exit Interviews ask why people are leaving, and Stay Interviews ask why they keep working here.
+			
+				(Open <a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5A02A461-03F0-4D93-8258-0A95A98CA773"><a href="https://arxiv.org/pdf/2104.00087.pdf"></a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://arxiv.org/pdf/2104.00087.pdf">https://arxiv.org/pdf/2104.00087.pdf</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:56.06173706 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://arxiv.org/pdf/2104.00087.pdf" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8D47E7AE-E2D1-4F5E-ADA2-D5C5AE91FCD6"><a href="https://www.defmacro.org/2015/02/25/startup-ideas.html">How to pick startup ideas</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.defmacro.org/2015/02/25/startup-ideas.html">https://www.defmacro.org/2015/02/25/startup-ideas.html</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:12.827280998 &#43;0000 UTC</span>
+		</div>
+		<p class="p">One of the most important things I learned from running a startup is that on a macro scale the innovation market is efficient. If the market conditions allow for a startup to arise, it’s overwhelmingly probable that mult
+			
+				(Open <a href="https://www.defmacro.org/2015/02/25/startup-ideas.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="22C9D369-7D87-417E-8241-0FF77B96719B"><a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c">Health, Availability, Debuggability - Observability&#43; - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c">https://medium.com/observability/health-availability-debuggability-5b0ab300b35c</a></span><br />
+			<span class="d">Added: 2020-01-19 20:02:51.116274833 &#43;0000 UTC</span>
+		</div>
+		<p class="p">As we collect various observability signals from systems, it fosters a new conversation around the classification of the signals. There is a significant discussion on observability signals and even…
+			
+				(Open <a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="7C68C329-A59A-4F8D-B795-0D61911878FA"><a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/">This is What a Large-Scale Cloud Adoption Program Looks Like</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/">https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/</a></span><br />
+			<span class="d">Added: 2022-02-03 20:01:26.464634895 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Dio Rettori discusses some of the lessons learned, challenges, and considerations of large-scale adoption for JPMorgan Chase.
+			
+				(Open <a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="243783C4-C897-490D-80E6-182A4DC7ACE6"><a href="https://opensource.com/article/21/11/cluster-logging-kubernetes">What you need to know about cluster logging in Kubernetes</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://opensource.com/article/21/11/cluster-logging-kubernetes">https://opensource.com/article/21/11/cluster-logging-kubernetes</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.47310996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Explore how different container logging patterns in Kubernetes work.
+			
+				(Open <a href="https://opensource.com/article/21/11/cluster-logging-kubernetes" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="E48D0031-178B-4DF4-B201-DD97C41FEF33"><a href="https://blog.close.com/subject-lines/">Sales email subject lines: 50&#43; tips, examples, and biggest mistakes</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://blog.close.com/subject-lines/">https://blog.close.com/subject-lines/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:56:34.453863143 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Find out about the best ways to write subject lines for your cold sales emails to improve your open and response rates! This post is here to help you craft a subject line that appeals to your customers &amp; is relevant to y
+			
+				(Open <a href="https://blog.close.com/subject-lines/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="16A89C55-2E46-46B7-9186-8DFB400E402C"><a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints">Overview ¶</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints">https://pkg.go.dev/cmd/go#hdr-Build_constraints</a></span><br />
+			<span class="d">Added: 2022-03-01 15:15:14.106298923 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Go is a tool for managing Go source code.
+			
+				(Open <a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B2CCAF5A-EEB8-4EDC-8899-08081B84FA71"><a href="http://akkartik.name/post/literate-programming">Literate programming: Knuth is doing it wrong</a></h3>
+		<div class="byline">
+			<span class="u"><a href="http://akkartik.name/post/literate-programming">http://akkartik.name/post/literate-programming</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472525119 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Oct 3, 2014 Literate programming: Knuth is doing it wrong Literate programming advocates this: Order your code for others to read, not for the compiler. Beautifully typeset your code so one can curl up in bed to read it
+			
+				(Open <a href="http://akkartik.name/post/literate-programming" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="371B741A-360B-457A-8E22-8714499A4D51"><a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/">A Short, Simple Introduction to Information Theory – Ryan Moulton&#39;s Articles</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/">https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:28:49.101143836 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Information Theory is one of the most useful things for Computer Scientists to understand about statistics, and it&#39;s deeply related to things we do every day. If you are comfortable writing code but sometimes intimidated
+			
+				(Open <a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="FB97E69F-BBE9-4DE4-BAFC-8A5C428228B2"><a href="https://bitfieldconsulting.com/golang/career">A career ending mistake — Bitfield Consulting</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://bitfieldconsulting.com/golang/career">https://bitfieldconsulting.com/golang/career</a></span><br />
+			<span class="d">Added: 2022-02-22 19:53:33.374945163 &#43;0000 UTC</span>
+		</div>
+		<p class="p">As software engineers, we&#39;re constantly making detailed, elaborate plans for computers to execute. Isn&#39;t it weird that we rarely give a moment&#39;s thought to the program for our own careers?
+			
+				(Open <a href="https://bitfieldconsulting.com/golang/career" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D2659AD7-1452-45F7-B2F0-074737CE8D7A"><a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/">CRISP: Critical Path Analysis for Microservice Architectures</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/">https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/</a></span><br />
+			<span class="d">Added: 2022-01-17 21:33:09.414513111 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Uber’s backend is an exemplar of microservice architecture. Each microservice is a small, individually deployable program performing a specific business logic (operation). The microservice architecture is a type of distr
+			
+				(Open <a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3719A1C9-84AE-480A-9732-F3296BFC4C4B"><a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F">https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F">https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F</a></span><br />
+			<span class="d">Added: 2021-02-16 03:19:16.030979156 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4EAE9D5E-8762-44E9-B560-8FA66CB88E48"><a href="https://lena-voita.github.io/nlp_course/word_embeddings.html">Distributional Semantics</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://lena-voita.github.io/nlp_course/word_embeddings.html">https://lena-voita.github.io/nlp_course/word_embeddings.html</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.471920967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">To capture meaning of words in their vectors, we first need to define the notion of meaning that can be used in practice. For this, let us try to understand how we, humans, get to know which w
+			
+				(Open <a href="https://lena-voita.github.io/nlp_course/word_embeddings.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9ADC0870-B6F9-4DC0-B898-CB7A43899238"><a href="https://johnnyrodgers.is/building-a-modern-home">building a modern home - Johnny Rodgers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://johnnyrodgers.is/building-a-modern-home">https://johnnyrodgers.is/building-a-modern-home</a></span><br />
+			<span class="d">Added: 2022-02-03 19:47:25.927577018 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Personal site of Johnny Rodgers, technology designer from Vancouver.
+			
+				(Open <a href="https://johnnyrodgers.is/building-a-modern-home" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="63ED09BD-BE6F-4FFA-A955-002EAED9172F"><a href="https://queue.acm.org/detail.cfm?id=3415014">Data on the Outside vs. Data on the Inside - ACM Queue</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://queue.acm.org/detail.cfm?id=3415014">https://queue.acm.org/detail.cfm?id=3415014</a></span><br />
+			<span class="d">Added: 2020-11-16 03:29:09.615636825 &#43;0000 UTC</span>
+		</div>
+		<p class="p">August 2, 2020 Pat Helland Recently, there has been a lot of interest in services. These can be microservices or just services. In each case, the service provides a function with its own code and data, and opera
+			
+				(Open <a href="https://queue.acm.org/detail.cfm?id=3415014" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9782E34D-D67B-4446-8904-A043590EBF92"><a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32">https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32">https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32</a></span><br />
+			<span class="d">Added: 2021-03-07 04:00:02.018476009 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Troubleshooting in Kubernetes can be a daunting task. In this article you will learn how to diagnose issues in Pods, Services and Ingress.
+			
+				(Open <a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="34BB5A22-51FE-4F9A-92EA-E765615BFF5A"><a href="https://orionmagazine.org/article/on-memory-and-survival/">Orion Magazine - On Memory and Survival</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://orionmagazine.org/article/on-memory-and-survival/">https://orionmagazine.org/article/on-memory-and-survival/</a></span><br />
+			<span class="d">Added: 2022-03-01 16:53:36.376021862 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I could blame it on a lot of things. On my education, or lack thereof, on the reasons why I still can’t spell worth a damn.
+			
+				(Open <a href="https://orionmagazine.org/article/on-memory-and-survival/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B5E085CD-4922-4DC1-A965-78EC343CD945"><a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/">How to Talk about Consistency and Isolation in Distributed DBs</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/">https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/</a></span><br />
+			<span class="d">Added: 2022-02-15 11:04:48.938548088 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The SQL standard defines isolation levels, but we don&#39;t have a great vocabulary for talking about consistency levels, and how these two things interact.
+			
+				(Open <a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5DD11538-E58D-4C23-BFF0-3214A458CD8D"><a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/">A Complete Guide To Mechanical Keyboards</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/">https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:42.818650007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this article, we dive into the possibilities of mechanical keyboards. The different layouts, switch types and even keycap material. Strap yourself in — this will be a deep dive!
+			
+				(Open <a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5F308D40-0FB6-4409-AAF0-868CA46D76FE"><a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/">Analyzing data stored in Amazon DocumentDB (with MongoDB compatibility) using Amazon Sagemaker | AWS Machine Learning Blog</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/">https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:46:07.911393165 &#43;0000 UTC</span>
+		</div>
+		<p class="p">{ &#34;id&#34;: &#34;13469392114&#34;, &#34;type&#34;: &#34;PullRequestEvent&#34;, &#34;actor&#34;: { &#34;id&#34;: 33526713, &#34;login&#34;: &#34;arjkesh&#34;, &#34;display_login&#34;: &#34;arjkesh&#34;, &#34;gravatar_id&#34;: &#34;&#34;, &#34;url&#34;: &#34;https://api.github.com/users/arjkesh&#34;, 
+			
+				(Open <a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="AB81D5DF-D925-4E10-AACF-204FEC720356"><a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html">Introduction to AWS Lake Formation - Build a Secure Data Lake in Days | AWS Online Tech Talks</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html">https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:37.371964931 &#43;0000 UTC</span>
+		</div>
+		<p class="p">AWS Lake Formation (coming soon) will make it easy to set up a secure data lake in days. With AWS Lake Formation, you will be able to ingest, catalog, clean, transform, and secure your data, and make it available for ana
+			
+				(Open <a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="38884C26-1CBF-4F39-863B-1297059B7970"><a href="https://news.ycombinator.com/item?id=24786778">How to put machine learning models into production | Hacker News</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://news.ycombinator.com/item?id=24786778">https://news.ycombinator.com/item?id=24786778</a></span><br />
+			<span class="d">Added: 2020-10-25 06:32:57.345412969 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Hacker News new | past | comments | ask | show | jobs | submit login How to put machine learning models into production (stackoverflow.blog) 120 points by Aaronmacaron 8 days ago | hide | past | favorite | 34 comments 
+			
+				(Open <a href="https://news.ycombinator.com/item?id=24786778" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4287DD39-F68F-4AFE-A728-00534EB7B5AD"><a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/">VPE and CTO - the first 90 days –</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/">https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/</a></span><br />
+			<span class="d">Added: 2020-11-16 02:47:12.523211002 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I put this mind map together a few years ago after a discussion about what a new VP of Engineering or CTO should think about in their first 90 days in a new role. It’s a map of the areas I believe every new technical le
+			
+				(Open <a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="51CBA16F-BF3D-4093-874C-C8439FE0B7F3"><a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team">How to Handle a Disagreement on Your Team</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team">https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team</a></span><br />
+			<span class="d">Added: 2021-06-20 02:47:40.929359912 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Rely on your mediation skills, not your authority.
+			
+				(Open <a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="92BCE160-6EB4-43DE-AB20-676C1A7E492B"><a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/">How to Work with Emotions</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/">https://www.lionsroar.com/forum-how-to-work-with-emotions/</a></span><br />
+			<span class="d">Added: 2020-01-20 07:48:57.201634883 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Sharon Salzberg, Judith Simmer-Brown, John Tarrant, and Dzogchen Ponlop Rinpoche discuss skillful and unskillful involvement with emotions, offering new perspectives on how to think about and engage with our emotional li
+			
+				(Open <a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3E615600-2B6D-426F-AC56-F9BFB4D9D251"><a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5">Failure Modes and Continuous Resilience</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5">https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:51.419013977 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A resilient system continues to operate successfully in the presence of failures. There are many possible failure modes, and each exercises a different aspect of resilience. The system needs to…
+			
+				(Open <a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3B292186-F7D4-4BAE-9514-894D386456D9"><a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw">What’s the size of the project?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw">https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:43.753388881 &#43;0000 UTC</span>
+		</div>
+		<p class="p">scc --exclude-dir docs/book ─────────────────────────────────────────────────────────────────────────────── Language Files Lines Blanks Comments Code Complexity ────────────────────────────────
+			
+				(Open <a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="907C0700-41D9-4113-A04C-AE82EAB79A78"><a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/">How to Get Into SRE – Alice Goldfuss</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/">https://blog.alicegoldfuss.com/how-to-get-into-sre/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:57:27.926506996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">My personal guide.
+			
+				(Open <a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="29A95F3A-14F0-4423-A688-FEA34B9FFD35"><a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/">Copying Better: How To Acquire The Tacit Knowledge of Experts</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/">https://commoncog.com/blog/how-to-learn-tacit-knowledge/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.470806121 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Much of expertise is tacit: that is, it cannot be captured through words alone. We look at techniques to learn the tacit knowledge of experts.
+			
+				(Open <a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="6FDB0B3D-9B1A-44C9-B337-58081D1DC392"><a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html">Journey into Observability: Reading material | Mads Hartmann</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html">https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html</a></span><br />
+			<span class="d">Added: 2020-01-19 20:02:56.259206056 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I’ve been reading up on observability over the last three months. In this post I have organized the material into a sort of recommended reading order. It doesn’t reflect the order in which I read it, but I think this ord
+			
+				(Open <a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2183E3CB-5AD3-4D96-95E5-6A57D58BAC2D"><a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/">A categorized list of all Java and JVM features since JDK 8 to 16 - Advanced Web Machinery</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/">https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:11.951596021 &#43;0000 UTC</span>
+		</div>
+		<p class="p">From Java 8 to 17
+			
+				(Open <a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+</body>
+</html>

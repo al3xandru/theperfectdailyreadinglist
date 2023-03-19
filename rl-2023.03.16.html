@@ -1,0 +1,2050 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Reading list for Thu, Mar.16, 2023</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com"> 
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+	<link href="https://fonts.googleapis.com/css2?family=Josefin+Slab:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+	<link href="style.css" rel="stylesheet">
+	<script>
+function toggle(id) {
+	var el = document.getElementById(id);
+	el.style.display = (el.style.display == "none" || el.style.display == "") ? "block" : "none";
+}
+	</script>
+</head>
+<body>
+<h1>Reading list for Thu, Mar.16, 2023</h1>
+<header>
+<div>Total: 552 from which: 3 suggested today and 95 expired</div>
+<nav>
+Jump to: 
+
+	<a href="#today">Today&#39;s reading list</a> | 
+
+	<a href="#saveme">Random expired</a> | 
+
+	<a href="#expired">Expired</a> | 
+
+</nav>
+</header>
+
+<section>
+<h2 id="today">Today&#39;s reading list <a href="javascript:toggle('oltoday');">&#177;</a></h2>
+<div>3 links selected from 457 today Thu, Mar.16, 2023</div>
+<ol id="oltoday">
+
+<li>
+	<article>
+		<h3 id="76217EC1-5D3E-4FCF-8118-91B4A19CF430"><a href="https://learnk8s.io/kubernetes-network-packets">Tracing the path of network traffic in Kubernetes</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://learnk8s.io/kubernetes-network-packets">https://learnk8s.io/kubernetes-network-packets</a></span><br />
+			<span class="d">Added: 2022-05-03 21:27:46.162530899 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Learn how packets flow inside and outside a Kubernetes cluster. Starting from the initial web request and down to the container hosting the application
+			
+				... (28438 chars. See <a href="javascript:toggle('b76217EC1-5D3E-4FCF-8118-91B4A19CF430');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="b76217EC1-5D3E-4FCF-8118-91B4A19CF430">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><article><p>Published in January 2022</p><hr/><p><img src="https://learnk8s.io/a/5d15e769b507e18545fba977032fb0f0.svg" alt="Tracing the path of network traffic in Kubernetes"/></p><hr/><p><strong>TL;DR:</strong> <em>In this article, you will learn how packets flow inside and outside a Kubernetes cluster. Starting from the initial web request and down to the container hosting the application.</em></p><h2 id="table-of-contents">Table of Contents</h2><ul><li><a href="#table-of-contents" target="_self">Table of Contents</a></li><li><a href="#kubernetes-networking-requirements" target="_self">Kubernetes networking requirements</a></li><li><a href="#how-linux-network-namespaces-work-in-a-pod" target="_self">How Linux network namespaces work in a pod</a></li><li><a href="#the-pause-container-creates-the-network-namespace-in-the-pod" target="_self">The pause container creates the network namespace in the pod</a></li><li><a href="#the-pod-is-assigned-a-single-ip-address" target="_self">The pod is assigned a single IP address</a></li><li><a href="#inspecting-pod-to-pod-traffic-in-the-cluster" target="_self">Inspecting pod to pod traffic in the cluster</a></li><li><a href="#the-pod-network-namespace-is-connected-to-an-ethernet-bridge" target="_self">The Pod network namespace is connected to an ethernet bridge</a></li><li><a href="#tracing-pod-to-pod-traffic-on-the-same-node" target="_self">Tracing pod to pod traffic on the same node</a></li><li><a href="#tracing-pod-to-pod-communication-on-different-nodes" target="_self">Tracing pod to pod communication on different nodes</a></li><li><a href="#the-container-network-interface-cni" target="_self">The Container Network Interface - CNI</a></li><li><a href="#inspecting-pod-to-service-traffic" target="_self">Inspecting pod to service traffic</a></li><li><a href="#intercepting-and-rewriting-traffic-with-netfilter-and-iptables" target="_self">Intercepting and rewriting traffic with Netfilter and Iptables</a></li><li><a href="#inspecting-responses-from-services" target="_self">Inspecting responses from services</a></li></ul><h2 id="kubernetes-networking-requirements">Kubernetes networking requirements</h2><p>Before diving into the details on how packets flow inside a Kubernetes cluster, let&#39;s first clear up the requirements for a Kubernetes network.</p><p>The Kubernetes networking model defines a set of fundamental rules:</p><ul><li><strong>A pod in the cluster should be able to freely communicate with any other pod</strong> without the use of Network Address Translation (NAT).</li><li><strong>Any program running on a cluster node should communicate with any pod</strong> on the same node without using NAT.</li><li><strong>Each pod has its own IP address</strong> (IP-per-Pod), and every other pod can reach it at that same address.</li></ul><p>Those requirements don&#39;t restrict the implementation to a single solution.</p><p>Instead, they describe the properties of the cluster network in general terms.</p><p>In satisfying those constraints, you will have to solve the <a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/network/networking.md" target="_blank" rel="noreferrer">following challenges:</a></p><ol><li><em>How do you make sure that containers in the same pod behave as if they are on the same host?</em></li><li><em>Can the pod reach other pods in the cluster?</em></li><li><em>Can the pod reach services? And are the services load balancing requests?</em></li><li><em>Can the pod receive traffic external to the cluster?</em></li></ol><p>In this article, you will focus on the first three points, starting with intra-pod networking or container-to-container communication.</p><h2 id="how-linux-network-namespaces-work-in-a-pod">How Linux network namespaces work in a pod</h2><p>Let&#39;s consider a main container hosting the application and another running alongside it.</p><p>In this example, you have a pod with an Nginx container and another with busybox:</p><div><header><p>pod.yaml</p></header><pre><code><span><span>apiVersion</span><span>:</span> v1
+<span>kind</span><span>:</span> Pod
+<span>metadata</span><span>:</span>
+  <span>name</span><span>:</span> multi<span>-</span>container<span>-</span>pod
+<span>spec</span><span>:</span>
+  <span>containers</span><span>:</span>
+    <span>-</span> <span>name</span><span>:</span> container<span>-</span><span>1</span>
+</span><span>      <span>image</span><span>:</span> busybox
+</span><span>      <span>command</span><span>:</span> <span>[</span><span>&#39;/bin/sh&#39;</span><span>,</span> <span>&#39;-c&#39;</span><span>,</span> <span>&#39;sleep 1d&#39;</span><span>]</span>
+    <span>-</span> <span>name</span><span>:</span> container<span>-</span><span>2</span>
+</span><span>      <span>image</span><span>:</span> nginx</span></code></pre></div><p>When deployed, the following things happen:</p><ol><li>The pod gets <strong>its own network namespace</strong> on the node.</li><li><strong>An IP address is assigned</strong> to the pod, and the ports are shared between the two containers.</li><li><strong>Both containers share the same networking namespace</strong> and can see each other on localhost.</li></ol><p>The network configuration happens lightning fast in the background.</p><p>However, let&#39;s take a step back and try to understand <em>why</em> the above is needed for containers to run.</p><p><a href="https://iximiuz.com/en/posts/container-networking-is-simple/" target="_blank" rel="noreferrer">In Linux, the network namespaces are separate, isolated, logical spaces.</a></p><p>You can think of network namespaces as taking the physical network interface and slicing it into smaller independent parts.</p><p>Each part can be configured separately and with its own networking rules and resources.</p><p>Those can range from firewall rules, interfaces (virtual or physical), routes, and everything else networking-related.</p><p>The physical interface has to process all the <em>real</em> packets in the end, so all virtual interfaces are created from that.</p><p>The network namespaces can be managed by the <code>ip-netns</code> <a href="https://man7.org/linux/man-pages/man8/ip-netns.8.html" target="_blank" rel="noreferrer">management tool</a>, and you can use <code>ip netns list</code> to list the namespaces on a host.</p><blockquote><p>Please note that when a network namespace is created, it will be present under <code>/var/run/netns</code> but <a href="https://www.packetcoders.io/how-to-view-the-network-namespaces-in-kubernetes/" target="_blank" rel="noreferrer">Docker doesn&#39;t always respect that.</a></p></blockquote><p>For example, these are namespaces from a Kubernetes node:</p><div><header><p>bash</p></header><pre><code><span><span>ip</span> netns list
+</span><span>cni-0f226515-e28b-df13-9f16-dd79456825ac <span>(</span>id: <span>3</span><span>)</span>
+cni-4e4dfaac-89a6-2034-6098-dd8b2ee51dcd <span>(</span>id: <span>4</span><span>)</span>
+cni-7e94f0cc-9ee8-6a46-178a-55c73ce58f2e <span>(</span>id: <span>2</span><span>)</span>
+cni-7619c818-5b66-5d45-91c1-1c516f559291 <span>(</span>id: <span>1</span><span>)</span>
+cni-3004ec2c-9ac2-2928-b556-82c7fb37a4d8 <span>(</span>id: <span>0</span><span>)</span></span><span></span></code></pre></div><blockquote><p>Notice the <code>cni-</code> prefix; this means that the namespace creation has been taken care of by a CNI.</p></blockquote><p>When you create a pod, and that pod gets assigned to a node, the <a href="https://github.com/containernetworking/cni#what-is-cni" target="_blank" rel="noreferrer">CNI</a> will:</p><ol><li>Assign an IP address.</li><li>Attach the container(s) to the network.</li></ol><p>If the pod contains multiple containers like above, both containers are put in the same namespace.</p><p><em>So what happens when you list the containers on a node?</em></p><p>You can SSH into a Kubernetes node and explore the namespaces:</p><div><header><p>bash</p></header><pre><code><span>lsns -t net
+</span><span>        NS TYPE NPROCS   PID <span>USER</span>     NETNSID NSFS                           COMMAND
+<span>4026531992</span> net     <span>171</span>     <span>1</span> root  unassigned /run/docker/netns/default      /sbin/init noembed norestore
+<span>4026532286</span> net       <span>2</span>  <span>4808</span> <span>65535</span>          <span>0</span> /run/docker/netns/56c020051c3b /pause
+<span>4026532414</span> net       <span>5</span>  <span>5489</span> <span>65535</span>          <span>1</span> /run/docker/netns/7db647b9b187 /pause</span><span></span></code></pre></div><p>Where <code>lsns</code> is a command for listing <em>all</em> available namespaces on a host.</p><blockquote><p>Keep in mind that there are <a href="https://man7.org/linux/man-pages/man7/namespaces.7.html" target="_blank" rel="noreferrer">multiple namespace types</a> in Linux.</p></blockquote><p><em>Where is the Nginx container?</em></p><p><em>What are those <code>pause</code> containers?</em></p><h2 id="the-pause-container-creates-the-network-namespace-in-the-pod">The pause container creates the network namespace in the pod</h2><p>Let&#39;s list all the processes on the node and check if we can find the Nginx container:</p><div><header><p>bash</p></header><pre><code><span>lsns
+</span><span>        NS TYPE   NPROCS   PID <span>USER</span>            COMMAND
+<span># truncated output</span>
+<span>4026532414</span> net         <span>5</span>  <span>5489</span> <span>65535</span>           /pause
+<span>4026532513</span> mnt         <span>1</span>  <span>5599</span> root            <span>sleep</span> 1d
+<span>4026532514</span> uts         <span>1</span>  <span>5599</span> root            <span>sleep</span> 1d
+<span>4026532515</span> pid         <span>1</span>  <span>5599</span> root            <span>sleep</span> 1d
+</span><span><span>4026532516</span> mnt         <span>3</span>  <span>5777</span> root            nginx: master process nginx -g daemon off<span>;</span>
+<span>4026532517</span> uts         <span>3</span>  <span>5777</span> root            nginx: master process nginx -g daemon off<span>;</span>
+<span>4026532518</span> pid         <span>3</span>  <span>5777</span> root            nginx: master process nginx -g daemon off<span>;</span></span><span></span></code></pre></div><p>The container is listed in the mount (<code>mnt</code>), Unix time-sharing (<code>uts</code>) and PID (<code>pid</code>) namespace, but not in the networking namespace (<code>net</code>).</p><p>Unfortunately, <code>lsns</code> only shows the lowest PID for each process, but you can further filter based on the process ID.</p><p>You can retrieve all namespaces for the Nginx container with:</p><div><header><p>bash</p></header><pre><code><span><span>sudo</span> lsns -p <span>5777</span>
+</span><span>       NS TYPE   NPROCS   PID <span>USER</span>  COMMAND
+<span>4026531835</span> cgroup    <span>178</span>     <span>1</span> root  /sbin/init noembed norestore
+<span>4026531837</span> user      <span>178</span>     <span>1</span> root  /sbin/init noembed norestore
+</span><span><span>4026532411</span> ipc         <span>5</span>  <span>5489</span> <span>65535</span> /pause
+<span>4026532414</span> net         <span>5</span>  <span>5489</span> <span>65535</span> /pause
+</span><span><span>4026532516</span> mnt         <span>3</span>  <span>5777</span> root  nginx: master process nginx -g daemon off<span>;</span>
+<span>4026532517</span> uts         <span>3</span>  <span>5777</span> root  nginx: master process nginx -g daemon off<span>;</span>
+<span>4026532518</span> pid         <span>3</span>  <span>5777</span> root  nginx: master process nginx -g daemon off<span>;</span></span><span></span></code></pre></div><p>The <code>pause</code> process again, and this time it&#39;s holding the network namespace hostage.</p><p><em>What is that?</em></p><p><strong>Every pod in the cluster has an additional hidden container running in the background called <code>pause</code>.</strong></p><p>If you list the containers running on a node and grab the pause containers:</p><div><header><p>bash</p></header><pre><code><span><span>docker</span> <span>ps</span> <span>|</span> <span>grep</span> pause
+fa9666c1d9c6   registry.k8s.io/pause:3.4.1  <span>&#34;/pause&#34;</span>  k8s_POD_kube-dns-599484b884-sv2js…
+44218e010aeb   registry.k8s.io/pause:3.4.1  <span>&#34;/pause&#34;</span>  k8s_POD_blackbox-exporter-55c457d…
+5fb4b5942c66   registry.k8s.io/pause:3.4.1  <span>&#34;/pause&#34;</span>  k8s_POD_kube-dns-599484b884-cq99x…
+8007db79dcf2   registry.k8s.io/pause:3.4.1  <span>&#34;/pause&#34;</span>  k8s_POD_konnectivity-agent-84f87c…</span><span></span></code></pre></div><p>You will see that for each assigned pod on the node, a <code>pause</code> container is automatically paired with it.</p><p><strong>This <code>pause</code> container is responsible for creating and holding the network namespace.</strong></p><p><em>Creating the namespace?</em></p><p>Yes and no.</p><p>The network namespace creation is done by <a href="https://www.aquasec.com/cloud-native-academy/container-security/container-runtime/" target="_blank" rel="noreferrer">the underlaying container runtime</a>. Usually <code>containerd</code> or <code>CRI-O</code>.</p><p>Just before the pod is deployed and container created, (among other things) it&#39;s the runtime responsibility to create the network namespace.</p><p>Instead of running <code>ip netns</code> and creating the network namespace manually, the container runtime does this automatically.</p><p>Back to the pause container.</p><p>It contains very little code and instantly goes to sleep as soon as deployed.</p><p>However, <a href="https://www.ianlewis.org/en/almighty-pause-container" target="_blank" rel="noreferrer">it is essential and plays a crucial role in the Kubernetes ecosystem.</a></p><p><em>How can a container that goes to sleep be useful?</em></p><p>To understand its utility, let&#39;s imagine having a pod with two containers like in the previous example, but no <code>pause</code> container.</p><p>As soon as the container starts, the CNI:</p><ol><li>Makes the busybox container join the previous network namespace.</li><li>Assigns an IP address.</li><li>Attaches the containers to the network.</li></ol><p><em>What happens if the Nginx crashes?</em></p><p>The CNI will have to go through all of the steps <em>again</em> and the network will be disrupted for both containers.</p><p>Since it&#39;s unlikely that a <code>sleep</code> container can have any bug, it&#39;s usually a safer and more robust choice to create the network namespace.</p><p><strong>If one of the containers inside the pod crashes, the remaining can still reply to any network requests.</strong></p><h2 id="the-pod-is-assigned-a-single-ip-address">The Pod is assigned a single IP address</h2><p>I mentioned that the pod and both containers receive the same IP.</p><p><em>How is that configured?</em></p><p><strong>Inside the pod network namespace, an interface is created, and an IP address is assigned.</strong></p><p>Let&#39;s verify that.</p><p>First, find the pod&#39;s IP address:</p><div><header><p>bash</p></header><pre><code><span>kubectl get pod multi-container-pod -o <span>jsonpath</span><span>=</span><span>{</span>.status.podIP<span>}</span>
+</span><span><span>10.244</span>.4.40</span><span></span></code></pre></div><p>Next, let&#39;s find the relevant network namespace.</p><p>Since network namespaces are created from a physical interface, you will have to access the cluster node.</p><blockquote><p>If you are running <code>minikube</code>, you can try <code>minikube ssh</code> to access the node. If you are running in a cloud provider, there should be some way to access the node over SSH.</p></blockquote><p>Once you are in, let&#39;s find the latest named network namespace that was created:</p><div><header><p>bash</p></header><pre><code><span><span>ls</span> -lt /var/run/netns
+</span><span>total <span>0</span>
+</span><span>-r--r--r-- <span>1</span> root root <span>0</span> Sep <span>25</span> <span>13</span>:34 cni-0f226515-e28b-df13-9f16-dd79456825ac
+</span><span>-r--r--r-- <span>1</span> root root <span>0</span> Sep <span>24</span> 09:39 cni-4e4dfaac-89a6-2034-6098-dd8b2ee51dcd
+-r--r--r-- <span>1</span> root root <span>0</span> Sep <span>24</span> 09:39 cni-7e94f0cc-9ee8-6a46-178a-55c73ce58f2e
+-r--r--r-- <span>1</span> root root <span>0</span> Sep <span>24</span> 09:39 cni-7619c818-5b66-5d45-91c1-1c516f559291
+-r--r--r-- <span>1</span> root root <span>0</span> Sep <span>24</span> 09:39 cni-3004ec2c-9ac2-2928-b556-82c7fb37a4d8</span><span></span></code></pre></div><p>In this case it is <code>cni-0f226515-e28b-df13-9f16-dd79456825ac</code>.</p><p>Now you can run the <code>exec</code> command inside that namespace:</p><div><header><p>bash</p></header><pre><code><span><span>ip</span> netns <span>exec</span> cni-0f226515-e28b-df13-9f16-dd79456825ac <span>ip</span> a
+</span><span><span># output truncated</span>
+</span><span><span>3</span>: eth0@if12: <span>&lt;</span>BROADCAST,MULTICAST,UP,LOWER_UP<span>&gt;</span> mtu <span>1450</span> qdisc noqueue state UP group default
+    link/ether <span>16</span>:a4:f8:4f:56:77 brd ff:ff:ff:ff:ff:ff link-netnsid <span>0</span>
+    inet <span>10.244</span>.4.40/32 brd <span>10.244</span>.4.40 scope global eth0
+</span><span>       valid_lft forever preferred_lft forever
+    inet6 fe80::14a4:f8ff:fe4f:5677/64 scope <span>link</span>
+       valid_lft forever preferred_lft forever</span><span></span></code></pre></div><p><strong>That&#39;s the IP address of the pod!</strong></p><p>Let&#39;s find out the other end of that interface by grepping for the <code>12</code> part of <code>@if12</code>.</p><div><header><p>bash</p></header><pre><code><span><span>ip</span> <span>link</span> <span>|</span> <span>grep</span> -A1 ^12
+</span><span><span>12</span>: vethweplb3f36a0@if16: mtu <span>1376</span> qdisc noqueue master weave state UP mode DEFAULT group default
+</span><span>    link/ether <span>72</span>:1c:73:d9:d9:f6 brd ff:ff:ff:ff:ff:ff link-netnsid <span>1</span></span><span></span></code></pre></div><p>You can also verify that the Nginx container listens for HTTP traffic from within that namespace:</p><div><header><p>bash</p></header><pre><code><span><span>ip</span> netns <span>exec</span> cni-0f226515-e28b-df13-9f16-dd79456825ac <span>netstat</span> -lnp
+</span><span>Active Internet connections <span>(</span>only servers<span>)</span>
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        <span>0</span>      <span>0</span> <span>0.0</span>.0.0:80              <span>0.0</span>.0.0:*               LISTEN      <span>692698</span>/nginx: master
+tcp6       <span>0</span>      <span>0</span> :::80                   :::*                    LISTEN      <span>692698</span>/nginx: master</span><span></span></code></pre></div><blockquote><p>If you can&#39;t get SSH access to the worker nodes in your cluster, you can use <code>kubectl exec</code> to get a shell to the busybox container and use the <code>ip</code> and <code>netstat</code> command directly inside.</p></blockquote><p><em>Excellent!</em></p><p>Now that we covered the communication between the containers let&#39;s see how Pod-to-Pod communication is established.</p><h2 id="inspecting-pod-to-pod-traffic-in-the-cluster">Inspecting pod to pod traffic in the cluster</h2><p>When Pod-to-Pod communication comes into question, there are two possible scenarios:</p><ol><li>The pod traffic is destined to a pod on the same node.</li><li>The pod traffic is destined to a pod that resides on a different node.</li></ol><p>For the whole setup to work, we need the virtual interface pairs that we&#39;ve discussed and ethernet bridges.</p><p>Before moving forward, let&#39;s discuss their function and why they are necessary.</p><p><strong>For a pod to communicate to other pods, it must first have access to the node&#39;s root namespace.</strong></p><p>This is achieved using a virtual ethernet pair connecting the two namespaces: pod and root.</p><p>Those <a href="https://man7.org/linux/man-pages/man4/veth.4.html" target="_blank" rel="noreferrer">virtual interface devices</a> (hence the <code>v</code> in <code>veth</code>) connect and act as a tunnel between the two namespaces.</p><p>With this <code>veth</code> device, you attach one end to the pod&#39;s namespace and the other to the root namespace.</p><img src="https://learnk8s.io/a/6400a5aa88f9ef3bdc165a1e2cfeb190.svg" alt="The virtual interface devices in a pod connect the pod&#39;s namespace to the root&#39;s network namespace." loading="lazy"/><p>The CNI does this for you, but you could also do this manually with:</p><div><header><p>bash</p></header><pre><code><span><span>ip</span> <span>link</span> <span>add</span> veth1 netns pod-namespace <span>type</span> veth peer veth2 netns root</span></code></pre></div><p>Now your pod&#39;s namespace has an access &#34;tunnel&#34; to the root namespace.</p><p><strong>Each newly created pod on the node will be set up with a <code>veth</code> pair like this.</strong></p><p>Creating the interface pairs is one part.</p><p>The other is assigning an address to the ethernet devices and creating the default routes.</p><p>Let&#39;s explore how to set up the <code>veth1</code> interface in the pod&#39;s namespace:</p><div><header><p>bash</p></header><pre><code><span><span>ip</span> netns <span>exec</span> cni-0f226515-e28b-df13-9f16-dd79456825ac <span>ip</span> addr <span>add</span> <span>10.244</span>.4.40/24 dev veth1
+</span><span><span>ip</span> netns <span>exec</span> cni-0f226515-e28b-df13-9f16-dd79456825ac <span>ip</span> <span>link</span> <span>set</span> veth1 up
+</span><span><span>ip</span> netns <span>exec</span> cni-0f226515-e28b-df13-9f16-dd79456825ac <span>ip</span> route <span>add</span> default via <span>10.244</span>.4.40</span></code></pre></div><p>On the node side, let&#39;s create the other <code>veth2</code> pair:</p><div><header><p>bash</p></header><pre><code><span><span>ip</span> addr <span>add</span> <span>169.254</span>.132.141/16 dev veth2
+</span><span><span>ip</span> <span>link</span> <span>set</span> veth2 up</span></code></pre></div><p>You can inspect the existing <code>veth</code> pairs as you did previously.</p><p>In the pod&#39;s namespace, retrieve the suffix of the <code>eth0</code> interface.</p><div><header><p>bash</p></header><pre><code><span><span>ip</span> netns <span>exec</span> cni-0f226515-e28b-df13-9f16-dd79456825ac <span>ip</span> <span>link</span> show <span>type</span> veth
+</span><span><span>3</span>: eth0@if12: <span>&lt;</span>BROADCAST,MULTICAST,UP,LOWER_UP<span>&gt;</span> mtu <span>1450</span> qdisc noqueue state UP mode DEFAULT group default
+    link/ether <span>16</span>:a4:f8:4f:56:77 brd ff:ff:ff:ff:ff:ff link-netnsid <span>0</span></span><span></span></code></pre></div><p>In this case, you can grep for <code>grep -A1 ^12</code> (or just scroll through the output):</p><div><header><p>bash</p></header><pre><code><span><span>ip</span> <span>link</span> show <span>type</span> veth
+</span><span><span># output truncated</span>
+<span>12</span>: cali97e50e215bd@if3: <span>&lt;</span>BROADCAST,MULTICAST,UP,LOWER_UP<span>&gt;</span> mtu <span>1450</span> qdisc noqueue state UP mode DEFAULT group default
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netns cni-0f226515-e28b-df13-9f16-dd79456825ac</span><span></span></code></pre></div><blockquote><p>You can also use <code>ip -n cni-0f226515-e28b-df13-9f16-dd79456825ac link show type veth</code>.</p></blockquote><p>Pay attention to the notation on both <code>3: eth0@if12</code> and <code>12: cali97e50e215bd@if3</code> interfaces.</p><p>From the pod namespace, the <code>eth0</code> interface connects to interface number 12 in the root namespace. Hence the <code>@if12</code>.</p><p>On the other end of the <code>veth</code> pair, the root namespace is connected to the pod namespace interface number 3.</p><p>Next comes the bridge that will connect each end of the <code>veth</code> pairs.</p><h2 id="the-pod-network-namespace-is-connected-to-an-ethernet-bridge">The pod network namespace is connected to an ethernet bridge</h2><p>The bridge will &#39;tie&#39; together each end of the virtual interfaces located in the root namespace.</p><p><strong>This bridge will allow traffic to flow between virtual pairs and traverse through the common root namespace.</strong></p><p><em>Theory time.</em></p><p>An ethernet bridge is located at layer 2 of <a href="https://en.wikipedia.org/wiki/OSI_model" target="_blank" rel="noreferrer">the OSI networking model.</a></p><p><a href="https://ops.tips/blog/using-network-namespaces-and-bridge-to-isolate-servers/" target="_blank" rel="noreferrer">You can think of the bridge as a virtual switch accepting connections from different namespaces and interfaces.</a></p><p><strong>The ethernet bridge allows you to connect multiple available networks on the same node.</strong></p><p>So you can use this setup and bridge the two interfaces, the <code>veth</code> from the pod namespace to the other pod <code>veth</code> on the node.</p><img src="https://learnk8s.io/a/72130856cd225fe326bccde12b524814.svg" alt="You can use the bridge to connect each end of the virtual interfaces" loading="lazy"/><p>Let&#39;s have a look at ethernet bridge and veth pairs in action.</p><h2 id="tracing-pod-to-pod-traffic-on-the-same-node">Tracing pod to pod traffic on the same node</h2><p>Let&#39;s assume there are two pods on the same node, and Pod-A wants to send a message to Pod-B.</p><p>With this, the communication between Pod-A and Pod-B has been successful.</p><h2 id="tracing-pod-to-pod-communication-on-different-nodes">Tracing pod to pod communication on different nodes</h2><p>For pods that need to communicate across different nodes, an additional hop in the communication is required.</p><p><strong>This time, the ARP resolution doesn&#39;t happen because the source and the destination IP are on different networks.</strong></p><p>The check is done using a Bitwise operation.</p><p>When the destination IP is not on the current network, it is forwarded to the default gateway of the node.</p><h3 id="how-the-bitwise-operation-works">How the Bitwise operation works</h3><p>The source node must perform a bitwise operation when determining where the packet should be forwarded.</p><p><a href="https://en.wikipedia.org/wiki/Bitwise_operation#AND" target="_blank" rel="noreferrer">This operation is also known as ANDing.</a></p><p>As a refresher, the bitwise AND operation yields the following:</p><div><header></header><pre><code><span>0 AND 0 = 0
+0 AND 1 = 0
+1 AND 0 = 0
+1 AND 1 = 1</span></code></pre></div><p>Anything apart from <code>1</code> and <code>1</code> will be false.</p><p>If the source node has an IP of 192.168.1.1 with a subnet mask of /24, and the destination IP is 172.16.1.1/16, the bitwise AND operation will state that they are indeed on different networks.</p><p>Meaning the destination IP isn&#39;t on the same network as the packet&#39;s source, so that the packet will be forwarded throughout the default gateway.</p><p><em>Math time.</em></p><p>We must start with the 32-bit addresses in binary to do the AND operation.</p><p>Let&#39;s first find out the source and destination IP networks.</p><div><header></header><pre><code><span>| Type             | Binary                              | Converted          |
+| ---------------- | ----------------------------------- | ------------------ |
+| Src. IP Address  | 11000000.10101000.00000001.00000001 | 192.168.1.1        |
+| Src. Subnet Mask | 11111111.11111111.11111111.00000000 | 255.255.255.0(/24) |
+| Src. Network     | 11000000.10101000.00000001.00000000 | 192.168.1.0        |
+|                  |                                     |                    |
+| Dst. IP Address  | 10101100.00010000.00000001.00000001 | 172.16.1.1         |
+| Dst. Subnet Mask | 11111111.11111111.00000000.00000000 | 255.255.0.0(/16)   |
+| Dst. Network     | 10101100.00010000.00000000.00000000 | 172.16.0.0         |</span></code></pre></div><p>For the bitwise operation, you need to compare the destination IP to the source subnet of the node from where the packet originates.</p><div><header></header><pre><code><span>| Type             | Binary                              | Converted          |
+| ---------------- | ----------------------------------- | ------------------ |
+| Dst. IP Address  | 10101100.00010000.00000001.00000001 | 172.16.1.1         |
+| Src. Subnet Mask | 11111111.11111111.11111111.00000000 | 255.255.255.0(/24) |
+| Network  Result  | 10101100.00010000.00000001.00000000 | 172.16.1.0         |</span></code></pre></div><p>As we can see, the ANDed network results in 172.16.1.0, which doesn&#39;t equal to 192.168.1.0 - the network from the source node.</p><p><em>With this, we confirm that the source and destination IP addresses don&#39;t reside on the same network.</em></p><p>For example, if the destination IP was 192.168.1.2, i.e. in the same subnet as the sending IP, the AND operation will yield the local network of the node.</p><div><header></header><pre><code><span>| Type             | Binary                              | Converted          |
+| ---------------- | ----------------------------------- | ------------------ |
+| Dst. IP Address  | 11000000.10101000.00000001.00000010 | 192.168.1.2        |
+| Src. Subnet Mask | 11111111.11111111.11111111.00000000 | 255.255.255.0(/24) |
+| Network          | 11000000.10101000.00000001.00000000 | 192.168.1.0        |</span></code></pre></div><p>After the bitwise comparison is made, the ARP will check its lookup table for the MAC address of the default gateway.</p><p>If there is an entry, it will immediately forward the packet.</p><p>Otherwise, it will first do a broadcast to determine the MAC address of the gateway.</p><p>Now that you are familiar with how the traffic flows between the pods let&#39;s take the time to explore how a CNI creates the above.</p><h2 id="the-container-network-interface-cni">The Container Network Interface - CNI</h2><p><a href="https://github.com/containernetworking/cni/blob/master/SPEC.md" target="_blank" rel="noreferrer">The Container Network Interface (CNI) is concerned about the networking in the current node.</a></p><img src="https://learnk8s.io/a/6c41c89fb22049f1eed5c0fb7b956bb2.svg" alt="The kubelet uses three interfaces: the Container Network Interface (CNI), the Container Runtime Interface (CRI) and the Container Storage Interface (CSI)" loading="lazy"/><p><strong>You can think of the CNI as a set of rules that a networking plugin should follow to solve <em>some</em> of the Kubernetes network requirements.</strong></p><p>However, this isn&#39;t tied only to Kubernetes or a specific network plugin.</p><p>You can use any CNI:</p><ul><li><a href="https://www.tigera.io/project-calico/" target="_blank" rel="noreferrer">Calico</a></li><li><a href="https://cilium.io/" target="_blank" rel="noreferrer">Cillium</a></li><li><a href="https://github.com/flannel-io/flannel" target="_blank" rel="noreferrer">Flannel</a></li><li><a href="https://www.weave.works/docs/net/latest/overview/" target="_blank" rel="noreferrer">Weave Net</a></li><li><a href="https://github.com/containernetworking/cni#3rd-party-plugins" target="_blank" rel="noreferrer">and a lot of other network plugins.</a></li></ul><p>They all implement the same CNI standard.</p><p>Without a CNI in place, you would need to manually:</p><ul><li>Create interfaces.</li><li>Create veth pairs.</li><li>Set up the namespace networking.</li><li>Set up static routes.</li><li>Configure an ethernet bridge.</li><li>Assign IP addresses.</li><li>Create NAT rules.</li></ul><p>And a plethora of other things that will require excessive manual work.</p><p>Not to mention deleting or adjusting all of the above when a pod needs to be deleted or restarted.</p><p>The CNI must support <a href="https://github.com/containernetworking/cni/blob/master/SPEC.md#cni-operations" target="_blank" rel="noreferrer">four distinct operations</a>:</p><ul><li><strong>ADD</strong> - adds a container to the network.</li><li><strong>DEL</strong> - deletes a container from the network.</li><li><strong>CHECK</strong> - returns an error if there is a problem with the container&#39;s network.</li><li><strong>VERSION</strong> - displays the version of the plugin.</li></ul><p><em>Let&#39;s see how it works in practice.</em></p><p>When a pod gets assigned to a specific node, the kubelet itself doesn&#39;t initialize the networking.</p><p>Instead, it offloads this task to the CNI.</p><p><strong>However, it does specify the configuration and sends it over in a JSON format to the CNI plugin.</strong></p><p>You can navigate to <code>/etc/cni/net.d</code> on the node and check the current CNI configuration file with:</p><div><header><p>bash</p></header><pre><code><span><span>cat</span> <span>10</span>-calico.conflist
+</span><span><span>{</span>
+  <span>&#34;name&#34;</span><span>:</span> <span>&#34;k8s-pod-network&#34;</span>,
+  <span>&#34;cniVersion&#34;</span><span>:</span> <span>&#34;0.3.1&#34;</span>,
+  <span>&#34;plugins&#34;</span><span>:</span> <span>[</span>
+    <span>{</span>
+      <span>&#34;type&#34;</span><span>:</span> <span>&#34;calico&#34;</span>,
+      <span>&#34;datastore_type&#34;</span><span>:</span> <span>&#34;kubernetes&#34;</span>,
+      <span>&#34;mtu&#34;</span><span>:</span> <span>0</span>,
+      <span>&#34;nodename_file_optional&#34;</span><span>:</span> false,
+      <span>&#34;log_level&#34;</span><span>:</span> <span>&#34;Info&#34;</span>,
+      <span>&#34;log_file_path&#34;</span><span>:</span> <span>&#34;/var/log/calico/cni/cni.log&#34;</span>,
+      <span>&#34;ipam&#34;</span><span>:</span> <span>{</span> <span>&#34;type&#34;</span><span>:</span> <span>&#34;calico-ipam&#34;</span>, <span>&#34;assign_ipv4&#34;</span> <span>:</span> <span>&#34;true&#34;</span>, <span>&#34;assign_ipv6&#34;</span> <span>:</span> <span>&#34;false&#34;</span><span>}</span>,
+      <span>&#34;container_settings&#34;</span><span>:</span> <span>{</span>
+          <span>&#34;allow_ip_forwarding&#34;</span><span>:</span> <span>false</span>
+      <span>}</span>,
+      <span>&#34;policy&#34;</span><span>:</span> <span>{</span>
+          <span>&#34;type&#34;</span><span>:</span> <span>&#34;k8s&#34;</span>
+      <span>}</span>,
+      <span>&#34;kubernetes&#34;</span><span>:</span> <span>{</span>
+          <span>&#34;k8s_api_root&#34;</span><span>:</span><span>&#34;https://10.96.0.1:443&#34;</span>,
+          <span>&#34;kubeconfig&#34;</span><span>:</span> <span>&#34;/etc/cni/net.d/calico-kubeconfig&#34;</span>
+      <span>}</span>
+    <span>}</span>,
+    <span>{</span>
+      <span>&#34;type&#34;</span><span>:</span> <span>&#34;bandwidth&#34;</span>,
+      <span>&#34;capabilities&#34;</span><span>:</span> <span>{</span><span>&#34;bandwidth&#34;</span><span>:</span> true<span>}</span>
+    <span>}</span>,
+    <span>{</span><span>&#34;type&#34;</span><span>:</span> <span>&#34;portmap&#34;</span>, <span>&#34;snat&#34;</span><span>:</span> true, <span>&#34;capabilities&#34;</span><span>:</span> <span>{</span><span>&#34;portMappings&#34;</span><span>:</span> true<span>}</span><span>}</span>
+  <span>]</span>
+<span>}</span></span><span></span></code></pre></div><p><strong>Each CNI plugin uses a different type of configuration for the network setup.</strong></p><p>For example, Calico uses layer 3 networking paired with the BGP routing protocol to connect pods.</p><p>Cilium configures an overlay network with eBPF on layers 3 to 7.</p><p>Along with Calico, Cilium supports setting up network policies to restrict traffic.</p><p><em>So which one should you use?</em></p><p>It depends.</p><p>There are mainly two groups of CNIs.</p><p><strong>In the first group, you can find CNIs that use a basic network setup (also called a flat network)</strong> and assign IP addresses to pods from the cluster&#39;s IP pool.</p><p>This could become a burden as you might quickly exhaust all available IP addresses.</p><p><strong>Instead, another approach is to use overlay networking.</strong></p><p>In simple terms, an overlay network is a secondary network on top of the main (underlay) network.</p><p><strong>The overlay network works by encapsulating any packet originating from the underlay network that is destined to a pod on another node.</strong></p><p>A popular technology for overlay networks is <a href="https://iximiuz.com/en/posts/computer-networking-101/" target="_blank" rel="noreferrer">VXLAN</a>, which enables tunnelling L2 domains over an L3 network.</p><p><em>So which one is better?</em></p><p><strong>There isn&#39;t a single answer, and it usually comes down to your requirements.</strong></p><p><em>Are you building a large cluster with tens of thousands of nodes?</em></p><p>Maybe an overlay is better.</p><p><em>Do you value a simpler setup and the ability to inspect your network traffic without being lost in nested networks?</em></p><p>A flat network is perfect for you.</p><p>Now that we&#39;ve discussed the CNI let&#39;s explore how Pod-to-Service communication works.</p><h2 id="inspecting-pod-to-service-traffic">Inspecting Pod to Service traffic</h2><p>Due to the dynamic nature of the pods in Kubernetes environments, the IP addresses that are assigned to them aren&#39;t static.</p><p><strong>They are ephemeral and change every time a pod is created or deleted.</strong></p><p>The service addresses this issue and provides a stable mechanism for connecting to a set of pods.</p><img src="https://learnk8s.io/a/cadd4ed0c39fc22f77a6278bacd832a2.svg" alt="A service provides a stable mechanism for connecting to a set of pods." loading="lazy"/><p>By default, when you create a service in Kubernetes, <a href="https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies" target="_blank" rel="noreferrer">a virtual IP is reserved and assigned to it.</a></p><p>From there, using selectors, you associate the service to the target pods.</p><p><em>What happens when a pod is deleted, and a new one is added?</em></p><p><strong>The service&#39;s virtual IP remains static and unchanged.</strong></p><p>However, the traffic will reach the newly created pods without the need for intervention.</p><p>In other words, services in Kubernetes are similar to load balancers.</p><p><em>But how do they work?</em></p><h2 id="intercepting-and-rewriting-traffic-with-netfilter-and-iptables">Intercepting and rewriting traffic with Netfilter and Iptables</h2><p>The service in Kubernetes is built upon two Linux kernel components:</p><ol><li><a href="https://en.wikipedia.org/wiki/Netfilter" target="_blank" rel="noreferrer">Netfilter</a> and</li><li><a href="https://en.wikipedia.org/wiki/Iptables" target="_blank" rel="noreferrer">iptables</a>.</li></ol><p><strong>Netfilter is a framework that allows to configure packet filtering, create NAT or port translation rules, and manage the traffic flow in the network.</strong></p><p>In addition, it also shields and prevents unsolicited connections to reach the services.</p><p><strong>Iptables, on the other hand, is a user-space utility program that allows you to configure the IP packet filter rules of the Linux kernel firewall.</strong></p><p>The iptables are implemented as different Netfilter modules.</p><p>You use the iptables CLI to alter the filtering rules on the fly and insert them into netfilters hooking points.</p><p>The filters are organized in different tables, which contain chains for handling network traffic packets.</p><p>Different kernel modules and programs are used for each protocol.</p><blockquote><p>When iptables is mentioned, it generally means the usage is for IPv4. For IPv6 rules, the CLI is called ip6tables.</p></blockquote><p>Iptables has five types of chains, and each chain directly maps to the Netfilter&#39;s hooks.</p><p>From iptables point of view, they are:</p><ul><li><code>PRE_ROUTING</code></li><li><code>INPUT</code></li><li><code>FORWARD</code></li><li><code>OUTPUT</code></li><li><code>POST_ROUTING</code></li></ul><p>And they correspondingly map to Netfilter hooks:</p><ul><li><code>NF_IP_PRE_ROUTING</code></li><li><code>NF_IP_LOCAL_IN</code></li><li><code>NF_IP_FORWARD</code></li><li><code>NF_IP_LOCAL_OUT</code></li><li><code>NF_IP_POST_ROUTING</code></li></ul><p>When a packet arrives, and depending on which stage it is, it will &#39;trigger&#39; a Netfilter hook, which applies a specific iptables filtering.</p><img src="https://learnk8s.io/a/2bcc5217ed5543a0e22c595485f014be.svg" alt="IPtable filtering" loading="lazy"/><p><em>Yikes! That looks complex!</em></p><p>Nothing to worry though.</p><p>That&#39;s why we use Kubernetes, all of the above is abstracted through the use of services, and a simple YAML definition sets those rules automatically.</p><p>If you are interested in seeing the iptables rules, you can connect to a node and run:</p><p>You can also <a href="https://github.com/Nudin/iptable_vis" target="_blank" rel="noreferrer">use this tool to visualize</a> the iptables chains on a node.</p><p>Example diagram with visualized iptables chains, taken from a GKE node:</p><a href="https://svgshare.com/i/bgz.svg" target="_blank" rel="noreferrer"><img src="https://learnk8s.io/a/34074233db1f1941c17bd5abd5ff2744.svg" alt="The iptables rules visualised for a GKE cluster" loading="lazy"/></a><p><em>Keep in mind that there may be hundreds of rules configured. Imagine creating them by hand!</em></p><p>We have explained how Pod-to-Pod communication happens when pods are on the same and different nodes.</p><p>In Pod-to-Service, the first half of the communication stays the same.</p><img src="https://learnk8s.io/a/167545f614324841b5bcd3713df08485.svg" alt="In Pod-to-Service, the first half of the communication stays the same." loading="lazy"/><p>When the request starts at Pod-A, and it wants to reach Pod-B, which in this case will be &#39;behind&#39; a service, there is an additional change happening halfway through the transfer.</p><p>The originating request exits through the <code>eth0</code> interface in the Pod-A namespace.</p><p>From there, it goes through the <code>veth</code> pair and reaches the root namespace ethernet bridge.</p><p>Once at the bridge, the packet gets immediately forwarded through the default gateway.</p><p>As in the Pod-to-Pod section, the host makes a bitwise comparison, and because the vIP of the service isn&#39;t part of the node&#39;s CIDR, the packet will be instantly forwarded through the default gateway.</p><p>The same ARP resolution will happen to find out the MAC address of the default gateway if it isn&#39;t already present in the lookup table.</p><p><em>Now the magic happens.</em></p><p>Just before that packet goes through the routing process of the node, the <code>NF_IP_PRE_ROUTING</code> Netfilter hook gets triggered, and an iptables rule is applied. The rule does a DNAT change and rewrites Pod&#39;s A packet destination IP.</p><img src="https://learnk8s.io/a/9fa0ef7eaf2ffc332d0cb9e6b4ba5c3a.svg" alt="The packet is intercepted by the iptables rules and rewritten." loading="lazy"/><p>The previous service vIP destination gets rewritten to the Pod&#39;s B IP address.</p><p>From there, the routing is just as same as directly communicating Pod-to-Pod.</p><img src="https://learnk8s.io/a/99423166613c21cff6aaa50c7590ff40.svg" alt="After the packet is rewritten, the communication is pod to pod." loading="lazy"/><p>However, in between all this communication, another third feature is utilized.</p><p><a href="https://www.linuxtopia.org/Linux_Firewall_iptables/x1298.html" target="_blank" rel="noreferrer">This feature is called conntrack</a>, or connection tracking.</p><p><strong>Conntrack will associate the packet to the connection and keep track of its origin when a response is sent back by Pod-B.</strong></p><p>The NAT heavily relies on conntrack to work.</p><p>Without connection tracking, it wouldn&#39;t know where to send back the packet containing the response.</p><p>When conntrack is used, the return path of the packets is easily set up with the same source or destination NAT change.</p><p>The other half is now in the reverse order.</p><p>Pod-B received and processed the request and now sends back data to Pod-A.</p><p><em>What happens now?</em></p><h2 id="inspecting-responses-from-services">Inspecting responses from Services</h2><p>Now Pod-B sends the response, setting up its IP address as source and Pod&#39;s A IP address as the destination.</p><p>The rest is the same; once the SNAT is done, the packet reaches the ethernet bridge in the root namespace and gets forwarded through the veth pair to Pod-A.</p><h2 id="recap">Recap</h2><p>Let&#39;s do a recap on what you&#39;ve learned in this article:</p><ul><li>How containers talk locally or Intra-Pod communication.</li><li>Pod-to-Pod communication when the pods are on the same and different nodes.</li><li>Pod-to-Service - when pod sends traffic to another pod behind a service in Kubernetes.</li><li>What are namespaces, veth, iptables, chains, conntrack, Netfilter, CNIs, overlay networks, and everything else in the Kubernetes networking toolbox required for effective communication.</li></ul><div><p>Don&#39;t miss the next article!</p><p>Be the first to be notified when a new article or Kubernetes experiment is published.</p><p>*We&#39;ll never share your email address, and you can opt-out at any time.</p></div></article></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="A624A638-8B25-4A77-83D8-120E1C916B56"><a href="https://www.warp.dev/blog/how-warp-uses-warp">How Warp Uses Warp</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.warp.dev/blog/how-warp-uses-warp">https://www.warp.dev/blog/how-warp-uses-warp</a></span><br />
+			<span class="d">Added: 2023-01-06 18:57:20.711974143 &#43;0000 UTC</span>
+		</div>
+		<p class="p">4 engineers from the Warp team talk about how they use their favorite features in Warp on a day-to-day basis.
+			
+				... (9608 chars. See <a href="javascript:toggle('bA624A638-8B25-4A77-83D8-120E1C916B56');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="bA624A638-8B25-4A77-83D8-120E1C916B56">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><div><p>In this article, members of the Warp team talk about how we’ve integrated some of Warp’s cooler features into our day-to-day workflows. Specifically, we go beyond expected features like split panes and tab completion and focus on unique features in Warp that improve on the terminal status quo. We’re excited about what we’re building and hope that this post gives some insight into how our team works!</p><p>‍<a href="#block-sharing"><br/>Block Sharing</a><a href="#workflows"><br/>Workflows</a><br/><a href="#quake-mode">Quake Mode</a><br/><a href="#ai-command-search">AI Command Search</a>‍</p><p>‍</p><p>‍</p><p><h2 id="block-sharing"><a href="https://docs.warp.dev/features/blocks/block-actions#sharing-a-block">Block Sharing</a> - <a href="https://www.linkedin.com/in/david-stern-24b71637/">David Stern</a> (Engineer)</h2></p><div><p>Block sharing in Warp allows users to share a block – a grouping of a command and its output – easily with coworkers or teammates by creating a web permalink that teammates can visit to see the terminal’s input and output for a given command. </p><p>Developers tend to take screenshots of terminal output, but screenshots have a number of problems.  By their nature, you can only capture at most one screen of text, and commands often produce much longer outputs. On top of that, recipients cannot search, select, or copy-paste text in screenshots. This in turn makes it hard to find specific strings or errors in the text. </p></div><p>‍</p><div><p>As another sharing solution, developers also try copy-pasting text from the terminal, but that has its own issues - it’s often hard to read output because colors are lost and text-wrapping is wrong on different screen sizes. </p><p>Block sharing fixes these issues and has completely replaced screenshotting and copy-pasting terminal output in our team.<em> </em>Colors and text-wrapping are preserved, so developers can easily spot things like specific line changes (eg. <a href="https://app.warp.dev/block/JjdoVfeKebVSw8wiykuDag">git diff</a>) or untracked files (eg. <a href="https://app.warp.dev/block/XMqSWjDotRHtWooacpyZcz">git status</a>). Under the hood, colors and fonts are being stored by using ANSI escape sequences (read more <a href="https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797#:~:text=%5Cx1b%5B1%3B31m%20%20%23%20Set%20style%20to%20bold%2C%20red%20foreground.">here</a>) and text formatting is stored as a series of JSON objects that preserve newlines as well as spacing between characters.</p><p>Here’s an example of a <a href="https://app.warp.dev/block/TdvyUF4S7nHocDQqEkYrY1">block</a> I shared in Warp’s #help Slack channel about a month ago. I was getting multiple error outputs from the command cargo clippy -p warp, which runs a Rust linter on the Warp codebase.</p></div><p>‍<br/></p><figure class="w-richtext-align-fullwidth w-richtext-figure-type-image"><p><img src="https://assets-global.website-files.com/6221c6f68d6664279c408870/6320b12b57c7cfcb60adbfdd_631fc0f31e514a326b82f39d_w_saMuyrexAZeqJ_pWvwPkO6AddfGfSPLGG6KRLhj7hpgYiyWvBGmH0wB96igiAOGcrBSWg7AhNO1fWpai1oC0H2sLCvEEIXHKC2vlY05vQ7JpkgK1Mg2HfUowIBQFP-ji0soeqAkYEdWUj7xG-1DVONR0iCkd73e0bB3vNmZdebTBVsiElPpLVUjA.png" alt=""/></p><figcaption><em>This is just a screenshot of the error output. Click </em><a href="https://app.warp.dev/block/TdvyUF4S7nHocDQqEkYrY1"><em>here</em></a><em> to get the full effect of a shared block.</em></figcaption></figure><div><p>As you can see, the shared block preserves the <strong>red</strong> to signify an error, <strong>blue</strong> to point to the specific file and line number, <strong>tabbing</strong> to signify an actual line of code, and even allows the user to <strong>directly click on links</strong> to existing Github issues in Rust. On top of that, the output is quite long (56 lines), but the permalink makes it easy to just scroll up and down without having to flip through multiple screenshots (like in the one above, where it is cut off at line 36). Everything above made it easy for one of our engineers to take a look at the permalink and come to a swift suggested fix:</p></div><figure class="w-richtext-align-fullwidth w-richtext-figure-type-image"><p><img src="https://assets-global.website-files.com/6221c6f68d6664279c408870/6320b12bb27a2323397f416b_631fc0f38e4bb269cbefe3dc_y01KwT0nUSUbkCFyr9uTkNgb01lbctIv4CNb3sAuNaBkpaltltYP2IVuJaRNfJqheY9fIb2d6C35FLbAyCsGso-Eav4gyjhiT82KeiRADPxAnELg5LqeDncnRCSZryXaQwrCK21qPIlChYd3irqVMzB7HYASI8eC92FYcBjL0OTKLA_GVW9x64b5Vg.png" alt=""/></p><figcaption><em>One of our engineers, Aloke, identified the root issue of the linting errors and quickly helped unblock me.</em></figcaption></figure><p>I also use shared blocks to demo steps for engineers that are just onboarding onto the codebase. A few months ago, one of our interns, Abhi, posted a question onto Warp’s #engineering Slack channel asking how to know whether a keyboard shortcut was already mapped to something within Warp. I replied by sharing <a href="https://app.warp.dev/block/UQ6bSlw6MBebIM77eRPOqw">this</a> block: </p><p>‍</p><figure class="w-richtext-align-fullwidth w-richtext-figure-type-image"><p><img src="https://assets-global.website-files.com/6221c6f68d6664279c408870/6320b12bea9bf329eba4deb5_631fc0f3e3fe9768bec0c745_4u-0X0NgBOt7FSCC041WQyPkq5Xv2iJABPFzwgGzljhu_U92LjL7cYatnMQd-MTBhldJxPNydGPqo5XZD9ro9wwG2IWFeS8GNb1RGmqVFdQhkJBHL_uVV3qlUCqI9Fgn7SQ669s0c2w0u-0cTrqyOxPEQsnp-PGaKCMV8lA-eMqfJKt-pGZg3cChig.png" alt=""/></p><figcaption><em>This is just a screenshot of the output. Click </em><a href="https://app.warp.dev/block/UQ6bSlw6MBebIM77eRPOqw"><em>here</em></a><em> to get the full effect of a shared block.</em></figcaption></figure><p><em>‍<br/></em></p><div><p>The shared block displays a simple grep command that searches the codebase for a specific phrase (in this case, a keyboard shortcut) and outputs all places in the code where the searched phrase exists. </p></div><p>One more fun thing about blocks – they last forever (or at least as long as you want them to)! Blocks are stored under user settings indefinitely until the user decides to unshare them, at which point that data is deleted from Warp’s servers permanently. </p><p>‍</p><figure class="w-richtext-align-fullwidth w-richtext-figure-type-image"><p><img src="https://assets-global.website-files.com/6221c6f68d6664279c408870/6320b12b1efdf16c134ad08f_631fc0f3e3fe975217c0c744_myPfoj4bqlSZuEoOuxh97BJQo7peEETtBuEJR8cJ4CqxOrSbSj0H3v7wln0Nz_u3QvFStjTvKhfkyY-hVf4IRpvbJVcxr5aW_vGhvM63dV8339qEdXwP_LCECX5vmhhcEHgWNs0hxm9yhvLgMBre9O9SYTEtgf69_BxALzyroiEyQviHI33xEzD9Cw.png" alt=""/></p><figcaption><em>It’s easy to unshare a block - just go to Settings &gt; Shared Blocks &gt; Unshare.</em></figcaption></figure><p>‍</p><p>‍</p><p><h2 id="workflows"><a href="https://docs.warp.dev/features/workflows">Workflows</a> - <a href="https://www.linkedin.com/in/ian-hodge-4876aa117/">Ian Hodge</a> (Engineer)</h2></p><div><p>Workflows are a curated list of commands within Warp that are searchable by name or description, and make it easy to recall hard-to-remember commands. They can also be specific to a particular git repository or just stored locally for an individual. </p><p>For me, workflows have been particularly useful when I’m on call. For context, workflows can be created at a repository level, so the engineering team created shared workflows for Warp’s internal repo:</p></div><figure class="w-richtext-align-fullwidth w-richtext-figure-type-image"><p><img src="https://assets-global.website-files.com/6221c6f68d6664279c408870/6320b12b27a6c6d673408319_631fc0f3a0939e2ac4eaf1fa_OFk_XBs2SS9gDagS1ck3ehMKCx7maIo2S-AnhWSFjEDceDxxhwyAUC3wukdOWVqHq3qUw3IbIyrXYCoJQ4O-aduZoQKO4uSVERJa21b6VPUjVFgfh_JOiEfPh1-CtmtZq7WoHVxXc_x3X1zDqUgWXlgmEbCXu7AfOLav8xmIfRrW6JDsQ17iOJj43w.png" alt=""/></p></figure><p><br/>Here’s a list of Warp’s repository workflows:</p><p>‍</p><ul role="list"><li>Allowlist IP address for staging</li><li>Build image and start container for SSH testing</li><li>Bundle Warp</li><li>Cherrypick commit into a latest release branch</li><li>Copy WarpDev Keychain to Warp local</li><li>Create GH pull request to release a feature</li><li>Create new branch off master</li><li>Run unit test</li><li>Run Warp locally with shell</li></ul><p>‍</p><p>The workflow that I’d like to highlight is the command to cherrypick a commit into the latest release branch. Here is the full command:</p><figure class="w-richtext-align-fullwidth w-richtext-figure-type-image"><p><img src="https://assets-global.website-files.com/6221c6f68d6664279c408870/6320b12bea9bf389a4a4deb6_631fc0f39b67e17fd82987d6_gbBkwhpvEV2P9Ija2qkDOHLxeZ8bHxhQe0pSqT5jFGUtezFjzaZPbOaPapOyyHSWDp39Ykimt1tr0icqCm4OAv6CrpflBSmxl59_cm-qgG1T3ZTanCPUsDc83fqvReZLNmLTbANseG8ur1o0Z0bZMQzgQk5p6HiaMkwTJI3y3-zQ3MvFUY2avgHQqA.png" alt=""/></p><figcaption><em>A screenshot of what you see in Warp when selecting a specific workflow. There are details for each parameter and a summary of what the overall command will do when executed.</em></figcaption></figure><div><p><em><br/></em>As you can see, the workflow is quite long and almost impossible to recall out of memory (for us mere mortals, at least), especially during on call when engineers are usually running commands they don’t use day-to-day. I use this command to quickly undo breaking changes when issues pop up during my on call week.</p></div><div><p>On top of that, it’s great for remembering commands that are asked often, potentially from engineers that are just onboarding:</p></div><figure class="w-richtext-align-fullwidth w-richtext-figure-type-image"><p><img src="https://assets-global.website-files.com/6221c6f68d6664279c408870/6320b12b9820e44d00627142_631fc0f3f73d891caecfd584_YKJD3BPz8rCR61fB6V2vza9efkmjvfaRV1iLNcxtt3G0bnNPn4wR4oIrKGgrOea7ZXvhv8uDDG6kAsdm-gojg10FFtWGPg9SXJ0IPZ5T9_c8JymmPkQe6vH2X2XvKE-IUNf6LWcVdeVJuy7yiQVhuLhKrWF4z6fme6NQFPti31u-GZT5C_Hi3VSbyw.png" alt=""/></p></figure><figure class="w-richtext-align-fullwidth w-richtext-figure-type-image"><p><img src="https://assets-global.website-files.com/6221c6f68d6664279c408870/6320b12b560162150a2c93b3_631fc0f3fde5b75f43acb4c0_8UybB9MWlhIWt5R35Ci2a5BIMm_err3quGt-cOomVELTr9VkMOazuhICaNrDb9ggOzC8DMk96O2ySm3Crd_87SfyHVwF1_aT1WAwQk--tEqPzDadodX0LQ7GQ09cf-GLdmNLdnTVDcf02dd0u7gGAMMybsMhEsrjgku5nIKEw3ig5MBtKkL55zJPkQ.png" alt=""/></p></figure><figure class="w-richtext-align-fullwidth w-richtext-figure-type-image"><p><img src="https://assets-global.website-files.com/6221c6f68d6664279c408870/6320b12bfdd46b2a63c48fd7_631fc0f3a0939eaf8ceaf1fb_Ur_9SvNb-Q9WneVA2SZ5aG5ki2ZshQKLcaNY0If15UFNoTfaIuvkpT2Qoj7xb4j6KkRNi7sREZ6FfGGQ6JqEVCXrrKO_qJCpnnyAIBZ5GkblSHqXuWhFo6QK4_vnGtwzA2fVd80fmNy2uzdOdg2-wZhNyA0or1nzQf4ZfU5YjodkII_eLSY0Pt6m9Q.png" alt=""/></p><figcaption><em>Screenshots of the same question being asked by three different people in Warp’s #help Slack channel over the past few months. </em></figcaption></figure><p><br/>Trying to add an IP address to staging is one of the most commonly asked questions in Warp’s #help Slack channel, since it’s a command that needs to be run for anybody on the team to access Warp’s dev build. We created a team shared workflow so that people could easily find the command - “Allowlist IP address for staging”. It’s quite simple to add a workflow - we just needed to fill out a .YAML file with the name of the workflow, command , any arguments, and the name of those arguments (learn more <a href="https://github.com/warpdotdev/workflows/blob/main/FORMAT.md">here</a>). </p><p>‍</p><p>Here is the command we added:<br/></p><p>‍</p><figure class="w-richtext-align-fullwidth w-richtext-figure-type-image"><p><img src="https://assets-global.website-files.com/6221c6f68d6664279c408870/6320b12ba48fa32578915bac_631fc0f40b17b34c86614498_VSgH7MGJj16-tAMbLThEtor_u2LJtYfQ661XJO9UjwQz0xmq15wo3xj0H-LvC_arPnMLLkJivPRWOaetq4FMfeoxf68B_i8F9WLI98hD4dkj0GlXkZzVWcsEC5Yb-t8yIS0pqw4or3-WQIceNluyX6Trhn2f5vihPP3Gw1WU9w54yWc03fl6Qha6vA.png" alt=""/></p><figcaption><em>A screenshot of what you see in Warp when selecting a specific workflow. I prefer using workflows over scripts because there are details for each parameter and a summary of what the overall command will do when executed.</em></figcaption></figure><p>‍</p><p><h2 id="quake-mode"><a href="https://docs.warp.dev/features/hotkey-window">Quake Mode</a> - <a href="https://www.linkedin.com/in/michlimlim/">Michelle Lim</a> (Growth Lead)</h2></p><div><p>I heavily depend on VS Code as my go-to code editor and realized that there were a lot of Warp features I became dependent on that did not exist in VS Code’s integrated terminal (block sharing, launch configurations, and saved workflows). So I figured out some clever “hacks” to integrate Warp with VS Code using Warp’s Quake Mode feature.</p></div><figure class="w-richtext-align-fullwidth w-richtext-figure-type-image"><p><img src="https://assets-global.website-files.com/6221c6f68d6664279c408870/6320b12b57c7cf8bdaadbfde_631fc0f4b929b11c927e1825_CQoGnTpj31ouOj4bdFZHNbn3lUSf7957xyn-c2rrNx2IN6SiYNzs6HvTcB6WC7dCdvwydnioObn0lgMLuDaIf1AuqCeF0OIEyFPZZVm474N7ImNTeaD0UupO755ePS0IoF20PYXwjManZcUzNR0lKEoZ-ad2nVVFB-VYvLAoZYPcqcqJyAzYrWPYsQ.png" alt=""/></p><figcaption><em>My setup before joining Warp. I used VS Code as my code editor, and the integrated code editor (highlighted in the image) that came with it. </em></figcaption></figure><div><p>In VS Code, the shortcut to show/hide the terminal pane is CMD + J, so I configured the same keyboard shortcut in Warp using Quake Mode. Warp’s global hotkey setting automatically overrides VS Code’s keyboard shortcut. As a result, I can just rely on muscle memory to hit the right buttons to toggle the terminal, except now it would automatically bring up Warp.</p><p>On top of that, I wanted Warp to blend in with my VS Code setup. I set Quake mode to pin Warp to the bottom of the screen, set the width as 100% and the height as 30%, and even matched up the themes by choosing “Solarized Light” in both VS Code and Warp. If you’re curious about how Warp handles themes, you can read our docs <a href="https://docs.warp.dev/features/themes">here</a> or even use <a href="https://github.com/haackt/warp-companion">this cool community-created tool</a> to automatically match your VS Code theme to your Warp theme.<br/>‍</p></div><figure class="w-richtext-align-fullwidth w-richtext-figure-type-image"><p><img src="https://assets-global.website-files.com/6221c6f68d6664279c408870/6320b12b35633066008f6195_63201c465478cc964fed867a_Screen%2520Shot%25202022-09-12%2520at%252010.48.20%2520PM.png" loading="lazy" alt=""/></p><figcaption><em>My setup when I use Quake Mode to bring up my Warp terminal in my VS Code window.</em></figcaption></figure><p>‍<br/>There are some added benefits to this approach as well. Quake mode is also known as “Global Hotkey”, and it is called that because the key binding works on an OS level and therefore works across all desktops. Conversely, it is currently not possible to detach the integrated terminal window from VS Code, which makes it hard to reuse VS Code’s terminal session for different setups or projects. This post <a href="https://superuser.com/questions/1468225/is-it-possible-to-detach-the-terminal-window-from-vscode">here</a> even suggests creating a new VS Code window just to work with the integrated terminal in a new window, which is less than ideal. </p><p>‍</p><p><h2 id="ai-command-search"><a href="https://docs.warp.dev/features/ai-command-search">AI Command Search</a> - <a href="https://www.linkedin.com/in/agata-cieplik/">Agata Cieplik</a> (Engineer)</h2></p><p>AI Command Search is a feature that converts natural language descriptions into shell commands. The feature is powered by <a href="https://openai.com/blog/openai-codex/">OpenAI Codex</a> - if you want to learn more, check out <a href="https://openai.com/blog/codex-apps/#:~:text=%E2%80%9CCodex%20allows%20Warp,Lloyd%2C%20Founder%2C%C2%A0Warp">this</a> blog post on OpenAI featuring Warp.</p><p>‍</p><div><p>I use AI Command Search to debug performance issues in the Warp app, specifically to extract traces from logs and process the output afterwards. </p></div><figure class="w-richtext-align-fullwidth w-richtext-figure-type-image"><p><img src="https://assets-global.website-files.com/6221c6f68d6664279c408870/6320b12bab1e1e6a643e29e7_631fc0f40a04d215454d256d_rLM_q5B-Gr2WCDAakIEY8pTiyhatTX_bNmmySD3LQ1gpl5bXDpZtdnmVBy54dNssyajOL2jIKTq3trvQkj2z5sD5YkWrWDzdGNr5s6a6I5moBNi0aQSd6kJrNXkYK88nM_OG2G8_GdGqCE27YPhz_MjgJi4Dht8iB35HsH0L1G_EqHHfIkUqsIma2A.png" alt=""/></p><figcaption><em>An example of Warp-related logs.</em></figcaption></figure><p>‍</p><div><p>In AI Command Search, I might type something like: “<em>Search for ‘redraw’ in this directory and extract the first and third column separated by space and then sort the output.</em>”</p></div><figure class="w-richtext-align-fullwidth w-richtext-figure-type-image"><p><img src="https://assets-global.website-files.com/6221c6f68d6664279c408870/6320b12bea3a90d38163ded8_631fc0f43d67489156bfeb82_KOTC9biJ5Oo0Nk98o6Q5lbs4GRiKQsM5fBtDn-OLkL2RBCiyu3k2BX0TbdxH_HFOtJa7yrX4sXLtf-UB-3eRgrs5U_H8voBclv_Z9JO9TtbMYjXvHLz-2U-5BMP3m7ZmA7IyuXmhUUDM8bOK3f0guODX5Wb868S11s2kNxMHjSEVkWKjzPUpi67oyQ.png" alt=""/></p><figcaption><em>A screenshot of the AI Command Search panel in Warp.</em>‍</figcaption></figure><p>‍<br/>AI Command Search generates the command: <strong>grep -i redraw * | cut -f 1,2 -d &#34; &#34; | sort<br/>‍</strong></p><p>And the <a href="https://app.warp.dev/block/k7zCOVRfqnKsaKjTzn7FP1">output</a>:</p><p>‍</p><figure class="w-richtext-align-fullwidth w-richtext-figure-type-image"><p><img src="https://assets-global.website-files.com/6221c6f68d6664279c408870/6320b12c768cef3c603067be_631fc0f42f19e84f4693452d_V0xhbJ3udxDtSlQA1wEBl1U2-k90JSGAWCs2lhrRe2TT2J4cRSCaNBOfeZaq_XF7gQ-c4bRFREJo9ET7czV-9-ENDiyyYAjQk6JMxglcSQRHWKeVjsST_YItVjK0G-txOUhOAIptJXQaZiac1R7AVrNFvG579a0-7E7CggqJwRVcudqyavzkye35vQ.png" alt=""/></p></figure><p><br/>At this point, I would start to analyze the output and weave together a story of how this specific trigger can be tied to performance and rendering slowness in Warp. Before AI Command Search, I had to write these commands from scratch. For example, I might first write the grep command, run it to see the output, then play around with the cut command and its flags to correctly parse the logs for relevant information, which usually takes a few tries. With AI Command Search, I can simply input in English (or whatever natural language you prefer) what I want to do, and get a nice grep + cut + sort pipeline that runs everything all in one fell swoop. </p><p>‍</p></div></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="44934F2E-27CA-4FB8-8663-EB9D4F49AEEA"><a href="https://hubermanlab.com/using-caffeine-to-optimize-mental-and-physical-performance/">Using Caffeine to Optimize Mental &amp; Physical Performance</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://hubermanlab.com/using-caffeine-to-optimize-mental-and-physical-performance/">https://hubermanlab.com/using-caffeine-to-optimize-mental-and-physical-performance/</a></span><br />
+			<span class="d">Added: 2022-12-10 09:03:03.759031057 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this episode, I explain how to use caffeine to enhance mental and physical health and performance, including the optimal dosages and intake schedules for caffeine.
+			
+				... (3849 chars. See <a href="javascript:toggle('b44934F2E-27CA-4FB8-8663-EB9D4F49AEEA');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="b44934F2E-27CA-4FB8-8663-EB9D4F49AEEA">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><div id="site-content" role="main">
+
+		<article id="post-2345">
+
+	
+	
+
+	
+		<figure>
+
+			
+			<p><img width="1920" height="1080" src="https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/12/Episode-Card-101.jpg?fit=1920%2C1080&amp;ssl=1" alt="&#34;Caffeine: Science &amp; Uses - Huberman Lab&#34; and image of Andrew Huberman" decoding="async" srcset="https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/12/Episode-Card-101.jpg?w=1920&amp;ssl=1 1920w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/12/Episode-Card-101.jpg?resize=300%2C169&amp;ssl=1 300w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/12/Episode-Card-101.jpg?resize=1024%2C576&amp;ssl=1 1024w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/12/Episode-Card-101.jpg?resize=768%2C432&amp;ssl=1 768w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/12/Episode-Card-101.jpg?resize=1536%2C864&amp;ssl=1 1536w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/12/Episode-Card-101.jpg?resize=1080%2C608&amp;ssl=1 1080w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/12/Episode-Card-101.jpg?w=1304&amp;ssl=1 1304w" sizes="(max-width: 1920px) 100vw, 1920px"/>			</p>
+
+			
+		</figure>
+
+		
+	<div>
+
+			
+<figure><p>
+<iframe loading="lazy" title="Using Caffeine to Optimize Mental &amp; Physical Performance | Huberman Lab Podcast 101" width="652" height="367" src="https://www.youtube.com/embed/iw97uvIge7c?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+</p></figure>
+
+
+
+<p>Listen: <a href="https://youtu.be/iw97uvIge7c" target="_blank" rel="noreferrer noopener">YouTube</a> | <a href="https://podcasts.apple.com/us/podcast/huberman-lab/id1545953110?i=1000588786147" target="_blank" rel="noreferrer noopener">Apple Podcasts</a> | <a href="https://open.spotify.com/episode/5UXYDLF6e66k8K9X6VwZB5?si=c59a915580cd43f8" target="_blank" rel="noreferrer noopener">Spotify</a></p>
+
+
+
+<p>In this episode, I explain how to use caffeine to enhance mental and physical health and performance, including the optimal dosages and intake schedules for caffeine. I explain how caffeine powerfully reinforces the consumption of certain foods and drinks—thereby increasing how much we like their tastes and seek them out. I discuss the mechanisms by which caffeine increases focus, alertness and mood and reduces sleepiness. I also explain many practical tools for caffeine use, including delaying caffeine intake after waking, intermittent caffeine use, during fasting, before and during exercise, and the use of theanine to curb jitters caused by caffeine. I also discuss the positive effects of caffeine on overall health and longevity and address several myths about caffeine. Since caffeine is one of the most commonly used substances (more than 90% of adults use caffeine daily!), this episode provides actionable tips for adjusting caffeine consumption to positively impact performance and health, including sleep.</p>
+
+
+
+<h2 id="h-articles">Articles</h2>
+
+
+
+<ul>
+<li><a href="https://www.cell.com/cell-reports-medicine/fulltext/S2666-3791(22)00372-X?_returnURL=https://linkinghub.elsevier.com/retrieve/pii/S266637912200372X%3Fshowall%3Dtrue&amp;utm_source=youtube&amp;utm_medium=social&amp;utm_campaign=hubermanlab&amp;utm_content=huber" target="_blank" rel="noreferrer noopener">Anti-diabetic effects of GLP1 analogs are mediated by thermogenic interleukin-6 signaling in adipocytes</a> (<em>Cell Reports Medicine</em>)</li>
+
+
+
+<li><a href="https://www.science.org/doi/10.1126/science.1228806?utm_source=youtube&amp;utm_medium=social&amp;utm_campaign=hubermanlab" target="_blank" rel="noreferrer noopener">Caffeine in Floral Nectar Enhances a Pollinator’s Memory of Reward</a> (<em>Science</em>)</li>
+
+
+
+<li><a href="https://link.springer.com/article/10.1007/s10552-017-0985-9?utm_source=youtube&amp;utm_medium=social&amp;utm_campaign=hubermanlab" target="_blank" rel="noreferrer noopener">Consumption of caffeinated beverages and serum concentrations of sex steroid hormones in US men</a> (<em>Cancer Causes &amp; Control</em>)</li>
+
+
+
+<li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0165178118300064?via%3Dihub=&amp;utm_source=youtube&amp;utm_medium=social&amp;utm_campaign=hubermanlab" target="_blank" rel="noreferrer noopener">Inverse association between caffeine intake and depressive symptoms in US adults: data from National Health and Nutrition Examination Survey (NHANES) 2005-2006</a> (<em>Psychiatry Research</em>)</li>
+
+
+
+<li><a href="https://journals.lww.com/psychosomaticmedicine/Abstract/2005/09000/Caffeine_Stimulation_of_Cortisol_Secretion_Across.9.aspx?utm_source=youtube&amp;utm_medium=social&amp;utm_campaign=hubermanlab" target="_blank" rel="noreferrer noopener">Caffeine stimulation of cortisol secretion across the waking hours in relation to caffeine intake levels</a> (<em>Psychosomatic Medicine</em>)</li>
+
+
+
+<li><a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0210275&amp;utm_source=youtube&amp;utm_medium=social&amp;utm_campaign=hubermanlab" target="_blank" rel="noreferrer noopener">Time course of tolerance to the performance benefits of caffeine</a> (<em>PLOS ONE</em>)</li>
+
+
+
+<li><a href="https://academic.oup.com/aje/article/149/6/550/215410?login=false&amp;utm_source=youtube&amp;utm_medium=social&amp;utm_campaign=hubermanlab" target="_blank" rel="noreferrer noopener">Caffeine consumption and menstrual function</a> (<em>American Journal of Epidemiology</em>)</li>
+
+
+
+<li><a href="https://link.springer.com/article/10.1007/s00394-019-02100-7?utm_source=youtube&amp;utm_medium=social&amp;utm_campaign=hubermanlab" target="_blank" rel="noreferrer noopener">Ergogenic effects of caffeine on peak aerobic cycling power during the menstrual cycle</a> (<em>European Journal of Nutrition</em>)</li>
+
+
+
+<li><a href="https://www.annualreviews.org/doi/abs/10.1146/annurev-psych-010814-014954?utm_source=youtube&amp;utm_medium=social&amp;utm_campaign=hubermanlab" target="_blank" rel="noreferrer noopener">Consolidating Memories</a> (<em>Annual Reviews</em>)</li>
+
+
+
+<li><a href="https://www.cjphysiology.org/article.asp?issn=0304-4920%3Byear%3D2019%3Bvolume%3D62%3Bissue%3D6%3Bspage%3D279%3Bepage%3D284%3Baulast%3DLee&amp;utm_source=youtube&amp;utm_medium=social&amp;utm_campaign=hubermanlab" target="_blank" rel="noreferrer noopener">Blood dopamine level enhanced by caffeine in men after treadmill running</a> (<em>Chinese Journal of Physiology</em>)
+<ul>
+<li></li>
+</ul>
+</li>
+
+
+
+<li><a href="https://onlinelibrary.wiley.com/doi/10.1111/cns.12684?utm_source=youtube&amp;utm_medium=social&amp;utm_campaign=hubermanlab" target="_blank" rel="noreferrer noopener">The neuroprotective effects of caffeine in neurodegenerative diseases </a>(<em>CNS Neuroscience &amp; Therapeutics</em>)</li>
+</ul>
+
+
+
+<h2 id="h-timestamps">Timestamps</h2>
+
+
+
+<ul>
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=0s" target="_blank" rel="noreferrer noopener">00:00:00</a> Caffeine </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=178s" target="_blank" rel="noreferrer noopener">00:02:58</a> Tool: GLP-1, Yerba Mate, Satiety &amp; Weight Loss </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=666s" target="_blank" rel="noreferrer noopener">00:11:06</a> Levels, Eight Sleep, ROKA, Momentous Supplements </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=923s" target="_blank" rel="noreferrer noopener">00:15:23</a> Caffeine Benefits for Mental &amp; Physical Performance </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=1223s" target="_blank" rel="noreferrer noopener">00:20:23</a> Caffeine in Nature &amp; Positive Reinforcement </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=1604s" target="_blank" rel="noreferrer noopener">00:26:44</a> Caffeine Effects on Brain; Reward Pathways </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=1795s" target="_blank" rel="noreferrer noopener">00:29:55</a> Caffeine as a Reinforcing Agent </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=2207s" target="_blank" rel="noreferrer noopener">00:36:47</a> AG1 (Athletic Greens) </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=2281s" target="_blank" rel="noreferrer noopener">00:38:01</a> Caffeine, Adenosine &amp; Reduced Sleepiness </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=2716s" target="_blank" rel="noreferrer noopener">00:45:16</a> Tool: Caffeine Dosage, Caffeine Adapted</li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=3224s" target="_blank" rel="noreferrer noopener">00:53:44</a> Tool: Delayed Caffeine Intake, Afternoon Crash &amp; Sleep </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=3886s" target="_blank" rel="noreferrer noopener">01:04:46</a> Morning Exercise &amp; Residual Caffeine Effects </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=4076s" target="_blank" rel="noreferrer noopener">01:07:56</a> Tool: Theanine &amp; Jitteriness; Fasting, Intermittent Caffeine Use </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=4380s" target="_blank" rel="noreferrer noopener">01:13:00</a> Theanine: Effects &amp; Dosage </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=4721s" target="_blank" rel="noreferrer noopener">01:18:41</a> InsideTracker </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=4785s" target="_blank" rel="noreferrer noopener">01:19:45</a> Other Effects: Osteoporosis, Hormone Levels, Depression </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=5261s" target="_blank" rel="noreferrer noopener">01:27:41</a> Afternoon Caffeine &amp; Sleep </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=5505s" target="_blank" rel="noreferrer noopener">01:31:45</a> Tool: Caffeine &amp; Mental/Physical Performance; Cortisol &amp; Caffeine Abstinence </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=6364s" target="_blank" rel="noreferrer noopener">01:46:04</a> Caffeine, Performance &amp; Menstrual Cycle </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=6447s" target="_blank" rel="noreferrer noopener">01:47:27</a> Tool: Memory &amp; Caffeine Timing; Adrenaline &amp; Cold Exposure </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=6848s" target="_blank" rel="noreferrer noopener">01:54:08</a> Caffeine &amp; Naps </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=6994s" target="_blank" rel="noreferrer noopener">01:56:34</a> Tool: Exercise, Caffeine, Dopamine &amp; Positive Reinforcement </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=7315s" target="_blank" rel="noreferrer noopener">02:01:55</a> Dopamine Stacking </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=7564s" target="_blank" rel="noreferrer noopener">02:06:04</a> Scheduling Caffeine to Maximize Its Effects </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=7713s" target="_blank" rel="noreferrer noopener">02:08:33</a> Pro-Health Effects of Caffeine </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=8018s" target="_blank" rel="noreferrer noopener">02:13:38</a> Tool: Sugar Cravings &amp; Reinforcing Effects of Caffeine </li>
+
+
+
+<li><a href="https://www.youtube.com/watch?v=iw97uvIge7c&amp;t=8417s" target="_blank" rel="noreferrer noopener">02:20:17</a> Zero-Cost Support, YouTube Feedback, Spotify &amp; Apple Reviews, Sponsors, Social Media, Momentous Supplements, Neural Network Newsletter</li>
+</ul>
+
+		</div>
+
+	
+<nav>
+
+	<div>
+
+		
+			<div>
+
+				<a href="https://hubermanlab.com/dr-lex-fridman-navigating-conflict-finding-purpose-and-maintaining-drive/">
+
+					
+					<figure>
+
+						<img width="1080" height="608" src="https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/11/Episode-Card-100-Lex-Fridman.jpg?fit=1080%2C608&amp;ssl=1" alt="&#34;Conflict Purpose &amp; Drive - Huberman Lab&#34; and image of Andrew Huberman and Lex Fridman" decoding="async" loading="lazy" srcset="https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/11/Episode-Card-100-Lex-Fridman.jpg?w=1920&amp;ssl=1 1920w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/11/Episode-Card-100-Lex-Fridman.jpg?resize=300%2C169&amp;ssl=1 300w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/11/Episode-Card-100-Lex-Fridman.jpg?resize=1024%2C576&amp;ssl=1 1024w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/11/Episode-Card-100-Lex-Fridman.jpg?resize=768%2C432&amp;ssl=1 768w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/11/Episode-Card-100-Lex-Fridman.jpg?resize=1536%2C864&amp;ssl=1 1536w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/11/Episode-Card-100-Lex-Fridman.jpg?resize=1080%2C608&amp;ssl=1 1080w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/11/Episode-Card-100-Lex-Fridman.jpg?w=1304&amp;ssl=1 1304w" sizes="(max-width: 1080px) 100vw, 1080px"/>
+						
+
+					</figure>
+
+					
+						
+
+						
+				</a>
+
+			</div>
+
+			
+			<div>
+
+				<a href="https://hubermanlab.com/dr-kyle-gillett-tools-for-hormone-optimization-in-males/">
+
+					
+					<figure>
+
+						<img width="1080" height="608" src="https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/12/Episode-Card-102-Kyle-Gillett.jpg?fit=1080%2C608&amp;ssl=1" alt="&#34;Male Hormone Optimization - Huberman Lab&#34; and image of Andrew Huberman and Kyle Gillett" decoding="async" loading="lazy" srcset="https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/12/Episode-Card-102-Kyle-Gillett.jpg?w=1920&amp;ssl=1 1920w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/12/Episode-Card-102-Kyle-Gillett.jpg?resize=300%2C169&amp;ssl=1 300w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/12/Episode-Card-102-Kyle-Gillett.jpg?resize=1024%2C576&amp;ssl=1 1024w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/12/Episode-Card-102-Kyle-Gillett.jpg?resize=768%2C432&amp;ssl=1 768w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/12/Episode-Card-102-Kyle-Gillett.jpg?resize=1536%2C864&amp;ssl=1 1536w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/12/Episode-Card-102-Kyle-Gillett.jpg?resize=1080%2C608&amp;ssl=1 1080w, https://i0.wp.com/hubermanlab.com/wp-content/uploads/2022/12/Episode-Card-102-Kyle-Gillett.jpg?w=1304&amp;ssl=1 1304w" sizes="(max-width: 1080px) 100vw, 1080px"/>
+						
+
+					</figure>
+
+					
+						
+
+						
+				</a>
+
+			</div>
+
+			
+	</div>
+	
+</nav>
+</article>
+
+	</div></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+<section>
+<h2 id="saveme">Random expired <a href="javascript:toggle('olsaveme');">&#177;</a></h2>
+<div>2 links selected from 95 expired links</div>
+<ol id="olsaveme">
+
+<li>
+	<article>
+		<h3 id="3B292186-F7D4-4BAE-9514-894D386456D9"><a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw">What’s the size of the project?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw">https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:43.753388881 &#43;0000 UTC</span>
+		</div>
+		<p class="p">scc --exclude-dir docs/book ─────────────────────────────────────────────────────────────────────────────── Language Files Lines Blanks Comments Code Complexity ────────────────────────────────
+			
+				(Open <a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8E8307BD-6D30-437E-8F22-D01A691B58B6"><a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6">https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6">https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6</a></span><br />
+			<span class="d">Added: 2021-02-16 03:18:15.004760026 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+<section>
+<h2 id="expired">Expired <a href="javascript:toggle('olexpired');">&#177;</a></h2>
+<div>95 links expired today Thu, Mar.16, 2023</div>
+<ol id="olexpired">
+
+<li>
+	<article>
+		<h3 id="4104A599-BB8C-4079-8C3A-12D8CE067A5F"><a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337">Why it’s difficult to build teams in high growth organisations | by Jason Yip | Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337">https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337</a></span><br />
+			<span class="d">Added: 2021-06-14 02:39:32.210827827 &#43;0000 UTC</span>
+		</div>
+		<p class="p">By “high growth”, I mean in terms of employee count and roughly doubling or more every year. Even at slower growth rates, some of the phenomena I’ll describe may be relevant. The only option where…
+			
+				(Open <a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="0F9CA482-5026-4D25-81CD-86B801F145C1"><a href="https://kg.dev/thoughts/be-anonymous">Be anonymous</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://kg.dev/thoughts/be-anonymous">https://kg.dev/thoughts/be-anonymous</a></span><br />
+			<span class="d">Added: 2022-02-21 10:38:02.598958969 &#43;0000 UTC</span>
+		</div>
+		<p class="p">My website.
+			
+				(Open <a href="https://kg.dev/thoughts/be-anonymous" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5BE3BDE4-6B27-4A2A-8384-233AC1C72BCF"><a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/">Reddit - Dive into anything</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/">https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/</a></span><br />
+			<span class="d">Added: 2022-03-06 18:19:36.222723007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">3.9m members in the programming community. Computer Programming
+			
+				(Open <a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="38884C26-1CBF-4F39-863B-1297059B7970"><a href="https://news.ycombinator.com/item?id=24786778">How to put machine learning models into production | Hacker News</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://news.ycombinator.com/item?id=24786778">https://news.ycombinator.com/item?id=24786778</a></span><br />
+			<span class="d">Added: 2020-10-25 06:32:57.345412969 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Hacker News new | past | comments | ask | show | jobs | submit login How to put machine learning models into production (stackoverflow.blog) 120 points by Aaronmacaron 8 days ago | hide | past | favorite | 34 comments 
+			
+				(Open <a href="https://news.ycombinator.com/item?id=24786778" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B1366A5D-4A71-4FFB-A922-4668D7DCA093"><a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg">Our Journey with Quarkus</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg">https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:36.351290941 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Quarkus truly appears to be the smartest possible solution, in our experience.
+			
+				(Open <a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5F308D40-0FB6-4409-AAF0-868CA46D76FE"><a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/">Analyzing data stored in Amazon DocumentDB (with MongoDB compatibility) using Amazon Sagemaker | AWS Machine Learning Blog</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/">https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:46:07.911393165 &#43;0000 UTC</span>
+		</div>
+		<p class="p">{ &#34;id&#34;: &#34;13469392114&#34;, &#34;type&#34;: &#34;PullRequestEvent&#34;, &#34;actor&#34;: { &#34;id&#34;: 33526713, &#34;login&#34;: &#34;arjkesh&#34;, &#34;display_login&#34;: &#34;arjkesh&#34;, &#34;gravatar_id&#34;: &#34;&#34;, &#34;url&#34;: &#34;https://api.github.com/users/arjkesh&#34;, 
+			
+				(Open <a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8E8307BD-6D30-437E-8F22-D01A691B58B6"><a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6">https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6">https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6</a></span><br />
+			<span class="d">Added: 2021-02-16 03:18:15.004760026 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3A96B38D-9B04-467E-B292-D0FA97557140"><a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/">The 40 Best Questions to Ask in an Interview — How to Go Deeper Than “What’s the Culture Like?”</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/">https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/</a></span><br />
+			<span class="d">Added: 2020-10-25 06:33:15.182893991 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Candidates need to sidestep common interview questions. Here are the best questions to ask in an interview.
+			
+				(Open <a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2183E3CB-5AD3-4D96-95E5-6A57D58BAC2D"><a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/">A categorized list of all Java and JVM features since JDK 8 to 16 - Advanced Web Machinery</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/">https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:11.951596021 &#43;0000 UTC</span>
+		</div>
+		<p class="p">From Java 8 to 17
+			
+				(Open <a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4287DD39-F68F-4AFE-A728-00534EB7B5AD"><a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/">VPE and CTO - the first 90 days –</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/">https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/</a></span><br />
+			<span class="d">Added: 2020-11-16 02:47:12.523211002 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I put this mind map together a few years ago after a discussion about what a new VP of Engineering or CTO should think about in their first 90 days in a new role. It’s a map of the areas I believe every new technical le
+			
+				(Open <a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ACC6DB41-087D-41C5-B177-EA627EA5ACCD"><a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/">Don&#39;t make yourself redundant</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/">https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/</a></span><br />
+			<span class="d">Added: 2020-10-05 02:44:52.821810007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">When splitting big teams into two smaller teams, don&#39;t make yourself redundant. Instead, try this advice to remain impactful.
+			
+				(Open <a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="1803FA34-0EF0-4D37-9429-A2738C72A3AF"><a href="https://iximiuz.com/en/posts/computer-networking-101/">Computer Networking Basics For Developers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://iximiuz.com/en/posts/computer-networking-101/">https://iximiuz.com/en/posts/computer-networking-101/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.473012924 &#43;0000 UTC</span>
+		</div>
+		<p class="p">What is a LAN? What is a network segment? Ethernet collision domains vs broadcast domains. How network switches work? How to send IP packets? VLAN vs VXLAN.
+			
+				(Open <a href="https://iximiuz.com/en/posts/computer-networking-101/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="153D61E7-394F-4E25-837F-1107CAB96E59"><a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do">What TPMs Do and What Software Engineers Can Learn From Them</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do">https://newsletter.pragmaticengineer.com/p/what-tpms-do</a></span><br />
+			<span class="d">Added: 2022-02-18 06:47:30.013221979 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A deep dive with five Technical Program Managers (TPM) on what the role is, how it evolved, and how engineers and managers can benefit from working with TPMs.
+			
+				(Open <a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="35BF825E-8A1E-4AFD-8277-ECAE794900FC"><a href="https://danluu.com/cache-incidents/">A decade of major cache incidents at Twitter</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://danluu.com/cache-incidents/">https://danluu.com/cache-incidents/</a></span><br />
+			<span class="d">Added: 2022-02-12 22:04:41.532500028 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I&#39;m trying some experimental tiers on Patreon to see if I can get to substack-like levels of financial support for this blog without moving to substack! A decade of major cache incidents at Twitter This was co-authored 
+			
+				(Open <a href="https://danluu.com/cache-incidents/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="92BCE160-6EB4-43DE-AB20-676C1A7E492B"><a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/">How to Work with Emotions</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/">https://www.lionsroar.com/forum-how-to-work-with-emotions/</a></span><br />
+			<span class="d">Added: 2020-01-20 07:48:57.201634883 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Sharon Salzberg, Judith Simmer-Brown, John Tarrant, and Dzogchen Ponlop Rinpoche discuss skillful and unskillful involvement with emotions, offering new perspectives on how to think about and engage with our emotional li
+			
+				(Open <a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="AB81D5DF-D925-4E10-AACF-204FEC720356"><a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html">Introduction to AWS Lake Formation - Build a Secure Data Lake in Days | AWS Online Tech Talks</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html">https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:37.371964931 &#43;0000 UTC</span>
+		</div>
+		<p class="p">AWS Lake Formation (coming soon) will make it easy to set up a secure data lake in days. With AWS Lake Formation, you will be able to ingest, catalog, clean, transform, and secure your data, and make it available for ana
+			
+				(Open <a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="A2C05C7C-A5E7-46B1-B47A-1D5BD53DF6FE"><a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/">Partitioning GitHub’s relational databases to handle scale</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/">https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/</a></span><br />
+			<span class="d">Added: 2021-09-28 19:04:08.894801139 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In 2019, to meet growth and availability challenges, we set a plan in motion to improve our tooling and ability to partition relational databases.
+			
+				(Open <a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F2F1740F-A682-49BD-A7CE-106B9CF488BF"><a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/">https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/">https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/</a></span><br />
+			<span class="d">Added: 2022-02-27 21:14:32.595848083 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Basically, sake comprises rice, water, and the fermenting agent called koji, resulting in an alcoholic level that usually sits between 13 and 16 percent. And you might be interested to know that the rice used is differen
+			
+				(Open <a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="49A40D1A-BD4E-4076-8E2A-C174F80F9187"><a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">1.3. Productivity</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">https://dave.cheney.net/practical-go/presentations/qcon-china.html</a></span><br />
+			<span class="d">Added: 2022-03-01 15:35:47.325203895 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Design is the art of arranging code to work today, and be changeable forever. — Sandi Metz The last underlying principle I want to highlight is productivity. Developer productivity is a sprawling topic but it boils 
+			
+				(Open <a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="973CCA37-0F8A-4370-B2D7-A2670EB77CCA"><a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e">Immutable Collections in Java using Sealed Types</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e">https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e</a></span><br />
+			<span class="d">Added: 2020-11-22 19:50:09.498816967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">JDK 15 was released on September 15, 2020. JEP 360 Sealed Types was included as a preview feature in this release. Sealed Types is part of Project Amber. Sealed classes or interfaces can be used to…
+			
+				(Open <a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="08E03994-02F2-415B-AD40-3AA908CFAC16"><a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw">Java sockets I/O: blocking, non-blocking and asynchronous</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw">https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:24.146421909 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="67794E53-71A0-40A7-AA58-B74BBEDC96C1"><a href="https://www.defmacro.org/2014/10/03/engman.html">44 engineering management lessons</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.defmacro.org/2014/10/03/engman.html">https://www.defmacro.org/2014/10/03/engman.html</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:17.431499004 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to engineering management. It’s fun, it’s exhausting, it’s rewarding — but most importantly it’s new! What worked for you before won’t work now. You’ll have to acquire a new set of skills, and shed some bad habit
+			
+				(Open <a href="https://www.defmacro.org/2014/10/03/engman.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5E2F906D-29F5-4863-8F9F-1A8B82E40BBC"><a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/">Data Caching Across Microservices in a Serverless Architecture</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/">https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472444057 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Organizations are re-architecting their traditional monolithic applications to incorporate microservices. This helps them gain agility and scalability and accelerate time-to-market for new features. Each microser
+			
+				(Open <a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9E769276-C043-4327-BD56-16F07A66B4E4"><a href="https://en.wikipedia.org/wiki/User_space">User space</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://en.wikipedia.org/wiki/User_space">https://en.wikipedia.org/wiki/User_space</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.471538066 &#43;0000 UTC</span>
+		</div>
+		<p class="p">For the term &#34;user space&#34; as used in Wikipedia, see Wikipedia:User pages. &#34;Kernel space&#34; redirects here. For the mathematical definition, see Null space. This article needs additional citations for verification. Please h
+			
+				(Open <a href="https://en.wikipedia.org/wiki/User_space" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9782E34D-D67B-4446-8904-A043590EBF92"><a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32">https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32">https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32</a></span><br />
+			<span class="d">Added: 2021-03-07 04:00:02.018476009 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Troubleshooting in Kubernetes can be a daunting task. In this article you will learn how to diagnose issues in Pods, Services and Ingress.
+			
+				(Open <a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="92BC21DB-94BA-41EA-AA2C-EB25CF574795"><a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter">“A damn stupid thing to do”—the origins of C</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter">https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter</a></span><br />
+			<span class="d">Added: 2020-12-14 01:06:14.395256996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Today, C may be a lingua franca among programmers. This is its (abridged) history.
+			
+				(Open <a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D2659AD7-1452-45F7-B2F0-074737CE8D7A"><a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/">CRISP: Critical Path Analysis for Microservice Architectures</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/">https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/</a></span><br />
+			<span class="d">Added: 2022-01-17 21:33:09.414513111 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Uber’s backend is an exemplar of microservice architecture. Each microservice is a small, individually deployable program performing a specific business logic (operation). The microservice architecture is a type of distr
+			
+				(Open <a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F03A6943-3161-48A5-B1CF-3414B76490C6"><a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/">Fairness in multi-tenant systems</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/">https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:29:26.916128158 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Building fairness into multitenant systems to provide predictable performance and availability
+			
+				(Open <a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2734B0B4-57F1-4687-AEB9-4D99A82A7E10"><a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b">Optimizing Distributed Joins: The Case of Google Cloud Spanner and DataStax Astra DB | by DataStax | Building the Open Data Stack | Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b">https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b</a></span><br />
+			<span class="d">Added: 2022-01-30 07:55:11.117269992 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this post, learn how relational and NoSQL databases, Google Cloud Spanner and DataStax Astra DB, optimize distributed joins for real-time applications. Distributed joins are commonly considered to…
+			
+				(Open <a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="63ED09BD-BE6F-4FFA-A955-002EAED9172F"><a href="https://queue.acm.org/detail.cfm?id=3415014">Data on the Outside vs. Data on the Inside - ACM Queue</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://queue.acm.org/detail.cfm?id=3415014">https://queue.acm.org/detail.cfm?id=3415014</a></span><br />
+			<span class="d">Added: 2020-11-16 03:29:09.615636825 &#43;0000 UTC</span>
+		</div>
+		<p class="p">August 2, 2020 Pat Helland Recently, there has been a lot of interest in services. These can be microservices or just services. In each case, the service provides a function with its own code and data, and opera
+			
+				(Open <a href="https://queue.acm.org/detail.cfm?id=3415014" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="E48D0031-178B-4DF4-B201-DD97C41FEF33"><a href="https://blog.close.com/subject-lines/">Sales email subject lines: 50&#43; tips, examples, and biggest mistakes</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://blog.close.com/subject-lines/">https://blog.close.com/subject-lines/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:56:34.453863143 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Find out about the best ways to write subject lines for your cold sales emails to improve your open and response rates! This post is here to help you craft a subject line that appeals to your customers &amp; is relevant to y
+			
+				(Open <a href="https://blog.close.com/subject-lines/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="391136C2-FBE9-4E59-864E-C07E8F6CFEAA"><a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html">Yann Herklotz - Introduction to Luhmann&#39;s Zettelkasten</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html">https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html</a></span><br />
+			<span class="d">Added: 2020-12-22 18:34:28.277521133 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to my blog! I am a final year student studying Electronic and Information Engineering at Imperial 
+			
+				(Open <a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="744F225B-D881-4600-964F-BC976DE3B9CD"><a href="https://www.youtube.com/watch?v=93_3CxCl_eI">YOW! 2019 - Josh Long - The Reactive Revolution - YouTube</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.youtube.com/watch?v=93_3CxCl_eI">https://www.youtube.com/watch?v=93_3CxCl_eI</a></span><br />
+			<span class="d">Added: 2021-06-20 02:38:51.257305145 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Share your videos with friends, family, and the world
+			
+				(Open <a href="https://www.youtube.com/watch?v=93_3CxCl_eI" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="51CBA16F-BF3D-4093-874C-C8439FE0B7F3"><a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team">How to Handle a Disagreement on Your Team</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team">https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team</a></span><br />
+			<span class="d">Added: 2021-06-20 02:47:40.929359912 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Rely on your mediation skills, not your authority.
+			
+				(Open <a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="243783C4-C897-490D-80E6-182A4DC7ACE6"><a href="https://opensource.com/article/21/11/cluster-logging-kubernetes">What you need to know about cluster logging in Kubernetes</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://opensource.com/article/21/11/cluster-logging-kubernetes">https://opensource.com/article/21/11/cluster-logging-kubernetes</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.47310996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Explore how different container logging patterns in Kubernetes work.
+			
+				(Open <a href="https://opensource.com/article/21/11/cluster-logging-kubernetes" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="247F00C1-71D9-49B2-AB91-47B4F826AF14"><a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/">What does it mean to listen on a port?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/">https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/</a></span><br />
+			<span class="d">Added: 2022-02-14 08:25:41.701181888 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This story explores some concepts in computer networking, inspired by Michael Nielsen’s idea of discovery fiction. Code samples can also be found in this repo. Excerpts use openbsd-flavoured netcat on Debian Linux; behvi
+			
+				(Open <a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D1EBDE68-DFE3-4116-BCDD-51C0188E30E3"><a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/">On Call Shouldn’t Suck: A Guide For Managers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/">https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/</a></span><br />
+			<span class="d">Added: 2020-10-05 02:45:04.299745082 &#43;0000 UTC</span>
+		</div>
+		<p class="p">https://twitter.com/mipsytipsy/status/1309604622554640384 There are few engineering topics that provoke as much heated commentary as oncall. Everybody has a strong opinion. So let me say straight up that there are few if
+			
+				(Open <a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="EF99A6E9-8C52-4FAD-9BC3-5475BE7B7660"><a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/">Reproducible Builds in Java</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/">https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/</a></span><br />
+			<span class="d">Added: 2022-02-06 13:01:06.832920074 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Reproducible builds are a set of software development practices that create an independently-verifiable path from source to binary code.https://reproducible-builds.org/Reproducible builds are important and provide benefi
+			
+				(Open <a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ACAFC094-E832-4177-8988-CD37A2546ACB"><a href="https://www.theguardian.com/books/2022/feb/27/manhattan-phoenix-review-epic-history-new-york-fire-water?utm_term=621b7ce0197d521d5bd973ee96e7e838&amp;utm_campaign=GuardianTodayUS&amp;utm_source=esp&amp;utm_medium=Email&amp;CMP=GTUS_email">Manhattan Phoenix review: epic history of how New York was forged by fire – and water | Books | The Guardian</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theguardian.com/books/2022/feb/27/manhattan-phoenix-review-epic-history-new-york-fire-water?utm_term=621b7ce0197d521d5bd973ee96e7e838&amp;utm_campaign=GuardianTodayUS&amp;utm_source=esp&amp;utm_medium=Email&amp;CMP=GTUS_email">https://www.theguardian.com/books/2022/feb/27/manhattan-phoenix-review-epic-history-new-york-fire-water?utm_term=621b7ce0197d521d5bd973ee96e7e838&amp;utm_campaign=GuardianTodayUS&amp;utm_source=esp&amp;utm_medium=Email&amp;CMP=GTUS_email</a></span><br />
+			<span class="d">Added: 2022-03-11 22:42:59.309005975 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Daniel Levy pins the great fire of 1835 as the birth event of modern Manhattan in a tale as teeming as the city itself
+			
+				(Open <a href="https://www.theguardian.com/books/2022/feb/27/manhattan-phoenix-review-epic-history-new-york-fire-water?utm_term=621b7ce0197d521d5bd973ee96e7e838&amp;utm_campaign=GuardianTodayUS&amp;utm_source=esp&amp;utm_medium=Email&amp;CMP=GTUS_email" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="772B3693-3D94-48A4-BB74-9A7F81FA0B09"><a href="https://twitter.com/9to5mac/status/1499129510238822400">Tweet from @9to5mac</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://twitter.com/9to5mac/status/1499129510238822400">https://twitter.com/9to5mac/status/1499129510238822400</a></span><br />
+			<span class="d">Added: 2022-03-02 22:32:45.797072887 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Don’t miss what’s happening People on Twitter are the first to know. Log in Sign up Did someone say … cookies? Twitter and its partners use cookies to provide you with a better, safer and faster service and to support ou
+			
+				(Open <a href="https://twitter.com/9to5mac/status/1499129510238822400" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="A056BB4B-676A-464C-82E6-9AFFB7ED9023"><a href="https://zhenzhongxu.com/the-four-innovation-phases-of-netflixs-trillions-scale-real-time-data-infrastructure-2370938d7f01">The Four Innovation Phases of Netflix’s Trillions Scale Real-time Data Infrastructure | by Zhenzhong Xu | Feb, 2022 | Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://zhenzhongxu.com/the-four-innovation-phases-of-netflixs-trillions-scale-real-time-data-infrastructure-2370938d7f01">https://zhenzhongxu.com/the-four-innovation-phases-of-netflixs-trillions-scale-real-time-data-infrastructure-2370938d7f01</a></span><br />
+			<span class="d">Added: 2022-03-11 22:31:04.65281701 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The blog post will share the four phases of Real-time Data Infrastructure’s iterative journey in Netflix (2015-2021). For each phase, we will go over the evolving business motivations, the team’s unique challenges, the 
+			
+				(Open <a href="https://zhenzhongxu.com/the-four-innovation-phases-of-netflixs-trillions-scale-real-time-data-infrastructure-2370938d7f01" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="7AC1A3D3-2E66-4317-8C48-EDD600870093"><a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb">pytudes/Probability.ipynb at main · norvig/pytudes · GitHub</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb">https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb</a></span><br />
+			<span class="d">Added: 2021-06-20 03:01:48.03035593 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Python programs, usually short, of considerable difficulty, to perfect particular skills. - pytudes/Probability.ipynb at main · norvig/pytudes
+			
+				(Open <a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="C5840C97-8A47-412B-9619-757E22D1F358"><a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md">resilience-engineering/intro.md at master · lorin/resilience-engineering · GitHub</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md">https://github.com/lorin/resilience-engineering/blob/master/intro.md</a></span><br />
+			<span class="d">Added: 2021-02-14 06:48:24.060963153 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Resilience engineering papers. Contribute to lorin/resilience-engineering development by creating an account on GitHub.
+			
+				(Open <a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B2CCAF5A-EEB8-4EDC-8899-08081B84FA71"><a href="http://akkartik.name/post/literate-programming">Literate programming: Knuth is doing it wrong</a></h3>
+		<div class="byline">
+			<span class="u"><a href="http://akkartik.name/post/literate-programming">http://akkartik.name/post/literate-programming</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472525119 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Oct 3, 2014 Literate programming: Knuth is doing it wrong Literate programming advocates this: Order your code for others to read, not for the compiler. Beautifully typeset your code so one can curl up in bed to read it
+			
+				(Open <a href="http://akkartik.name/post/literate-programming" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="E4FE0219-C276-4423-8FAD-2FA657B9810F"><a href="https://learnwardleymapping.com/book/">The Book</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://learnwardleymapping.com/book/">https://learnwardleymapping.com/book/</a></span><br />
+			<span class="d">Added: 2022-02-25 15:09:41.99259901 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This is the story of Simon Wardley. Follow his journey from bumbling and confused CEO lost in the headlights of change to someone with a vague idea of what they&#39;re doing.
+			
+				(Open <a href="https://learnwardleymapping.com/book/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="94E868CC-FAF2-4068-B1AF-FB2A8134350B"><a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/">Stay Interviews (the opposite of Exit Interviews) – Mike Crittenden</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/">https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/</a></span><br />
+			<span class="d">Added: 2021-06-14 02:24:17.310279846 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Exit Interviews ask why people are leaving, and Stay Interviews ask why they keep working here.
+			
+				(Open <a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="34BB5A22-51FE-4F9A-92EA-E765615BFF5A"><a href="https://orionmagazine.org/article/on-memory-and-survival/">Orion Magazine - On Memory and Survival</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://orionmagazine.org/article/on-memory-and-survival/">https://orionmagazine.org/article/on-memory-and-survival/</a></span><br />
+			<span class="d">Added: 2022-03-01 16:53:36.376021862 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I could blame it on a lot of things. On my education, or lack thereof, on the reasons why I still can’t spell worth a damn.
+			
+				(Open <a href="https://orionmagazine.org/article/on-memory-and-survival/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="75CDCEB0-679B-44A4-852E-23484D887092"><a href="https://treblle.com/blog/the-10-rest-commandments">The 10 REST Commandments - Treblle</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://treblle.com/blog/the-10-rest-commandments">https://treblle.com/blog/the-10-rest-commandments</a></span><br />
+			<span class="d">Added: 2022-03-11 22:42:33.353334903 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Find out how to build great REST APIs in any language by following these 10 essential rules.
+			
+				(Open <a href="https://treblle.com/blog/the-10-rest-commandments" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="32992F5F-AE2D-455C-9220-5F745266AB66"><a href="http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf">‎cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf</a></h3>
+		<div class="byline">
+			<span class="u"><a href="http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf">http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf</a></span><br />
+			<span class="d">Added: 2022-03-02 14:02:11.560539007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5DD11538-E58D-4C23-BFF0-3214A458CD8D"><a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/">A Complete Guide To Mechanical Keyboards</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/">https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:42.818650007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this article, we dive into the possibilities of mechanical keyboards. The different layouts, switch types and even keycap material. Strap yourself in — this will be a deep dive!
+			
+				(Open <a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2F682234-9E4F-4889-8029-5376E9ECC042"><a href="https://commoncog.com/blog/accelerated-expertise/">Accelerated Expertise</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://commoncog.com/blog/accelerated-expertise/">https://commoncog.com/blog/accelerated-expertise/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.470912933 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A summary of Accelerated Expertise, the best book on accelerating training programs we have today.
+			
+				(Open <a href="https://commoncog.com/blog/accelerated-expertise/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4A4DBD31-E21E-404F-B4FC-D3A89081A97F"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg">What&#39;s in a Good Error Message? - Gunnar Morling</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg">https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg</a></span><br />
+			<span class="d">Added: 2022-02-03 19:43:27.72410798 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8D47E7AE-E2D1-4F5E-ADA2-D5C5AE91FCD6"><a href="https://www.defmacro.org/2015/02/25/startup-ideas.html">How to pick startup ideas</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.defmacro.org/2015/02/25/startup-ideas.html">https://www.defmacro.org/2015/02/25/startup-ideas.html</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:12.827280998 &#43;0000 UTC</span>
+		</div>
+		<p class="p">One of the most important things I learned from running a startup is that on a macro scale the innovation market is efficient. If the market conditions allow for a startup to arise, it’s overwhelmingly probable that mult
+			
+				(Open <a href="https://www.defmacro.org/2015/02/25/startup-ideas.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="22C9D369-7D87-417E-8241-0FF77B96719B"><a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c">Health, Availability, Debuggability - Observability&#43; - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c">https://medium.com/observability/health-availability-debuggability-5b0ab300b35c</a></span><br />
+			<span class="d">Added: 2020-01-19 20:02:51.116274833 &#43;0000 UTC</span>
+		</div>
+		<p class="p">As we collect various observability signals from systems, it fosters a new conversation around the classification of the signals. There is a significant discussion on observability signals and even…
+			
+				(Open <a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="63C585E3-7B53-425E-8794-0B9E7539D549"><a href="https://mitchellh.com/writing/contributing-to-complex-projects">Contributing to Complex Projects – Mitchell Hashimoto</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://mitchellh.com/writing/contributing-to-complex-projects">https://mitchellh.com/writing/contributing-to-complex-projects</a></span><br />
+			<span class="d">Added: 2022-03-15 10:30:26.706400871 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Table of ContentsStep 1: Become a UserStep 2: Build the ProjectStep 3: Learn the Hot-Path InternalsTrace DownLearn UpExperiment and Break ThingsSupplement with MediaStep 4: Read and Reimplement Recent CommitsStep 5: Make
+			
+				(Open <a href="https://mitchellh.com/writing/contributing-to-complex-projects" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="907C0700-41D9-4113-A04C-AE82EAB79A78"><a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/">How to Get Into SRE – Alice Goldfuss</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/">https://blog.alicegoldfuss.com/how-to-get-into-sre/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:57:27.926506996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">My personal guide.
+			
+				(Open <a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="46FFB2D8-317B-462D-AD71-4069DCB717F0"><a href="https://nesslabs.com/mind-garden">You and your mind garden</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://nesslabs.com/mind-garden">https://nesslabs.com/mind-garden</a></span><br />
+			<span class="d">Added: 2022-03-02 14:00:01.643723011 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In French, “cultiver son jardin intérieur” means to tend to your internal garden—to take care of your mind. The garden metaphor is particularly apt: taking care of your mind involves cultivating your curiosity (the seeds
+			
+				(Open <a href="https://nesslabs.com/mind-garden" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="6FDB0B3D-9B1A-44C9-B337-58081D1DC392"><a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html">Journey into Observability: Reading material | Mads Hartmann</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html">https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html</a></span><br />
+			<span class="d">Added: 2020-01-19 20:02:56.259206056 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I’ve been reading up on observability over the last three months. In this post I have organized the material into a sort of recommended reading order. It doesn’t reflect the order in which I read it, but I think this ord
+			
+				(Open <a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5A02A461-03F0-4D93-8258-0A95A98CA773"><a href="https://arxiv.org/pdf/2104.00087.pdf"></a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://arxiv.org/pdf/2104.00087.pdf">https://arxiv.org/pdf/2104.00087.pdf</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:56.06173706 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://arxiv.org/pdf/2104.00087.pdf" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3B6CB96B-63A5-4747-AC87-D5A7D936D80B"><a href="https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/">The Seven Habits That Lead to Happiness in Old Age - The Atlantic</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/">https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/</a></span><br />
+			<span class="d">Added: 2022-02-23 08:31:30.785979986 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Your well-being is like a retirement account: The sooner you invest, the greater your returns will be.
+			
+				(Open <a href="https://www.theatlantic.com/family/archive/2022/02/happiness-age-investment/622818/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="59872DBD-46DE-4E72-B527-A2F8EB3AA488"><a href="https://saucecode.bar/posts/06-using-www-authenticate.html">using www-authenticate for user authentication</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://saucecode.bar/posts/06-using-www-authenticate.html">https://saucecode.bar/posts/06-using-www-authenticate.html</a></span><br />
+			<span class="d">Added: 2022-03-04 13:14:28.720092058 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This article explains how to use the www-authenticate header to handle user authentication without any client side code.
+			
+				(Open <a href="https://saucecode.bar/posts/06-using-www-authenticate.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F36CF381-606E-45C7-9147-C680660ADD3C"><a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html">How to Read a Wine Label, in 12 Easy Lessons - The New York Times</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html">https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html</a></span><br />
+			<span class="d">Added: 2020-10-03 22:10:30.001008987 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The wine shop can be intimidating, with so many different styles of labeling. Here’s help in decoding a dozen basic types.
+			
+				(Open <a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="371B741A-360B-457A-8E22-8714499A4D51"><a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/">A Short, Simple Introduction to Information Theory – Ryan Moulton&#39;s Articles</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/">https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:28:49.101143836 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Information Theory is one of the most useful things for Computer Scientists to understand about statistics, and it&#39;s deeply related to things we do every day. If you are comfortable writing code but sometimes intimidated
+			
+				(Open <a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="A9B0816E-8809-4588-A4FD-F484F9AFD28B"><a href="https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/">What is Developer Experience? a roundup of links and goodness</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/">https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/</a></span><br />
+			<span class="d">Added: 2022-03-04 13:03:31.506291866 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I recently contributed to a series of fireside chats hosted by LaunchDarkly. One of the themes that we discussed was Developer Experience, and how to improve it. I was asked by one of the attendees at the EMEA event (vid
+			
+				(Open <a href="https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ECFE519B-F709-4FDC-98D0-E0F643810B47"><a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea">Production Oriented Development - Paul Osman - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea">https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea</a></span><br />
+			<span class="d">Added: 2020-01-30 02:45:22.718299865 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Code working in production is the only thing that matters. Teams should optimize for delivering code to production as quickly as possible.
+			
+				(Open <a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B5E085CD-4922-4DC1-A965-78EC343CD945"><a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/">How to Talk about Consistency and Isolation in Distributed DBs</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/">https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/</a></span><br />
+			<span class="d">Added: 2022-02-15 11:04:48.938548088 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The SQL standard defines isolation levels, but we don&#39;t have a great vocabulary for talking about consistency levels, and how these two things interact.
+			
+				(Open <a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3E615600-2B6D-426F-AC56-F9BFB4D9D251"><a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5">Failure Modes and Continuous Resilience</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5">https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:51.419013977 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A resilient system continues to operate successfully in the presence of failures. There are many possible failure modes, and each exercises a different aspect of resilience. The system needs to…
+			
+				(Open <a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="7C68C329-A59A-4F8D-B795-0D61911878FA"><a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/">This is What a Large-Scale Cloud Adoption Program Looks Like</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/">https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/</a></span><br />
+			<span class="d">Added: 2022-02-03 20:01:26.464634895 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Dio Rettori discusses some of the lessons learned, challenges, and considerations of large-scale adoption for JPMorgan Chase.
+			
+				(Open <a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="546C87AF-7B7A-4689-A830-C7B9A7294144"><a href="https://joelhooks.com/digital-garden">🌱 My blog is a digital garden, not a blog</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://joelhooks.com/digital-garden">https://joelhooks.com/digital-garden</a></span><br />
+			<span class="d">Added: 2022-03-02 13:59:56.193624973 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The phrase &#34;digital garden&#34; is a metaphor for thinking about writing and creating that focuses less on the resulting &#34;showpiece&#34; and more on the process, care, and craft it takes to get there. While not everybody has or 
+			
+				(Open <a href="https://joelhooks.com/digital-garden" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B894AE2E-3C5E-4941-A8C5-769BD2531CB5"><a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained">DataHub: Popular metadata architectures explained | LinkedIn Engineering</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained">https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained</a></span><br />
+			<span class="d">Added: 2020-12-19 19:18:08.410096168 &#43;0000 UTC</span>
+		</div>
+		<p class="p">When I started my journey at LinkedIn ten years ago, the company was just beginning to experience extreme growth in the volume, variety, and velocity of our data. Over the next few years, my colleagues and I in LinkedIn’
+			
+				(Open <a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="152B5455-0C2E-4CE5-BEF5-3FB5BD06D088"><a href="https://cate.blog/2021/08/09/on-being-strategic/">On Being “Strategic”</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://cate.blog/2021/08/09/on-being-strategic/">https://cate.blog/2021/08/09/on-being-strategic/</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:09.864347934 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Ages ago, a work colleague / friend offered me the following piece of advice: “We need to make sure you’re seen as strategic”. I’ve thought about it a lot ever since. It was the first time I realised I was on the edge
+			
+				(Open <a href="https://cate.blog/2021/08/09/on-being-strategic/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F83B3D52-4909-4EF8-937B-23C9D6A73ADD"><a href="https://news.ycombinator.com/item?id=24814687">7 days ago</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://news.ycombinator.com/item?id=24814687">https://news.ycombinator.com/item?id=24814687</a></span><br />
+			<span class="d">Added: 2020-10-25 06:28:36.088758945 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This article has a large gap in the story: it ignores sensor data sources, which are both the highest velocity and highest volume data models by multiple orders of magnitude. They have become ubiquitous in diverse, mediu
+			
+				(Open <a href="https://news.ycombinator.com/item?id=24814687" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4EAE9D5E-8762-44E9-B560-8FA66CB88E48"><a href="https://lena-voita.github.io/nlp_course/word_embeddings.html">Distributional Semantics</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://lena-voita.github.io/nlp_course/word_embeddings.html">https://lena-voita.github.io/nlp_course/word_embeddings.html</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.471920967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">To capture meaning of words in their vectors, we first need to define the notion of meaning that can be used in practice. For this, let us try to understand how we, humans, get to know which w
+			
+				(Open <a href="https://lena-voita.github.io/nlp_course/word_embeddings.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D473BC81-57FE-451F-BB84-6DAF4A34B7F5"><a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1">Testing in Production, the safe way</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1">https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1</a></span><br />
+			<span class="d">Added: 2020-01-25 21:07:09.173211097 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this post, I hope to explore different forms of “testing in production”, when each form of testing is the most beneficial as well as how to test services in production in a safe way. However…
+			
+				(Open <a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9ADC0870-B6F9-4DC0-B898-CB7A43899238"><a href="https://johnnyrodgers.is/building-a-modern-home">building a modern home - Johnny Rodgers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://johnnyrodgers.is/building-a-modern-home">https://johnnyrodgers.is/building-a-modern-home</a></span><br />
+			<span class="d">Added: 2022-02-03 19:47:25.927577018 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Personal site of Johnny Rodgers, technology designer from Vancouver.
+			
+				(Open <a href="https://johnnyrodgers.is/building-a-modern-home" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="6209073B-4370-479B-B60E-1E5281B21CF6"><a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202">GPS</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202">https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202</a></span><br />
+			<span class="d">Added: 2022-01-30 13:45:06.893004894 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Interactive article explaining how GPS works.
+			
+				(Open <a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="86B34871-F4BB-44A0-804A-56556B12F3CB"><a href="https://twitter.com/alexxubyte/status/1491821606422781975">https://twitter.com/alexxubyte/status/1491821606422781975</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://twitter.com/alexxubyte/status/1491821606422781975">https://twitter.com/alexxubyte/status/1491821606422781975</a></span><br />
+			<span class="d">Added: 2022-02-13 22:20:38.556627035 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://twitter.com/alexxubyte/status/1491821606422781975" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="16A89C55-2E46-46B7-9186-8DFB400E402C"><a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints">Overview ¶</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints">https://pkg.go.dev/cmd/go#hdr-Build_constraints</a></span><br />
+			<span class="d">Added: 2022-03-01 15:15:14.106298923 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Go is a tool for managing Go source code.
+			
+				(Open <a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="FB97E69F-BBE9-4DE4-BAFC-8A5C428228B2"><a href="https://bitfieldconsulting.com/golang/career">A career ending mistake — Bitfield Consulting</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://bitfieldconsulting.com/golang/career">https://bitfieldconsulting.com/golang/career</a></span><br />
+			<span class="d">Added: 2022-02-22 19:53:33.374945163 &#43;0000 UTC</span>
+		</div>
+		<p class="p">As software engineers, we&#39;re constantly making detailed, elaborate plans for computers to execute. Isn&#39;t it weird that we rarely give a moment&#39;s thought to the program for our own careers?
+			
+				(Open <a href="https://bitfieldconsulting.com/golang/career" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="EAB90B18-87D1-4B09-90C4-C78525EDF920"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter">What&#39;s in a Good Error Message?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter">https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.473227024 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5E528535-D488-45A0-B0D7-5C7EE9F45269"><a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/">Emerging Architectures for Modern Data Infrastructure</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/">https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:28:58.590971946 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Software systems are increasingly based on data, rather than code. And a new class of tools and technologies have emerged to process data for both analytics and operational AI/ ML.
+			
+				(Open <a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8392AB94-0594-43D2-ABA5-AAC5B24AE254"><a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/">Mercurial&#39;s Journey to and Reflections on Python 3</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/">https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/</a></span><br />
+			<span class="d">Added: 2020-01-22 03:10:36.542356967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Mercurial 5.2 was released on November 5, 2019. It is the first version of Mercurial that supports Python 3. This milestone comes nearly 11 years after Python 3.0 was first released on December 3, 2008. Speaking as a mai
+			
+				(Open <a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="29A95F3A-14F0-4423-A688-FEA34B9FFD35"><a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/">Copying Better: How To Acquire The Tacit Knowledge of Experts</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/">https://commoncog.com/blog/how-to-learn-tacit-knowledge/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.470806121 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Much of expertise is tacit: that is, it cannot be captured through words alone. We look at techniques to learn the tacit knowledge of experts.
+			
+				(Open <a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="0005A9E5-FB73-4470-89CF-362DD0D1D1AC"><a href="https://convey.earth/conversation?id=48">Convey</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://convey.earth/conversation?id=48">https://convey.earth/conversation?id=48</a></span><br />
+			<span class="d">Added: 2022-02-04 18:50:33.62513113 &#43;0000 UTC</span>
+		</div>
+		<p class="p">2022 February 01 16:21 stuartscott 1473754¤ 1240149¤ You may have noticed that the January edition of the Convey Digest looks a little different from the previous ones - the color scheme is now based on the dominant
+			
+				(Open <a href="https://convey.earth/conversation?id=48" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="71A6CC9C-0133-45CF-BBBF-5E2288680954"><a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming">Beyond Microservices: Streams, State and Scalability</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming">https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming</a></span><br />
+			<span class="d">Added: 2022-01-29 21:51:51.795267105 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Gwen Shapira talks about how microservices evolved in the last few years, based on experience gained while working with companies using Apache Kafka to update their application architecture.
+			
+				(Open <a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3B292186-F7D4-4BAE-9514-894D386456D9"><a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw">What’s the size of the project?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw">https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:43.753388881 &#43;0000 UTC</span>
+		</div>
+		<p class="p">scc --exclude-dir docs/book ─────────────────────────────────────────────────────────────────────────────── Language Files Lines Blanks Comments Code Complexity ────────────────────────────────
+			
+				(Open <a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D0EF149F-0350-4016-8C7B-C7A62E82732E"><a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/">How to put machine learning models into production</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/">https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/</a></span><br />
+			<span class="d">Added: 2020-10-25 06:32:53.718122005 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Data scientists excel at creating models that represent and predict real-world data, but effectively deploying machine learning models is more of an art than science. Deployment requires skills more commonly found in sof
+			
+				(Open <a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3719A1C9-84AE-480A-9732-F3296BFC4C4B"><a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F">https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F">https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F</a></span><br />
+			<span class="d">Added: 2021-02-16 03:19:16.030979156 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2E46DBFF-90BB-4B14-9DF6-C0388D62032A"><a href="https://www.theobservereffect.org/tobi.html">The Observer Effect – Tobi Lütke</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theobservereffect.org/tobi.html">https://www.theobservereffect.org/tobi.html</a></span><br />
+			<span class="d">Added: 2020-12-19 19:09:05.707730054 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to the third interview on &#39;The Observer Effect&#39;. We are lucky to have one of the most interesting founders in technology and commerce - Tobi Lütke, Founder and CEO of Shopify. This interview was
+			
+				(Open <a href="https://www.theobservereffect.org/tobi.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="80084756-28D3-4781-89C8-484C9A746F00"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww">What&#39;s in a Good Error Message?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww">https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:39.613649845 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ACBA973D-AC13-4337-9A13-E797707FEB37"><a href="https://learn.particular.net/users/sign_in">Online education by Particular Software</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://learn.particular.net/users/sign_in">https://learn.particular.net/users/sign_in</a></span><br />
+			<span class="d">Added: 2021-06-20 03:02:37.519088983 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Skip to main content Online education by Particular Software Toggle menu MENU Welcome Back! EMAIL PASSWORD REMEMBER ME Forgot Password? If you are a human, ignore this field SIGN IN Create a new account HOME SUPPOR
+			
+				(Open <a href="https://learn.particular.net/users/sign_in" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F62EDE75-F797-47AD-AF47-54C9AF7B905D"><a href="https://iximiuz.com/en/posts/container-networking-is-simple/">Container Networking Is Simple!</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://iximiuz.com/en/posts/container-networking-is-simple/">https://iximiuz.com/en/posts/container-networking-is-simple/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472911834 &#43;0000 UTC</span>
+		</div>
+		<p class="p">How container networking works under the hood? Setting up docker-like container networking from scratch. Bonus: podman rootless container networking explained.
+			
+				(Open <a href="https://iximiuz.com/en/posts/container-networking-is-simple/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="88E9BAF9-01A6-4774-BE3E-EE928BAD13B0"><a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector">How to choose the best Java garbage collector</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector">https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector</a></span><br />
+			<span class="d">Added: 2022-02-14 08:25:45.931617021 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Improve Java application performance by choosing the best garbage collector for your application&#39;s throughput, latency, and footprint requirements.
+			
+				(Open <a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4B341D85-649C-4D5A-8551-31BDE28AC022"><a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5">Failure Modes and Continuous Resilience - adrian cockcroft - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5">https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5</a></span><br />
+			<span class="d">Added: 2020-01-19 05:29:02.044257164 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A resilient system continues to operate successfully in the presence of failures. There are many possible failure modes, and each exercises a different aspect of resilience. The system needs to…
+			
+				(Open <a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="CE1D160C-9BD4-44F6-8701-5FC512623AD8"><a href="https://www.spakhm.com/p/how-to-get-promoted">How to get promoted</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.spakhm.com/p/how-to-get-promoted">https://www.spakhm.com/p/how-to-get-promoted</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:23.689921855 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Almost everyone who does great work toils in relative obscurity. Performance reviews are social fiction. How do people really advance through the corporate hierarchy?
+			
+				(Open <a href="https://www.spakhm.com/p/how-to-get-promoted" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,2384 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Reading list for Sun, Mar.19, 2023</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com"> 
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+	<link href="https://fonts.googleapis.com/css2?family=Josefin+Slab:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+	<link href="style.css" rel="stylesheet">
+	<script>
+function toggle(id) {
+	var el = document.getElementById(id);
+	el.style.display = (el.style.display == "none" || el.style.display == "") ? "block" : "none";
+}
+	</script>
+</head>
+<body>
+<h1>Reading list for Sun, Mar.19, 2023</h1>
+<header>
+<div>Total: 549 from which: 3 suggested today and 94 expired</div>
+<nav>
+Jump to: 
+
+	<a href="#today">Today&#39;s reading list</a> | 
+
+	<a href="#saveme">Random expired</a> | 
+
+	<a href="#expired">Expired</a> | 
+
+</nav>
+</header>
+
+<section>
+<h2 id="today">Today&#39;s reading list <a href="javascript:toggle('oltoday');">&#177;</a></h2>
+<div>3 links selected from 455 today Sun, Mar.19, 2023</div>
+<ol id="oltoday">
+
+<li>
+	<article>
+		<h3 id="AE28AE3C-42CC-45BA-B344-D863DA07E82D"><a href="https://iximiuz.com/en/posts/ssh-tunnels/">A Visual Guide to SSH Tunnels: Local and Remote Port Forwarding</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://iximiuz.com/en/posts/ssh-tunnels/">https://iximiuz.com/en/posts/ssh-tunnels/</a></span><br />
+			<span class="d">Added: 2023-01-20 22:01:39.899322986 &#43;0000 UTC</span>
+		</div>
+		<p class="p">SSH port forwarding explained in a clean and visual way. How to use local and remote port forwarding. What sshd settings may need to be adjusted. How to memorize the right flags.
+			
+				... (16846 chars. See <a href="javascript:toggle('bAE28AE3C-42CC-45BA-B344-D863DA07E82D');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="bAE28AE3C-42CC-45BA-B344-D863DA07E82D">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><div><p><strong>TL;DR</strong> <u><a href="https://iximiuz.com/ssh-tunnels/ssh-tunnels.png">SSH Port Forwarding as a printable cheat sheet</a></u>.</p>
+<p><a name="cut"></a>
+SSH is <a href="https://iximiuz.com/en/posts/linux-pty-what-powers-docker-attach-functionality/">yet another example</a> of an ancient technology that is still in wide use today. It may very well be that learning a couple of SSH tricks is more profitable in the long run than mastering a dozen Cloud Native tools destined to become deprecated next quarter.</p>
+<p>One of my favorite parts of this technology is SSH Tunnels. With nothing but standard tools and often using just a single command, you can achieve the following:</p>
+<ul>
+<li>Access internal VPC endpoints through a public-facing EC2 instance.</li>
+<li>Open a port from the localhost of a development VM in the host&#39;s browser.</li>
+<li>Expose any local server from a home/private network to the outside world.</li>
+</ul>
+<p>And more 😍</p>
+<p>But despite the fact that I use SSH Tunnels daily, it always takes me a while to figure out the right command. Should it be a Local or a Remote tunnel? What are the flags? Is it a <em>local_port:remote_port</em> or the other way around? So, I decided to finally wrap my head around it, and it resulted in a series of labs and a visual cheat sheet 🙈</p>
+
+
+
+<h2 id="prerequisites">Prerequisites</h2>
+<p>SSH Tunnels are about connecting hosts over the network, so every lab below expectedly involves multiple &#34;machines&#34;. However, I&#39;m too lazy to spin up full-blown instances, especially when containers can be used instead. That&#39;s why I ended up using just <a href="https://iximiuz.com/en/posts/how-to-setup-development-environment/">a single vagrant VM with Docker on it</a>.</p>
+<p>In theory, any Linux box with Docker Engine on it should do. However, running the below examples as-is with Docker Desktop won&#39;t be possible because the ability to access the <del>machines</del> containers by their IPs is assumed.</p>
+<p>Alternatively, the labs can be done with <a href="https://github.com/lima-vm/lima">Lima (QEMU + nerdctl + containerd + BuildKit)</a>, but don&#39;t forget to <code>limactl shell bash</code> first.</p>
+<p>Every example requires a valid passphrase-less key pair on the host that is then mounted into the containers to simplify access management. If you don&#39;t have one, generating it is as simple as just <code>ssh-keygen</code> on the host.</p>
+<p><strong>Important:</strong> SSH daemons in the containers here are solely for educational purposes - containers in this post are meant to represent full-blown &#34;machines&#34; with SSH clients and servers on them. Beware that it&#39;s rarely a good idea to have SSH stuff in real-world containers!</p>
+<h2 id="local-port-forwarding">Local Port Forwarding</h2>
+<p>Starting from the one that I use the most. Oftentimes, there might be a service listening on localhost or a private interface of a machine that I can only SSH to via its public IP. And I desperately need to access this port from the outside. A few typical examples:</p>
+<ul>
+<li>Accessing a database (MySQL, Postgres, Redis, etc) using a fancy UI tool from your laptop.</li>
+<li>Using your browser to access a web application exposed only to a private network.</li>
+<li>Accessing a container&#39;s port from your laptop without publishing it on the server&#39;s public interface.</li>
+</ul>
+<p>All of the above use cases can be solved with a single <code>ssh</code> command:</p>
+<pre><code>ssh -L [local_addr:]local_port:remote_addr:remote_port [user@]sshd_addr
+</code></pre>
+<p>The <code>-L</code> flag indicates we&#39;re starting a <em>local port forwarding</em>. What it actually means is:</p>
+<ul>
+<li>On your machine, the SSH client will start listening on <code>local_port</code> (likely, on <code>localhost</code>, but <em>it depends</em> - <a href="https://linux.die.net/man/5/sshd_config#GatewayPorts">check the <code>GatewayPorts</code> setting</a>).</li>
+<li>Any traffic to this port will be forwarded to the <code>remote_private_addr:remote_port</code> on the machine you SSH-ed to.</li>
+</ul>
+<p>Here is how it looks on a diagram:</p>
+<p><img src="https://iximiuz.com/ssh-tunnels/local-port-forwarding-2000-opt.png" alt="SSH Tunnels visualized - local port forwarding."/>
+</p>
+
+
+
+<div>
+
+<details><summary>Lab 1: Using SSH Tunnels for Local Port Forwarding 👨‍🔬</summary>
+
+<p>The lab reproduces the setup from the diagram above. First, we need to prepare the server - a machine with the SSH daemon and a simple web service listening on <code>127.0.0.1:80</code>:</p>
+<pre><code>$ docker buildx build -t server:latest -&lt;&lt;&#39;EOD&#39;
+# syntax=docker/dockerfile:1
+FROM alpine:3
+
+# Install the dependencies:
+RUN apk add --no-cache openssh-server curl python3
+RUN mkdir /root/.ssh &amp;&amp; chmod 0700 /root/.ssh &amp;&amp; ssh-keygen -A
+
+# Prepare the entrypoint that starts the daemons:
+COPY --chmod=755 &lt;&lt;&#39;EOF&#39; /entrypoint.sh
+#!/bin/sh
+set -euo pipefail
+
+for file in /tmp/ssh/*.pub; do
+  cat ${file} &gt;&gt; /root/.ssh/authorized_keys
+done
+chmod 600 /root/.ssh/authorized_keys
+
+# Minimal config for the SSH server:
+sed -i &#39;/AllowTcpForwarding/d&#39; /etc/ssh/sshd_config
+sed -i &#39;/PermitOpen/d&#39; /etc/ssh/sshd_config
+/usr/sbin/sshd -e -D &amp;
+
+python3 -m http.server --bind 127.0.0.1 ${PORT} &amp;
+
+sleep infinity
+EOF
+
+# Run it:
+CMD [&#34;/entrypoint.sh&#34;]
+EOD
+</code></pre>
+<p>Starting the server and noting its IP address:</p>
+<pre><code>$ docker run -d --rm \
+   -e PORT=80 \
+   -v $HOME/.ssh:/tmp/ssh \
+   --name server \
+   server:latest
+
+SERVER_IP=$(
+  docker inspect \
+    -f &#39;{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}&#39; \
+  server
+)
+</code></pre>
+<p>Since the web service listens on the localhost, it won&#39;t be accessible from the outside (i.e., from the host system in this particular case):</p>
+<pre><code>$ curl ${SERVER_IP}
+curl: (7) Failed to connect to 172.17.0.2 port 80: Connection refused
+</code></pre>
+<p>But from the inside of the &#34;server&#34;, it works just fine:</p>
+<pre><code>$ ssh -o StrictHostKeyChecking=no root@${SERVER_IP}
+7b3e49181769:$# curl localhost
+&lt;!DOCTYPE HTML PUBLIC &#34;-//W3C//DTD HTML 4.01//EN&#34; &#34;http://www.w3.org/TR/html4/strict.dtd&#34;&gt;
+&lt;html&gt;
+&lt;head&gt;
+...
+</code></pre>
+<p><strong>And here is the trick:</strong> bind the server&#39;s <code>localhost:80</code> to the host&#39;s <code>localhost:8080</code> using local port forwarding:</p>
+<pre><code>$ ssh -o StrictHostKeyChecking=no -f -N -L 8080:localhost:80 root@${SERVER_IP}
+</code></pre>
+<p>Now you should be able to access the web service on a local port of the host system:</p>
+<pre><code>$ curl localhost:8080
+&lt;!DOCTYPE HTML PUBLIC &#34;-//W3C//DTD HTML 4.01//EN&#34; &#34;http://www.w3.org/TR/html4/strict.dtd&#34;&gt;
+&lt;html&gt;
+&lt;head&gt;
+...
+</code></pre>
+<p>A slightly more verbose (but more explicit and flexible) way to achieve the same goal - using the <code>local_addr:local_port:remote_addr:remote_port</code> form:</p>
+<pre><code>$ ssh -o StrictHostKeyChecking=no -f -N -L \
+  localhost:8080:localhost:80 \
+  root@${SERVER_IP}
+</code></pre>
+</details>
+
+</div>
+
+<h2 id="local-port-forwarding-with-a-bastion-host">Local Port Forwarding with a Bastion Host</h2>
+<p>It might not be obvious at first, but the <code>ssh -L</code> command allows forwarding a local port to a remote port on <em>any machine</em>, not only on the SSH server itself. Notice how the <code>remote_addr</code> and <code>sshd_addr</code> may or may not have the same value:</p>
+<pre><code>ssh -L [local_addr:]local_port:remote_addr:remote_port [user@]sshd_addr
+</code></pre>
+<p>Not sure how legitimate the use of the term <a href="https://en.wikipedia.org/wiki/Bastion_host"><em>bastion host</em></a> is here, but that&#39;s how I visualize this scenario for myself:</p>
+<p><img src="https://iximiuz.com/ssh-tunnels/local-port-forwarding-bastion-2000-opt.png" alt="SSH Tunnels visualized - local port forwarding with a bastion host."/>
+</p>
+
+<p>I often use the above trick to call endpoints that are accessible from the <em>bastion host</em> but not from my laptop (e.g., using an EC2 instance with private and public interfaces to connect to an OpenSearch cluster deployed fully within a VPC).</p>
+<div>
+
+<details><summary>Lab 2: Local Port Forwarding with a Bastion Host 👨‍🔬</summary>
+
+<p>Again, the lab reproduces the setup from the diagram above. First, we need to prepare the bastion host - a machine with only the SSH daemon on it:</p>
+<pre><code>$ docker buildx build -t bastion:latest -&lt;&lt;&#39;EOD&#39;
+# syntax=docker/dockerfile:1
+FROM alpine:3
+
+# Install the dependencies:
+RUN apk add --no-cache openssh-server
+RUN mkdir /root/.ssh &amp;&amp; chmod 0700 /root/.ssh &amp;&amp; ssh-keygen -A
+
+# Prepare the entrypoint that starts the SSH daemon:
+COPY --chmod=755 &lt;&lt;&#39;EOF&#39; /entrypoint.sh
+#!/bin/sh
+set -euo pipefail
+
+for file in /tmp/ssh/*.pub; do
+  cat ${file} &gt;&gt; /root/.ssh/authorized_keys
+done
+chmod 600 /root/.ssh/authorized_keys
+
+# Minimal config for the SSH server:
+sed -i &#39;/AllowTcpForwarding/d&#39; /etc/ssh/sshd_config
+sed -i &#39;/PermitOpen/d&#39; /etc/ssh/sshd_config
+/usr/sbin/sshd -e -D &amp;
+
+sleep infinity
+EOF
+
+# Run it:
+CMD [&#34;/entrypoint.sh&#34;]
+EOD
+</code></pre>
+<p>Starting the bastion host and noting its IP:</p>
+<pre><code>$ docker run -d --rm \
+    -v $HOME/.ssh:/tmp/ssh \
+    --name bastion \
+    bastion:latest
+
+BASTION_IP=$(
+  docker inspect \
+    -f &#39;{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}&#39; \
+  bastion
+)
+</code></pre>
+<p>Now, starting the target web service on a separate &#34;machine&#34;:</p>
+<pre><code>$ docker run -d --rm \
+    --name server \
+    python:3-alpine \
+    python3 -m http.server 80
+
+SERVER_IP=$(
+  docker inspect \
+    -f &#39;{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}&#39; \
+  server
+)
+</code></pre>
+<p>Let&#39;s pretend that calling <code>curl ${SERVER_IP}</code> directly from the host is not an option for some reason (e.g., as if there were no route from the host to that IP address). So, we need to start the port-forwarding:</p>
+<pre><code>$ ssh -o StrictHostKeyChecking=no -f -N -L 8080:${SERVER_IP}:80 root@${BASTION_IP}
+</code></pre>
+<p><strong>Notice that the SERVER_IP and the BASTION_IP variables have different values in the above command.</strong></p>
+<p>Checking that it works:</p>
+<pre><code>$ curl localhost:8080
+&lt;!DOCTYPE HTML PUBLIC &#34;-//W3C//DTD HTML 4.01//EN&#34; &#34;http://www.w3.org/TR/html4/strict.dtd&#34;&gt;
+&lt;html&gt;
+&lt;head&gt;
+...
+</code></pre>
+</details>
+
+</div>
+
+<h2 id="remote-port-forwarding">Remote Port Forwarding</h2>
+<p>Another popular (but rather inverse) scenario is when you want to momentarily expose a local service to the outside world. Of course, for that, you&#39;ll need a <em>public-facing ingress gateway server</em>. But fear not! Any public-facing server with an SSH daemon on it can be used as such a gateway:</p>
+<pre><code>ssh -R [remote_addr:]remote_port:local_addr:local_port [user@]gateway_addr
+</code></pre>
+<p>The above command looks no more complicated than its <code>ssh -L</code> counterpart. But there is a pitfall...</p>
+<p><strong>By default, the above SSH tunnel will allow using only the gateway&#39;s localhost as the remote address.</strong> In other words, your local port will become accessible only from the inside of the gateway server itself, and highly likely it&#39;s not something you actually need. For instance, I typically want to use the gateway&#39;s public address as the remote address to expose my local services to the public Internet. For that, the SSH server needs to be configured with the <a href="https://linux.die.net/man/5/sshd_config#GatewayPorts"><code>GatewayPorts yes</code></a> setting.</p>
+<p>Here is what remote port forwarding can be used for:</p>
+<ul>
+<li>Exposing a dev service from your laptop to the public Internet for a demo.</li>
+<li>Hmm... I can think of a few esoteric examples, but I doubt it&#39;s worth sharing them here. Curious to hear what other people may use remote port forwarding for!</li>
+</ul>
+<p>Here is how the remote port forwarding looks on a diagram:</p>
+<p><img src="https://iximiuz.com/ssh-tunnels/remote-port-forwarding-2000-opt.png" alt="SSH Tunnels visualized - remote port forwarding."/>
+</p>
+
+
+
+<div>
+
+<details><summary>Lab 3: Using SSH Tunnels for Remote Port Forwarding 👨‍🔬</summary>
+
+<p>The lab reproduces the setup from the diagram above. First, we need to prepare a &#34;dev machine&#34; - a computer with an SSH client and a local web server:</p>
+<pre><code>$ docker buildx build -t devel:latest -&lt;&lt;&#39;EOD&#39;
+# syntax=docker/dockerfile:1
+FROM alpine:3
+
+# Install dependencies:
+RUN apk add --no-cache openssh-client curl python3
+RUN mkdir /root/.ssh &amp;&amp; chmod 0700 /root/.ssh
+
+# Prepare the entrypoint that starts the web service:
+COPY --chmod=755 &lt;&lt;&#39;EOF&#39; /entrypoint.sh
+#!/bin/sh
+set -euo pipefail
+
+cp /tmp/ssh/* /root/.ssh
+chmod 600 /root/.ssh/*
+
+python3 -m http.server --bind 127.0.0.1 ${PORT} &amp;
+
+sleep infinity
+EOF
+
+# Run it:
+CMD [&#34;/entrypoint.sh&#34;]
+EOD
+</code></pre>
+<p>Starting the dev machine:</p>
+<pre><code>$ docker run -d --rm \
+    -e PORT=80 \
+    -v $HOME/.ssh:/tmp/ssh \
+    --name devel \
+    devel:latest
+</code></pre>
+<p>Preparing an ingress gateway server - a simple SSH server with <code>GatewayPorts</code> set to <code>yes</code> in <code>sshd_config</code>:</p>
+<pre><code>$ docker buildx build -t gateway:latest -&lt;&lt;&#39;EOD&#39;
+# syntax=docker/dockerfile:1
+FROM alpine:3
+
+# Install the dependencies:
+RUN apk add --no-cache openssh-server
+RUN mkdir /root/.ssh &amp;&amp; chmod 0700 /root/.ssh &amp;&amp; ssh-keygen -A
+
+# Prepare the entrypoint that starts the SSH server:
+COPY --chmod=755 &lt;&lt;&#39;EOF&#39; /entrypoint.sh
+#!/bin/sh
+set -euo pipefail
+
+for file in /tmp/ssh/*.pub; do
+  cat ${file} &gt;&gt; /root/.ssh/authorized_keys
+done
+chmod 600 /root/.ssh/authorized_keys
+
+sed -i &#39;/AllowTcpForwarding/d&#39; /etc/ssh/sshd_config
+sed -i &#39;/PermitOpen/d&#39; /etc/ssh/sshd_config
+sed -i &#39;/GatewayPorts/d&#39; /etc/ssh/sshd_config
+echo &#39;GatewayPorts yes&#39; &gt;&gt; /etc/ssh/sshd_config
+
+/usr/sbin/sshd -e -D &amp;
+
+sleep infinity
+EOF
+
+# Run it:
+CMD [&#34;/entrypoint.sh&#34;]
+EOD
+</code></pre>
+<p>Starting the gateway server and noting its IP address:</p>
+<pre><code>$ docker run -d --rm \
+    -v $HOME/.ssh:/tmp/ssh \
+    --name gateway \
+    gateway:latest
+
+GATEWAY_IP=$(
+  docker inspect \
+    -f &#39;{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}&#39; \
+  gateway
+)
+</code></pre>
+<p>Now <strong>from the inside of the dev machine, start the remote port forwarding</strong>:</p>
+<pre><code>$ docker exec -it -e GATEWAY_IP=${GATEWAY_IP} devel sh
+/ $# ssh -o StrictHostKeyChecking=no -f -N -R 0.0.0.0:8080:localhost:80 root@${GATEWAY_IP}
+/ $# exit  # or detach with ctrl-p, ctrl-q
+</code></pre>
+<p>And validate that the dev machine&#39;s local port became exposed on the gateway&#39;s public interface (from the host system):</p>
+<pre><code>$ curl ${GATEWAY_IP}:8080
+&lt;!DOCTYPE HTML PUBLIC &#34;-//W3C//DTD HTML 4.01//EN&#34; &#34;http://www.w3.org/TR/html4/strict.dtd&#34;&gt;
+&lt;html&gt;
+&lt;head&gt;
+...
+</code></pre>
+</details>
+
+</div>
+
+<h2 id="remote-port-forwarding-from-a-homeprivate-network">Remote Port Forwarding from a Home/Private Network</h2>
+<p>Much like local port forwarding, remote port forwarding has its own <em>bastion host</em> mode. But this time, the machine with the SSH client (e.g., your dev laptop) plays the role of the bastion. In particular, it allows exposing ports from a home (or a private) network your laptop has the access to to the outside world through the ingress gateway:</p>
+<pre><code>ssh -R [remote_addr:]remote_port:local_addr:local_port [user@]gateway_addr
+</code></pre>
+<p>Looks almost identical to the simple remote SSH tunnel, but the <code>local_addr:local_port</code> pair becomes the address of a device in the home network. Here is how it can be depicted on a diagram:</p>
+<p><img src="https://iximiuz.com/ssh-tunnels/remote-port-forwarding-home-network-2000-opt.png" alt="SSH Tunnels visualized - remote port forwarding to home network."/>
+</p>
+
+<p>Since I typically use my laptop as a thin client and the actual development happens on a home server, I rely on such a remote port forwarding when I need to expose a dev service from a home server to the public Internet, and the only machine with the gateway access is my thin laptop.</p>
+<div>
+
+<details><summary>Lab 4: Remote Port Forwarding from a Home/Private Network 👨‍🔬</summary>
+
+<p>As always, the lab reproduces the setup from the diagram above. First, we need to prepare the &#34;thin dev machine&#34;:</p>
+<pre><code>$ docker buildx build -t devel:latest -&lt;&lt;&#39;EOD&#39;
+# syntax=docker/dockerfile:1
+FROM alpine:3
+
+# Install the dependencies:
+RUN apk add --no-cache openssh-client
+RUN mkdir /root/.ssh &amp;&amp; chmod 0700 /root/.ssh
+
+# This time we run nothing (at first):
+COPY --chmod=755 &lt;&lt;&#39;EOF&#39; /entrypoint.sh
+#!/bin/sh
+set -euo pipefail
+
+cp /tmp/ssh/* /root/.ssh
+chmod 600 /root/.ssh/*
+
+sleep infinity
+EOF
+
+# Run it:
+CMD [&#34;/entrypoint.sh&#34;]
+EOD
+</code></pre>
+<p>Starting the &#34;dev machine&#34;:</p>
+<pre><code>$ docker run -d --rm \
+    -v $HOME/.ssh:/tmp/ssh \
+    --name devel \
+    devel:latest
+</code></pre>
+<p>Starting a private dev server using a separate &#34;machine&#34; and noting its IP address:</p>
+<pre><code>$ docker run -d --rm \
+    --name server \
+    python:3-alpine \
+    python3 -m http.server 80
+
+SERVER_IP=$(
+  docker inspect -f &#39;{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}&#39; \
+  server
+)
+</code></pre>
+<p>Preparing the ingress gateway server:</p>
+<pre><code>$ docker buildx build -t gateway:latest -&lt;&lt;&#39;EOD&#39;
+# syntax=docker/dockerfile:1
+FROM alpine:3
+
+# Install the dependencies:
+RUN apk add --no-cache openssh-server
+RUN mkdir /root/.ssh &amp;&amp; chmod 0700 /root/.ssh &amp;&amp; ssh-keygen -A
+
+# Prepare the entrypoint that starts the SSH daemon:
+COPY --chmod=755 &lt;&lt;&#39;EOF&#39; /entrypoint.sh
+#!/bin/sh
+set -euo pipefail
+
+for file in /tmp/ssh/*.pub; do
+  cat ${file} &gt;&gt; /root/.ssh/authorized_keys
+done
+chmod 600 /root/.ssh/authorized_keys
+
+sed -i &#39;/AllowTcpForwarding/d&#39; /etc/ssh/sshd_config
+sed -i &#39;/PermitOpen/d&#39; /etc/ssh/sshd_config
+sed -i &#39;/GatewayPorts/d&#39; /etc/ssh/sshd_config
+echo &#39;GatewayPorts yes&#39; &gt;&gt; /etc/ssh/sshd_config
+
+/usr/sbin/sshd -e -D &amp;
+
+sleep infinity
+EOF
+
+# Run it:
+CMD [&#34;/entrypoint.sh&#34;]
+EOD
+</code></pre>
+<p>And starting it:</p>
+<pre><code>$ docker run -d --rm \
+    -v $HOME/.ssh:/tmp/ssh \
+    --name gateway \
+    gateway:latest
+
+GATEWAY_IP=$(
+  docker inspect \
+    -f &#39;{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}&#39; \
+  gateway
+)
+</code></pre>
+<p>Now, <strong>from the inside of the &#34;dev machine&#34;, start the remote port forwarding SERVER-GATEWAY</strong>:</p>
+<pre><code>$ docker exec -it -e GATEWAY_IP=${GATEWAY_IP} -e SERVER_IP=${SERVER_IP} devel sh
+/ $# ssh -o StrictHostKeyChecking=no -f -N -R 0.0.0.0:8080:${SERVER_IP}:80 root@${GATEWAY_IP}
+/ $# exit  # or detach with ctrl-p, ctrl-q
+</code></pre>
+<p>Finally, validate that the dev server became accessible on the gateway&#39;s public interface (from the host system):</p>
+<pre><code>$ curl ${GATEWAY_IP}:8080
+&lt;!DOCTYPE HTML&gt;
+&lt;html lang=&#34;en&#34;&gt;
+&lt;head&gt;
+...
+</code></pre>
+</details>
+
+</div>
+
+<h2 id="summarizing">Summarizing</h2>
+<p>After doing all these labs and drawings, I noticed that:</p>
+<ul>
+<li>The word <strong>&#34;local&#34;</strong> can mean either the <strong>SSH client machine</strong> or an upstream host accessible from this machine.</li>
+<li>The word <strong>&#34;remote&#34;</strong> can mean either the <strong>SSH server machine (sshd)</strong> of an upstream host accessible from it.</li>
+<li>Local port forwarding (<code>ssh -L</code>) implies it&#39;s the <code>ssh</code> client that starts listening on a new port.</li>
+<li>Remote port forwarding (<code>ssh -R</code>) implies it&#39;s the <code>sshd</code> server that starts listening on an extra port.</li>
+<li>The mnemonics are &#34;ssh <strong>-L</strong> <strong>l</strong>ocal:remote&#34; and &#34;ssh <strong>-R</strong> <strong>r</strong>emote:local&#34; and it&#39;s always the left-hand side that opens a new port.</li>
+</ul>
+<h2 id="instead-of-conclusion">Instead of conclusion</h2>
+<p>Hope the above materials helped you a bit with becoming a master of SSH Tunnels 🧙 If you find the networking topics interesting but feel like most of the materials are written for bearded network engineers and almost indigestible for mere developers, I&#39;ve got a few more articles that you may find useful:</p>
+<ul>
+<li><a href="https://iximiuz.com/en/posts/computer-networking-101/">Computer Networking Introduction: Ethernet and IP</a></li>
+<li><a href="https://iximiuz.com/en/posts/laymans-iptables-101/">Illustrated introduction to Linux iptables</a></li>
+<li><a href="https://iximiuz.com/en/posts/bridge-vs-switch/">Bridge vs. Switch: What I Learned From a Data Center Tour</a></li>
+<li><a href="https://iximiuz.com/en/posts/container-networking-is-simple/">Container Networking Is Simple (not really)</a></li>
+</ul>
+<p>Happy reading!</p>
+<h3 id="resources">Resources</h3>
+<ul>
+<li><a href="https://goteleport.com/blog/ssh-tunneling-explained/">SSH Tunneling Explained</a> by networking gurus from Teleport.</li>
+<li><a href="https://www.ssh.com/academy/ssh/tunneling-example">SSH Tunneling: Examples, Command, Server Config</a> by SSH Academy.</li>
+</ul>
+</div></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="67AEAA46-8D2B-48E2-9872-6F67C02D82B5"><a href="https://www.infoq.com/articles/java-virtual-threads/">Virtual Threads: New Foundations for High-Scale Java Applications</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.infoq.com/articles/java-virtual-threads/">https://www.infoq.com/articles/java-virtual-threads/</a></span><br />
+			<span class="d">Added: 2022-09-28 08:43:56.060676097 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Virtual threads are a lightweight implementation of Java threads, delivered as a preview feature in Java 19.
+			
+				... (28569 chars. See <a href="javascript:toggle('b67AEAA46-8D2B-48E2-9872-6F67C02D82B5');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="b67AEAA46-8D2B-48E2-9872-6F67C02D82B5">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><div>
+							
+								<div>
+									<h3>Key Takeaways</h3>
+									<ul>
+	<li> Virtual threads are a lightweight implementation of Java threads, delivered as a preview feature in Java 19.</li>
+	<li> Virtual threads dramatically reduce the effort of writing, maintaining, and observing high-throughput concurrent applications.</li>
+	<li> Virtual threads breathe new life into the familiar thread-per-request style of programming, allowing it to scale with near-optimal hardware utilization.</li>
+	<li> Virtual threads are fully compatible with the existing `Thread` API, so existing applications and libraries can support them with minimal change.</li>
+	<li> Virtual threads support the existing debugging and profiling interfaces, enabling easy troubleshooting, debugging, and profiling of virtual threads with existing tools and techniques.</li>
+</ul>
+
+									
+								</div>
+							
+							
+								
+								<p>Java 19 brings the first <a href="https://openjdk.java.net/jeps/12">preview</a> of <a href="https://openjdk.java.net/jeps/425"><em>virtual threads</em></a> to the Java platform; this is the main deliverable of OpenJDKs <a href="https://wiki.openjdk.org/display/loom/Main">Project Loom</a>. This is one of the biggest changes to come to Java in a long time -- and at the same time, is an almost imperceptible change. Virtual threads fundamentally change how the Java runtime interacts with the underlying operating system, eliminating significant impediments to scalability -- but change relatively little about how we build and maintain concurrent programs. There is almost zero new API surface, and virtual threads behave almost exactly like the threads we already know. Indeed, to use virtual threads effectively, there is more <em>unlearning</em> than learning to be done.</p>
+
+<h2>Threads</h2>
+
+<p>Threads are foundational in Java. When we run a Java program, its main method is invoked as the first call frame of the <code>&#34;main&#34;</code> thread, which is created by the Java launcher. When one method calls another, the callee runs on the same thread as the caller, and where to return to is recorded on the threads stack. When a method uses local variables, they are stored in that methods call frame on the threads stack. When something goes wrong, we can reconstruct the context of how we got to the current point -- a stack trace -- by walking the current threads stack. Threads give us so many things we take for granted every day: sequential control flow, local variables, exception handling, single-step debugging, and profiling. Threads are also the basic unit of scheduling in Java programs; when a thread blocks waiting for a storage device, network connection, or a lock, the thread is descheduled so another thread can run on that CPU. Java was the first mainstream language to feature integrated support for thread-based concurrency, including a cross-platform memory model; threads are foundational to Javas model of concurrency.</p>
+
+<p>Despite all this, threads often get a bad reputation, because most developers experience with threads is in trying to implement or debug shared-state concurrency. Indeed, shared-state concurrency -- often referred to as &#34;programming with threads and locks&#34; -- can be difficult. Unlike many other aspects of programming on the Java platform, the answers are not all to be found in the language specification or API documentation; writing safe, performant concurrent code that manages shared mutable state requires understanding subtle concepts like memory visibility, and a great deal of discipline. (If it were easier, the authors own <a href="https://jcip.net/"><em>Java Concurrency in Practice</em></a> would not weigh in at almost 400 pages.)</p>
+
+
+								
+								
+									
+
+
+
+
+
+
+<div data-trk-view="true" data-trk-impr="true" data-place="EMBEDDED">
+	
+	<ul>
+		<h4>Related Sponsored Content</h4>
+		
+		
+		
+			
+		
+	</ul>
+	
+		
+	
+	
+</div>
+
+								
+								<p>Despite the legitimate apprehension that developers have when approaching concurrency, it is easy to forget that the other 99% of the time, threads are quietly and reliably making our lives much easier, giving us exception handling with informative stack traces, serviceability tools that let us observe what is going on in each thread, remote debugging, and the illusion of sequentiality that makes our code easier to reason about.</p>
+
+<h3>Platform threads</h3>
+
+<p>Java achieved write-once, run-anywhere for concurrent programs by ensuring that the language and APIs provided a complete, portable abstraction for threads, inter-thread coordination mechanisms, and a memory model that gives predictable semantics to the effects of threads on memory, that could be efficiently mapped to a number of different underlying implementations.</p>
+
+<p>Most JVM implementations today implement Java threads as thin wrappers around operating system threads; well call these heavyweight, OS-managed threads <em>platform threads</em>. This isnt required -- in fact, Javas threading model predates widespread OS support for threads -- but because modern OSes now have good support for threads (in most OSes today, the thread is the basic unit of scheduling), there are good reasons to lean on the underlying platform threads. But this reliance on OS threads has a downside: because of how most OSes implement threads, thread creation is relatively expensive and resource-heavy. This implicitly places a practical limit on how many we can create, which in turn has consequences for how we use threads in our programs.</p>
+
+
+								
+								
+									
+								
+								<p>Operating systems typically allocate thread stacks as monolithic blocks of memory at thread creation time that cannot be resized later. This means that threads carry with them megabyte-scale chunks of memory to manage the native and Java call stacks. Stack size can be tuned both with command-line switches and <code>Thread</code> constructors, but tuning is risky in both directions. If stacks are overprovisioned, we will use even more memory; if they are underprovisioned, we risk <code>StackOverflowException</code> if the wrong code is called at the wrong time. We generally lean towards overprovisioning thread stacks as being the lesser of evils, but the result is a relatively low limit on how many concurrent threads we can have for a given amount of memory.</p>
+
+<p>Limiting how many threads we can create is problematic because the simplest approach to building server applications is the thread-per-task approach: assign each incoming request to a single thread for the lifetime of the task.<br/>
+Aligning the applications unit of concurrency (the task) with the platforms (the thread) in this way maximizes ease of development, debugging, and maintenance, leaning on all the benefits that threads invisibly give us, especially that all-important illusion of sequentiality. It usually requires little awareness of concurrency (other than configuring a thread pool for request handlers) because most requests are independent of each other. Unfortunately, as programs scale, this approach is on a collision course with the memory characteristics of platform threads. Thread-per-task scales well enough for moderate-scale applications -- we can easily service 1000 concurrent requests -- but we will not be able to service 1M concurrent requests using the same technique, even if the hardware has adequate CPU capacity and IO bandwidth.</p>
+
+<p>Until now, Java developers who wanted to service large volumes of concurrent requests had several bad choices: constrain how code is written so it can use substantially smaller stack sizes (which usually means giving up on most third-party libraries), throw more hardware at the problem, or switch to an &#34;async&#34; or &#34;reactive&#34; style of programming. While the &#34;async&#34; model has had some popularity recently, it means programming in a highly constrained style which requires us to give up many of the benefits that threads give us, such as readable stack traces, debugging, and observability. Due to the design patterns employed by most async libraries, it also means giving up many of the benefits the Java language gives us as well, because async libraries essentially become rigid domain-specific languages that want to manage the entirety of the computation. This sacrifices many of the things that make programming in Java productive.</p>
+
+<h2>Virtual threads</h2>
+
+<p>Virtual threads are an alternative implementation of <code>java.lang.Thread</code> which store their stack frames in Javas garbage-collected heap rather than in monolithic blocks of memory allocated by the operating system. We dont have to guess how much stack space a thread might need, or make a one-size-fits-all estimate for all threads; the memory footprint for a virtual thread starts out at only a few hundred bytes, and is expanded and shrunk automatically as the call stack expands and shrinks.</p>
+
+<p>The operating system only knows about platform threads, which remain the unit of scheduling. To run code in a virtual thread, the Java runtime arranges for it to run by <em>mounting</em> it on some platform thread, called a <em>carrier thread</em>. Mounting a virtual thread means temporarily copying the needed stack frames from the heap to the stack of the carrier thread, and borrowing the carriers stack while it is mounted.</p>
+
+<p>When code running in a virtual thread would otherwise block for IO, locking, or other resource availability, it can be <em>unmounted</em> from the carrier thread, and any modified stack frames copied are back to the heap, freeing the carrier thread for something else (such as running another virtual thread.) Nearly all blocking points in the JDK have been adapted so that when encountering a blocking operation on a virtual thread, the virtual thread is unmounted from its carrier instead of blocking.</p>
+
+<p>Mounting and unmounting a virtual thread on a carrier thread is an implementation detail that is entirely invisible to Java code. Java code cannot observe the identity of the current carrier (calling <code>Thread::currentThread</code> always returns the virtual thread); <code>ThreadLocal</code> values of the carrier thread are not visible to a mounted virtual thread; the stack frames of the carrier do not show up in exceptions or thread dumps for the virtual thread. During the virtual threads lifetime, it may run on many different carrier threads, but anything depending on thread identity, such as locking, will see a consistent picture of what thread it is running on.</p>
+
+<p>Virtual threads are so-named because they share characteristics with virtual memory. With virtual memory, applications have the illusion that they have access to the entire memory address space, not limited by the available physical memory. The hardware completes this illusion by temporarily mapping plentiful virtual memory to scarce physical memory as needed, and when some other virtual page needs that physical memory, the old contents are first paged out to disk. Similarly, virtual threads are cheap and plentiful, and share the scarce and expensive platform threads as needed, and inactive virtual thread stacks are &#34;paged&#34; out to the heap.</p>
+
+<p>Virtual threads have relatively little new API surface. There are several new methods for creating virtual threads (e.g., <a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Thread.html#ofVirtual()"><code>Thread::ofVirtual</code></a>), but after creation, they are ordinary <code>Thread</code> objects and behave like the threads we already know. Existing APIs such as <code>Thread::currentThread</code>, <code>ThreadLocal</code>, interruption, stack walking, etc, work exactly the same on virtual threads as on platform threads, which means we can run existing code confidently on virtual threads.</p>
+
+<p>The following example illustrates using virtual threads to concurrently fetch two URLs and aggregate their results as part of handling a request. It creates an <a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/concurrent/ExecutorService.html"><code>ExecutorService</code></a> that runs each task in a new virtual thread, submits two tasks to it, and waits for the results. <code>ExecutorService</code> has been retrofitted to implement <code>AutoCloseable</code>, so it can be used with <code>try-with-resources</code>, and the <code>close</code> method shuts down the executor and waits for tasks to complete.<code> </code></p>
+
+<pre><code>void handle(Request request, Response response) {
+    var url1 = ...
+    var url2 = ...
+
+    try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+        var future1 = executor.submit(() -&gt; fetchURL(url1));
+        var future2 = executor.submit(() -&gt; fetchURL(url2));
+        response.send(future1.get() + future2.get());
+    } catch (ExecutionException | InterruptedException e) {
+        response.fail(e);
+    }
+}
+
+String fetchURL(URL url) throws IOException {
+    try (var in = url.openStream()) {
+        return new String(in.readAllBytes(), StandardCharsets.UTF_8);
+    }
+}</code></pre>
+
+<p>On reading this code, we might initially worry it is somehow profligate to create threads for such short-lived activities or a thread pool for so few tasks, but this is just something we will have to unlearn -- this code is a perfectly responsible use of virtual threads</p>
+
+<h3>Isnt this just &#34;green threads&#34;?</h3>
+
+<p>Java developers may recall that in the Java 1.0 days, some JVMs implemented threads using <a href="https://docs.oracle.com/cd/E19455-01/806-3461/ch2mt-41/index.html">user-mode</a>, or &#34;green&#34;, threads. Virtual threads bear a superficial similarity to green threads in that they are both managed by the JVM rather than the OS, but this is where the similarity ends. The green threads of the 90s still had large, monolithic stacks. They were very much a product of their time, when systems were single-core and OSes didnt have thread support at all. Virtual threads have more in common with the user-mode threads found in other languages, such as <a href="https://go.dev/tour/concurrency/1">goroutines</a> in <a href="https://go.dev/tour/welcome/1">Go</a> or <a href="https://www.erlang.org/doc/reference_manual/processes.html">processes</a> in <a href="https://www.erlang.org/">Erlang</a> -- but have the advantage of being semantically identical to the threads we already have.</p>
+
+<h3>It&#39;s about scalability</h3>
+
+<p>Despite the difference in creation costs, virtual threads are not <em>faster</em> than platform threads; we cant do any more computation with one virtual thread in one second than we can with a platform thread. Nor can we schedule any more <em>actively running</em> virtual threads than we can platform threads; both are limited by the number of available CPU cores. So, what is the benefit? Because they are so lightweight, we can have many more <em>inactive</em> virtual threads than we can with platform threads. At first, this may not sound like a big benefit at all! But &#34;lots of inactive threads&#34; actually describes the majority of server applications. Requests in server applications spend much more time doing network, file, or database I/O than computation. So if we run each task in its own thread, most of the time that thread will be blocked on I/O or other resource availability. Virtual threads allow IO-bound thread-per-task applications to <em>scale better</em> by removing the most common scaling bottleneck -- the maximum number of threads -- which in turn enables better hardware utilization. Virtual threads allow us to have the best of both worlds: a programming style that is in harmony with the platform rather than working against it, while allowing optimal hardware utilization.</p>
+
+<p>For CPU-bound workloads, we already have tools to get to optimal CPU utilization, such as the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/ForkJoinPool.html">fork-join</a> framework and <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/package-summary.html">parallel streams</a>. Virtual threads offer a complementary benefit to these. Parallel streams make it easier to scale CPU-bound workloads, but offer relatively little for IO-bound workloads; virtual threads offer a scalability benefit for IO-bound workloads, but relatively little for CPU-bound ones.</p>
+
+<h3>Littles Law</h3>
+
+<p>The scalability of a stable system is governed by <a href="https://en.wikipedia.org/wiki/Little%27s_law"><em>Littles Law</em></a>, which relates latency, concurrency, and throughput. If each request has a duration (or latency) of <em>d</em>, and we can perform <em>N</em> tasks concurrently, then throughput <em>T</em> is given by</p>
+
+<pre><code><span>T</span> = <span>N</span> / d
+</code></pre>
+
+<p>Littles Law doesnt care about what portion of the time is spent &#34;doing work&#34; vs &#34;waiting&#34;, or whether the unit of concurrency is a thread, a CPU, an ATM machine, or a human bank teller. It just states that to scale up the throughput, we either have to proportionally scale down the latency or scale up the number of requests we can handle concurrently. When we hit the limit on concurrent threads, the throughput of the thread-per-task model is limited by Littles Law. Virtual threads address this in a graceful way by giving us more concurrent threads rather than asking us to change our programming model.</p>
+
+<h3>Virtual threads in action</h3>
+
+<p>Virtual threads do not replace platform threads; they are complementary. However, many server applications will choose virtual threads (often through the configuration of a framework) to achieve greater scalability.</p>
+
+<p>The following example creates 100,000 virtual threads that simulate an IO-bound operation by sleeping for one second. It creates a virtual-thread-per-task executor and submits the tasks as lambdas.</p>
+
+<pre><code>try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+    IntStream.range(0, 100_000).forEach(i -&gt; {
+        executor.submit(() -&gt; {
+            Thread.sleep(Duration.ofSeconds(1));
+            return i;
+        });
+    });
+}  // close() called implicitly
+</code></pre>
+
+<p>On a modest desktop system with no special configuration options, running this program takes about 1.6 seconds in a cold start, and about 1.1 seconds after warmup. If we try running this program with a cached thread pool instead, depending on how much memory is available, it may well crash with <code>OutOfMemoryError</code> before all the tasks are submitted. And if we ran it with a fixed-sized thread pool with 1000 threads, it wont crash, but Littles Law accurately predicts it will take 100 seconds to complete.</p>
+
+<h2>Things to unlearn</h2>
+
+<p>Because virtual threads are threads and have little new API surface of their own, there is relatively little to learn in order to use virtual threads. But there are actually quite a few things we need to <em>unlearn</em> in order to use them effectively.</p>
+
+<h3>Everyone out of the pool</h3>
+
+<p>The biggest thing to unlearn is the patterns surrounding thread creation. Java 5 brought with it the <code>java.util.concurrent</code> package, including the <code>ExecutorService</code> framework, and Java developers have (correctly!) learned that it is generally far better to let <code>ExecutorService</code> manage and pool threads in a policy-driven manner than to create threads directly. But when it comes to virtual threads, pooling becomes an antipattern. (We dont have to give up using <code>ExecutorService</code> or the encapsulation of policy that it provides; we can use the new factory method <a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/concurrent/Executors.html#newVirtualThreadPerTaskExecutor()"><code>Executors::newVirtualThreadPerTaskExecutor</code></a> to get an <code>ExecutorService</code> that creates a new virtual thread per task.)</p>
+
+<p>Because the initial footprint of virtual threads is so small, creating virtual threads is dramatically cheaper in both time and memory than creating platform threads -- so much so, that our intuitions around thread creation need to be revisited. With platform threads, we are in the habit of pooling them, both to place a bound on resource utilization (because its easy to run out of memory otherwise), and to amortize the cost of thread startup over multiple requests. On the other hand, creating virtual threads is so cheap that it is actively a <em>bad</em> idea to pool them! We would gain little in terms of bounding memory usage, because the footprint is so small; it would take millions of virtual threads to use even 1G of memory. We also gain little in terms of amortizing creation overhead, because the creation cost is so small. And while it is easy to forget because pooling has historically been a forced move, it comes with its own problems, such as <code>ThreadLocal</code> pollution (where <code>ThreadLocal</code> values are left behind and accumulate in long-lived threads, causing memory leaks.)</p>
+
+<p>If it is necessary to limit concurrency to bound consumption of some resource other than the threads themselves, such as database connections, we can use a <code>Semaphore</code> and have each virtual thread that needs the scarce resource acquire a permit.</p>
+
+<p>Virtual threads are so lightweight that it is perfectly OK to create a virtual thread even for short-lived tasks, and counterproductive to try to reuse or recycle them. Indeed, virtual threads were designed with such short-lived tasks in mind, such as an HTTP fetch or a JDBC query.</p>
+
+<h3>Overuse of ThreadLocal</h3>
+
+<p>Libraries may also need to adjust their use of <code>ThreadLocal</code> in light of virtual threads. One of the ways in which <code>ThreadLocal</code> is sometimes used (some would say abused) is to cache resources that are expensive to allocate, not thread-safe, or simply to avoid repeated allocation of a commonly used object (e.g., ASM uses a <code>ThreadLocal</code> to maintain a per-thread <code>char[]</code> buffer, used for formatting operations.) When a system has a few hundred threads, the resource usage from such a pattern is usually not excessive, and it may be cheaper than reallocating each time it is needed. But the calculus changes dramatically with a few million threads that each only perform a single task, because there are potentially many more instances allocated and there is much less chance of each being reused. Using a <code>ThreadLocal</code> to amortize the creation cost of a costly resource across multiple tasks that may execute in the same thread is an ad-hoc form of pooling; if these things need to be pooled, they should be pooled explicitly.</p>
+
+<h2>What about Reactive?</h2>
+
+<p>A number of so-called &#34;async&#34; or &#34;reactive&#34; frameworks offer a path to fuller hardware utilization by asking developers to trade the thread-per-request style in favor of asynchronous IO, callbacks, and thread sharing. In such a model, when an activity needs to perform IO, it initiates an asynchronous operation which will invoke a callback when complete. The framework will invoke that callback on some thread, but not necessarily the same thread that initiated the operation. This means developers must break their logic down into alternating IO and computational steps which are stitched together into a sequential workflow. Because a request only uses a thread when it is actually computing something, the number of concurrent requests is not bounded by the number of threads, and so the limit on the number of threads is less likely to be the limiting factor in application throughput.</p>
+
+<p>But, this scalability comes at a great cost -- you often have to give up some of the fundamental features of the platform and ecosystem. In the thread-per-task model, if you want to do two things sequentially, you just do them sequentially. If you want to structure your workflow with loops, conditionals, or try-catch blocks, you just do that. But in the asynchronous style, you often cannot use the sequential composition, iteration, or other features the language gives you to structure the workflow; these must be done with API calls that simulate these constructs within the asynchronous framework. An API for simulating loops or conditionals will never be as flexible or familiar as the constructs built into the language. And if we are using libraries that perform blocking operations, and have not been adapted to work in the asynchronous style, we may not be able to use these either. So we may get scalability from this model, but we have to give up on using parts of the language and ecosystem to get it.</p>
+
+<p>These frameworks also make us give up a number of the runtime features that make developing in Java easier. Because each stage of a request might execute in a different thread, and service threads may interleave computations belonging to different requests, the usual tools we use when things go wrong, such as stack traces, debuggers, and profilers, are much less helpful than in the thread-per-task model. This programming style is at odds with the Java Platform because the frameworks unit of concurrency -- a stage of an asynchronous pipeline -- is not the same as the platforms unit of concurrency. Virtual threads, on the other hand, allow us to gain the same throughput benefit without giving up key language and runtime features.</p>
+
+<h3>What about async/await?</h3>
+
+<p>A number of languages have embraced <code>async</code> methods (a form of stackless coroutines) as a means of managing blocking operations, which can be called either by other <code>async</code> methods or by ordinary methods using the <code>await</code> statement. Indeed, there was some popular call to add <code>async/await</code> to Java, as <a href="https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/async/"><code>C#</code></a> and <a href="https://kotlinlang.org/docs/async-programming.html">Kotlin</a> have.</p>
+
+<p>Virtual threads offer some significant advantages that <code>async/await</code> does not. Virtual threads are not just syntactic sugar for an asynchronous framework, but an overhaul to the JDK libraries to be more &#34;blocking-aware&#34;. Without that, an errant call to a synchronous blocking method from an async task will still tie up a platform thread for the duration of the call. Merely making it syntactically easier to manage asynchronous operations does not offer any scalability benefit unless you find <em>every</em> blocking operation in your system and turn it into an <code>async</code> method.</p>
+
+<p>A more serious problem with <code>async/await</code> is the <a href="https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/">&#34;function color&#34;</a> problem, where methods are divided into two kinds -- one designed for threads and another designed for async methods -- and the two do not interoperate perfectly. This is a cumbersome programming model, often with significant duplication, and would require the new construct to be introduced into every layer of libraries, frameworks, and tooling in order to get a seamless result. Why would we implement yet another unit of concurrency -- one that is only syntax-deep -- which does not align with the threads we already have? This might be more attractive in another language, where language-runtime co-evolution was not an option, but fortunately we didnt have to make that choice.</p>
+
+<h2>API and platform changes</h2>
+
+<p>Virtual threads, and their related APIs, are a <a href="https://openjdk.java.net/jeps/12"><em>preview feature</em></a>. This means that the <code>--enable-preview</code> flag is needed to enable virtual thread support.</p>
+
+<p>Virtual threads are implementations of <code>java.lang.Thread</code>, so there is no new <code>VirtualThread</code> base type. However, the <code>Thread</code> API has been extended with some new API points for creating and inspecting threads. There are new factory methods for <code>Thread::ofVirtual</code> and <a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Thread.html#ofPlatform()"><code>Thread::ofPlatform</code></a>, a new <a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Thread.Builder.html"><code>Thread.Builder</code></a> class, and <code>Thread::startVirtualThread</code> to create a start a task on a virtual thread in one go. The existing thread constructors continue to work as before, but are only for creating platform threads.</p>
+
+<p>There are a few behavioral differences between virtual and platform threads. Virtual threads are always daemon threads; the <code>Thread::setDaemon</code> method has no effect on them. Virtual threads always have priority <code>Thread.NORM_PRIORITY</code> which cannot be changed. Virtual threads do not support some (flawed) legacy mechanisms, such as <code>ThreadGroup</code> and the <code>Thread</code> methods <code>stop</code>, <code>suspend</code>, and <code>remove</code>. <code>Thread::isVirtual</code> will reveal whether a thread is virtual or not.</p>
+
+<p>Unlike platform thread stacks, virtual threads can be reclaimed by the garbage collector if nothing else is keeping them alive. This means that if a virtual thread is blocked, say, on <code>BlockingQueue::take</code>, but neither the virtual thread nor the queue is reachable by any platform thread, then the thread and its stack can be garbage collected. (This is safe because in this case the virtual thread can never be interrupted or unblocked.)</p>
+
+<p>Initially, carrier threads for virtual threads are threads in a <a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/concurrent/ForkJoinPool.html"><code>ForkJoinPool</code></a> that operates in FIFO mode. The size of this pool defaults to the number of available processors. In the future, there may be more options to create custom schedulers.</p>
+
+<h3>Preparing the JDK</h3>
+
+<p>While virtual threads are the primary deliverable of Project Loom, there was a number of improvements behind the scenes in the JDK to ensure that applications would have a good experience using virtual threads:</p>
+
+<ul>
+	<li><strong>New socket implementations.</strong> <a href="https://openjdk.java.net/jeps/353">JEP 353</a> (Reimplement the Legacy Socket API) and <a href="https://openjdk.java.net/jeps/373">JEP 373</a> (Reimplement the Legacy DatagramSocket API) replaced the implementations of <code>Socket</code>, <code>ServerSocket</code>, and <code>DatagramSocket</code> to better support virtual threads (including making blocking methods interruptible in virtual threads.)</li>
+	<li><strong>Virtual-thread-awareness.</strong> Nearly all blocking points in the JDK were made aware of virtual threads, and will unmount a virtual thread rather than blocking it.</li>
+	<li><strong>Revisiting the use of <code>ThreadLocal</code>.</strong> Many uses of <code>ThreadLocal</code> in the JDK were revised in light of the expected changing usage patterns of threads.</li>
+	<li><strong>Revisiting locking.</strong> Because acquiring an intrinsic lock (<code>synchronized</code>) currently pins a virtual thread to its carrier, critical intrinsic locks were replaced with <code>ReentrantLock</code>, which does not share this behavior. (The interaction between virtual threads and intrinsic locks is likely to be improved in the future.)</li>
+	<li><strong>Improved thread dumps.</strong> Greater control over thread dumps, such as those produced by <code>jcmd</code>, is provided to filter out virtual threads, group related virtual threads together, or produce dumps in machine-readable formats that can be post-processed for better observability.</li>
+</ul>
+
+<h3>Related work</h3>
+
+<p>While virtual threads are the main course of Project Loom, there are several other Loom sub-projects that further enhance virtual threads. One is a simple framework for <a href="https://openjdk.org/jeps/428"><em>structured concurrency</em></a>, which offers a powerful means to coordinate and manage cooperating groups of virtual threads. The other is <em>extent local variables</em>, which are similar to thread locals, but more suitable (and performant) for use in virtual threads. These will be the topics of upcoming articles.</p>
+
+							
+							
+
+							
+
+
+
+
+
+
+
+
+
+  
+    
+
+
+                            
+                            
+                                
+                            
+						</div></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="CC2F74DB-568A-449D-8B5D-D760DDA5B488"><a href="https://www.paperplanes.de/2022/5/12/start-by-making-a-list.html">When You‘re Stuck, Start By Making a List</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.paperplanes.de/2022/5/12/start-by-making-a-list.html">https://www.paperplanes.de/2022/5/12/start-by-making-a-list.html</a></span><br />
+			<span class="d">Added: 2022-07-13 20:08:05.385727882 &#43;0000 UTC</span>
+		</div>
+		<p class="p">When you‘re in the midst of starting a business, while also writing a book, like me and my business partner Sara currently are with The Intentional Organization, your mind can feel all over the place. It‘s constantly ove
+			
+				... (5199 chars. See <a href="javascript:toggle('bCC2F74DB-568A-449D-8B5D-D760DDA5B488');">body</a>)
+			 
+		</p>
+		
+		<div class="body" id="bCC2F74DB-568A-449D-8B5D-D760DDA5B488">
+			<hr class="hr"/>
+		<div id="readability-page-1" class="page"><div id="main" aria-label="Content">
+  <article>
+    
+
+    <div>
+          <p>When you‘re in the midst of starting a business, while also writing a book, like me and my business partner Sara currently are with <a href="https://intentionalorganization.com/">The Intentional Organization</a>, your mind can feel all over the place. It‘s constantly overwhelmed by not knowing what to do and where to go next. There’s just so much to do, and you get a pick of the litter of what you might want to do next. Meanwhile I have handfuls of client to attend to, staying in touch with them, making sure I keep track of our conversations, and that I bill them regularly. With growing numbers, it‘s easy to lose track of things.</p>
+
+<p>That‘s only the normal part of the work. Now, I‘m not going to complain about any of this. It‘s been my choice to go down the path of founding a business more than once. And here I am, doing it again. Plus, <a href="https://intentionalorganization.com/book/">the book</a>. Keeping track of chapters to review, edit, completely rewrite, review and edit again, and eventually tear my hair out because it still doesn‘t read right.</p>
+
+<p>Still, there are times when my mind gets lost, almost stuck. It‘s ironic that this is the same molasses that I‘m helping my clients get out of in our sessions. I know the tools. As a good friend once said: „The hardest advice to listen to is the one you give yourself.“</p>
+
+<p>When things feel overwhelming, I‘m getting close to shutting down, not able to move anywhere. And when I do feel stuck, I resort to my own frameworks to find my way back into the light. When I feel stuck on a decision, I write down what problem I’m trying to solve, what the alternatives are, and what consequences I can foresee. When it’s written down, I’ve got everything out in the open.</p>
+
+<p>In this case, the simplest framework in my tool belt is to make a list. A simple list of things to do, sorted in different buckets. Where that list exists is besides the point. My favourite lists are in a paper notebook (I always carry a pocket sized Leuchtturm notebook and pen with me). But anywhere is fine. Some lists I slap into Notion, should they need sharing with others. For others, just writing them down on a piece of paper and discarding that piece later does the trick.</p>
+
+<p>The magic isn‘t just in having a list to tick things off from. The real magic is sitting down, taking your mind off whatever is going on, and focusing on what needs to get down to get you out of the rut.</p>
+
+<p>Lists are magical for anything that requires you to orient yourself. They’re simple, they don’t require any tooling. You can make a list anywhere, everywhere, and on anything.</p>
+
+<p>Say you’re a startup with a hiring process that doesn’t fit the company’s needs anymore. Candidates aren’t going through the process fast enough, or you as the leader keep finding yourself wound up by what little time you have, not being able to give a candidate their due time. You want to hand off more of the process, but most of the decision-making keeps happening in your gut. Or at least that’s what it feels like.</p>
+
+<p>I come across this persona of leader quite often. And the advice I give them is pretty simple. And you guessed it, it’s to make a list. That list should contain all the things they’re looking for in that first interview, in the coding challenge, in the team interview. Much of the process usually consists of intuitive filtering. It may even feel so intuitive that you can’t put it in words. This hesitancy tends to point to a fear of finding something that you don’t like, something that has disqualified candidates in the past, or something that highlights personal biases.</p>
+
+<p>There are certain ingrained criteria that you may look for, like how many questions a candidate ask, how excited they appear about your company or product, or how many times they mention how excited they are. The latter part in particular we easily conflate with someone having a passion for our product.</p>
+
+<p>A list is about making the invisible visible. It’s about making actionable what seemed like it’s only happening in your gut. It’s about setting expectations so that you can be fair, consistent, and delegate things to other people. When you write things down you can question them, assess them, discard them, replace them.</p>
+
+<p>Whatever hidden expectations you brought into the hiring process, or any process for that matter, are dragged out in the open, for everyone to see. There can be discomfort in this process. It may shed light on something you didn’t want anyone to see. It may show that you may have treated some candidates different from others, highlighting personal biases that influenced your decision-making.</p>
+
+<p>But moving towards a moment of clarity requires pushing through that discomfort. The first step is in acknowledging reality. The next is then to shape it in a fair and consistent way so that everyone gets a fair chance, and that is ready for other folks to use, so you can scale yourself and your organisation.</p>
+
+<p>Did we really get here by making a list? Yes, we did. A list is the simplest possible tool to gain clarity where there’s uncertainty. When you’re stuck, or when it feels like you can’t quite put your finger on something, make a list. It forces you to pause and bring forth hidden expectations. It can help bring a wee bit of order to what feels like chaos every single day.</p>
+
+        </div>
+  </article>
+</div></div>	
+			<hr class="hr"/>
+		</div>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+<section>
+<h2 id="saveme">Random expired <a href="javascript:toggle('olsaveme');">&#177;</a></h2>
+<div>2 links selected from 94 expired links</div>
+<ol id="olsaveme">
+
+<li>
+	<article>
+		<h3 id="772B3693-3D94-48A4-BB74-9A7F81FA0B09"><a href="https://twitter.com/9to5mac/status/1499129510238822400">Tweet from @9to5mac</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://twitter.com/9to5mac/status/1499129510238822400">https://twitter.com/9to5mac/status/1499129510238822400</a></span><br />
+			<span class="d">Added: 2022-03-02 22:32:45.797072887 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Don’t miss what’s happening People on Twitter are the first to know. Log in Sign up Did someone say … cookies? Twitter and its partners use cookies to provide you with a better, safer and faster service and to support ou
+			
+				(Open <a href="https://twitter.com/9to5mac/status/1499129510238822400" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8392AB94-0594-43D2-ABA5-AAC5B24AE254"><a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/">Mercurial&#39;s Journey to and Reflections on Python 3</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/">https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/</a></span><br />
+			<span class="d">Added: 2020-01-22 03:10:36.542356967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Mercurial 5.2 was released on November 5, 2019. It is the first version of Mercurial that supports Python 3. This milestone comes nearly 11 years after Python 3.0 was first released on December 3, 2008. Speaking as a mai
+			
+				(Open <a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+<section>
+<h2 id="expired">Expired <a href="javascript:toggle('olexpired');">&#177;</a></h2>
+<div>94 links expired today Sun, Mar.19, 2023</div>
+<ol id="olexpired">
+
+<li>
+	<article>
+		<h3 id="CE1D160C-9BD4-44F6-8701-5FC512623AD8"><a href="https://www.spakhm.com/p/how-to-get-promoted">How to get promoted</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.spakhm.com/p/how-to-get-promoted">https://www.spakhm.com/p/how-to-get-promoted</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:23.689921855 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Almost everyone who does great work toils in relative obscurity. Performance reviews are social fiction. How do people really advance through the corporate hierarchy?
+			
+				(Open <a href="https://www.spakhm.com/p/how-to-get-promoted" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8392AB94-0594-43D2-ABA5-AAC5B24AE254"><a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/">Mercurial&#39;s Journey to and Reflections on Python 3</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/">https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/</a></span><br />
+			<span class="d">Added: 2020-01-22 03:10:36.542356967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Mercurial 5.2 was released on November 5, 2019. It is the first version of Mercurial that supports Python 3. This milestone comes nearly 11 years after Python 3.0 was first released on December 3, 2008. Speaking as a mai
+			
+				(Open <a href="https://gregoryszorc.com/blog/2020/01/13/mercurial%27s-journey-to-and-reflections-on-python-3/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="29A95F3A-14F0-4423-A688-FEA34B9FFD35"><a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/">Copying Better: How To Acquire The Tacit Knowledge of Experts</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/">https://commoncog.com/blog/how-to-learn-tacit-knowledge/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.470806121 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Much of expertise is tacit: that is, it cannot be captured through words alone. We look at techniques to learn the tacit knowledge of experts.
+			
+				(Open <a href="https://commoncog.com/blog/how-to-learn-tacit-knowledge/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="80084756-28D3-4781-89C8-484C9A746F00"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww">What&#39;s in a Good Error Message?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww">https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:39.613649845 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMsyJOpHurbsnCPhYb-0Yp8rFX2M8vf1YU5TqyRKimcwP70qAAEKwI-ofB2htPbhShEhMW5397gGP7eEaSCdWtDem8suI2eUwFHZC9vZrww" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4A4DBD31-E21E-404F-B4FC-D3A89081A97F"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg">What&#39;s in a Good Error Message? - Gunnar Morling</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg">https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg</a></span><br />
+			<span class="d">Added: 2022-02-03 19:43:27.72410798 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMm5KGzkTUMdRLFNqDKPsQHCZbBgtmfyLP5IgEQZPJhWnF5DySo8PXZbF-H-fixbDd2c23bSBZkMqLwhsWRDxKX3LBHJOSEcZgaMBLewuVg" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="EF99A6E9-8C52-4FAD-9BC3-5475BE7B7660"><a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/">Reproducible Builds in Java</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/">https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/</a></span><br />
+			<span class="d">Added: 2022-02-06 13:01:06.832920074 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Reproducible builds are a set of software development practices that create an independently-verifiable path from source to binary code.https://reproducible-builds.org/Reproducible builds are important and provide benefi
+			
+				(Open <a href="https://candrews.integralblue.com/2020/06/reproducible-builds-in-java/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="7AC1A3D3-2E66-4317-8C48-EDD600870093"><a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb">pytudes/Probability.ipynb at main · norvig/pytudes · GitHub</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb">https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb</a></span><br />
+			<span class="d">Added: 2021-06-20 03:01:48.03035593 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Python programs, usually short, of considerable difficulty, to perfect particular skills. - pytudes/Probability.ipynb at main · norvig/pytudes
+			
+				(Open <a href="https://github.com/norvig/pytudes/blob/main/ipynb/Probability.ipynb" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="7C68C329-A59A-4F8D-B795-0D61911878FA"><a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/">This is What a Large-Scale Cloud Adoption Program Looks Like</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/">https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/</a></span><br />
+			<span class="d">Added: 2022-02-03 20:01:26.464634895 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Dio Rettori discusses some of the lessons learned, challenges, and considerations of large-scale adoption for JPMorgan Chase.
+			
+				(Open <a href="https://www.infoq.com/presentations/jpmorgan-chase-cloud-adoption/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="46FFB2D8-317B-462D-AD71-4069DCB717F0"><a href="https://nesslabs.com/mind-garden">You and your mind garden</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://nesslabs.com/mind-garden">https://nesslabs.com/mind-garden</a></span><br />
+			<span class="d">Added: 2022-03-02 14:00:01.643723011 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In French, “cultiver son jardin intérieur” means to tend to your internal garden—to take care of your mind. The garden metaphor is particularly apt: taking care of your mind involves cultivating your curiosity (the seeds
+			
+				(Open <a href="https://nesslabs.com/mind-garden" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ACBA973D-AC13-4337-9A13-E797707FEB37"><a href="https://learn.particular.net/users/sign_in">Online education by Particular Software</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://learn.particular.net/users/sign_in">https://learn.particular.net/users/sign_in</a></span><br />
+			<span class="d">Added: 2021-06-20 03:02:37.519088983 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Skip to main content Online education by Particular Software Toggle menu MENU Welcome Back! EMAIL PASSWORD REMEMBER ME Forgot Password? If you are a human, ignore this field SIGN IN Create a new account HOME SUPPOR
+			
+				(Open <a href="https://learn.particular.net/users/sign_in" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ACAFC094-E832-4177-8988-CD37A2546ACB"><a href="https://www.theguardian.com/books/2022/feb/27/manhattan-phoenix-review-epic-history-new-york-fire-water?utm_term=621b7ce0197d521d5bd973ee96e7e838&amp;utm_campaign=GuardianTodayUS&amp;utm_source=esp&amp;utm_medium=Email&amp;CMP=GTUS_email">Manhattan Phoenix review: epic history of how New York was forged by fire – and water | Books | The Guardian</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theguardian.com/books/2022/feb/27/manhattan-phoenix-review-epic-history-new-york-fire-water?utm_term=621b7ce0197d521d5bd973ee96e7e838&amp;utm_campaign=GuardianTodayUS&amp;utm_source=esp&amp;utm_medium=Email&amp;CMP=GTUS_email">https://www.theguardian.com/books/2022/feb/27/manhattan-phoenix-review-epic-history-new-york-fire-water?utm_term=621b7ce0197d521d5bd973ee96e7e838&amp;utm_campaign=GuardianTodayUS&amp;utm_source=esp&amp;utm_medium=Email&amp;CMP=GTUS_email</a></span><br />
+			<span class="d">Added: 2022-03-11 22:42:59.309005975 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Daniel Levy pins the great fire of 1835 as the birth event of modern Manhattan in a tale as teeming as the city itself
+			
+				(Open <a href="https://www.theguardian.com/books/2022/feb/27/manhattan-phoenix-review-epic-history-new-york-fire-water?utm_term=621b7ce0197d521d5bd973ee96e7e838&amp;utm_campaign=GuardianTodayUS&amp;utm_source=esp&amp;utm_medium=Email&amp;CMP=GTUS_email" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3B292186-F7D4-4BAE-9514-894D386456D9"><a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw">What’s the size of the project?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw">https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:43.753388881 &#43;0000 UTC</span>
+		</div>
+		<p class="p">scc --exclude-dir docs/book ─────────────────────────────────────────────────────────────────────────────── Language Files Lines Blanks Comments Code Complexity ────────────────────────────────
+			
+				(Open <a href="https://michael-simons.github.io/neo4j-migrations/maintaining-a-medium-sized-java-library-in-2022-and-beyond/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGM2flvZ3uN3yTqCR2HfFMnHZhs6dL9qynf_0ws3X1w5HL93uWZ5oLNVlGR30q5XxLHvHRy_zPKYbqvOtBHoc6cU6W5yvjnWLQbasxX3FTtw" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="08E03994-02F2-415B-AD40-3AA908CFAC16"><a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw">Java sockets I/O: blocking, non-blocking and asynchronous</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw">https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:24.146421909 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://www.linkedin.com/pulse/java-sockets-io-blocking-non-blocking-asynchronous-aliaksandr-liakh/?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMxs-GwRfEBbHBvIGMf-X1xrGQYopu7x0OajZoY_LD1RS0Y4J_ImJZ2kFtbQvFL9rdOwate8mBn0wPHV9V33omm23KNHajQemi1f94eZWUw" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="38884C26-1CBF-4F39-863B-1297059B7970"><a href="https://news.ycombinator.com/item?id=24786778">How to put machine learning models into production | Hacker News</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://news.ycombinator.com/item?id=24786778">https://news.ycombinator.com/item?id=24786778</a></span><br />
+			<span class="d">Added: 2020-10-25 06:32:57.345412969 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Hacker News new | past | comments | ask | show | jobs | submit login How to put machine learning models into production (stackoverflow.blog) 120 points by Aaronmacaron 8 days ago | hide | past | favorite | 34 comments 
+			
+				(Open <a href="https://news.ycombinator.com/item?id=24786778" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="FB97E69F-BBE9-4DE4-BAFC-8A5C428228B2"><a href="https://bitfieldconsulting.com/golang/career">A career ending mistake — Bitfield Consulting</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://bitfieldconsulting.com/golang/career">https://bitfieldconsulting.com/golang/career</a></span><br />
+			<span class="d">Added: 2022-02-22 19:53:33.374945163 &#43;0000 UTC</span>
+		</div>
+		<p class="p">As software engineers, we&#39;re constantly making detailed, elaborate plans for computers to execute. Isn&#39;t it weird that we rarely give a moment&#39;s thought to the program for our own careers?
+			
+				(Open <a href="https://bitfieldconsulting.com/golang/career" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="75CDCEB0-679B-44A4-852E-23484D887092"><a href="https://treblle.com/blog/the-10-rest-commandments">The 10 REST Commandments - Treblle</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://treblle.com/blog/the-10-rest-commandments">https://treblle.com/blog/the-10-rest-commandments</a></span><br />
+			<span class="d">Added: 2022-03-11 22:42:33.353334903 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Find out how to build great REST APIs in any language by following these 10 essential rules.
+			
+				(Open <a href="https://treblle.com/blog/the-10-rest-commandments" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="92BCE160-6EB4-43DE-AB20-676C1A7E492B"><a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/">How to Work with Emotions</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/">https://www.lionsroar.com/forum-how-to-work-with-emotions/</a></span><br />
+			<span class="d">Added: 2020-01-20 07:48:57.201634883 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Sharon Salzberg, Judith Simmer-Brown, John Tarrant, and Dzogchen Ponlop Rinpoche discuss skillful and unskillful involvement with emotions, offering new perspectives on how to think about and engage with our emotional li
+			
+				(Open <a href="https://www.lionsroar.com/forum-how-to-work-with-emotions/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="86B34871-F4BB-44A0-804A-56556B12F3CB"><a href="https://twitter.com/alexxubyte/status/1491821606422781975">https://twitter.com/alexxubyte/status/1491821606422781975</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://twitter.com/alexxubyte/status/1491821606422781975">https://twitter.com/alexxubyte/status/1491821606422781975</a></span><br />
+			<span class="d">Added: 2022-02-13 22:20:38.556627035 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://twitter.com/alexxubyte/status/1491821606422781975" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="EAB90B18-87D1-4B09-90C4-C78525EDF920"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter">What&#39;s in a Good Error Message?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter">https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.473227024 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In a way, an error message tells a story; and as with every good story, you need to establish some context about its general settings. For an error message, this should tell the recipient what the code in question was tr
+			
+				(Open <a href="https://www.morling.dev/blog/whats-in-a-good-error-message/?utm_source=tldrnewsletter" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3719A1C9-84AE-480A-9732-F3296BFC4C4B"><a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F">https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F">https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F</a></span><br />
+			<span class="d">Added: 2021-02-16 03:19:16.030979156 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://link.oreilly.com/lRMpC000WJ6q0S0rH0Q0U0F" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="6209073B-4370-479B-B60E-1E5281B21CF6"><a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202">GPS</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202">https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202</a></span><br />
+			<span class="d">Added: 2022-01-30 13:45:06.893004894 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Interactive article explaining how GPS works.
+			
+				(Open <a href="https://ciechanow.ski/gps/?mc_cid=be16b863a6&amp;mc_eid=bce23e7202" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2F682234-9E4F-4889-8029-5376E9ECC042"><a href="https://commoncog.com/blog/accelerated-expertise/">Accelerated Expertise</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://commoncog.com/blog/accelerated-expertise/">https://commoncog.com/blog/accelerated-expertise/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.470912933 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A summary of Accelerated Expertise, the best book on accelerating training programs we have today.
+			
+				(Open <a href="https://commoncog.com/blog/accelerated-expertise/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="744F225B-D881-4600-964F-BC976DE3B9CD"><a href="https://www.youtube.com/watch?v=93_3CxCl_eI">YOW! 2019 - Josh Long - The Reactive Revolution - YouTube</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.youtube.com/watch?v=93_3CxCl_eI">https://www.youtube.com/watch?v=93_3CxCl_eI</a></span><br />
+			<span class="d">Added: 2021-06-20 02:38:51.257305145 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Share your videos with friends, family, and the world
+			
+				(Open <a href="https://www.youtube.com/watch?v=93_3CxCl_eI" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="0F9CA482-5026-4D25-81CD-86B801F145C1"><a href="https://kg.dev/thoughts/be-anonymous">Be anonymous</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://kg.dev/thoughts/be-anonymous">https://kg.dev/thoughts/be-anonymous</a></span><br />
+			<span class="d">Added: 2022-02-21 10:38:02.598958969 &#43;0000 UTC</span>
+		</div>
+		<p class="p">My website.
+			
+				(Open <a href="https://kg.dev/thoughts/be-anonymous" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="49A40D1A-BD4E-4076-8E2A-C174F80F9187"><a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">1.3. Productivity</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">https://dave.cheney.net/practical-go/presentations/qcon-china.html</a></span><br />
+			<span class="d">Added: 2022-03-01 15:35:47.325203895 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Design is the art of arranging code to work today, and be changeable forever. — Sandi Metz The last underlying principle I want to highlight is productivity. Developer productivity is a sprawling topic but it boils 
+			
+				(Open <a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F62EDE75-F797-47AD-AF47-54C9AF7B905D"><a href="https://iximiuz.com/en/posts/container-networking-is-simple/">Container Networking Is Simple!</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://iximiuz.com/en/posts/container-networking-is-simple/">https://iximiuz.com/en/posts/container-networking-is-simple/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472911834 &#43;0000 UTC</span>
+		</div>
+		<p class="p">How container networking works under the hood? Setting up docker-like container networking from scratch. Bonus: podman rootless container networking explained.
+			
+				(Open <a href="https://iximiuz.com/en/posts/container-networking-is-simple/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="32992F5F-AE2D-455C-9220-5F745266AB66"><a href="http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf">‎cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf</a></h3>
+		<div class="byline">
+			<span class="u"><a href="http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf">http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf</a></span><br />
+			<span class="d">Added: 2022-03-02 14:02:11.560539007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="http://cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="153D61E7-394F-4E25-837F-1107CAB96E59"><a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do">What TPMs Do and What Software Engineers Can Learn From Them</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do">https://newsletter.pragmaticengineer.com/p/what-tpms-do</a></span><br />
+			<span class="d">Added: 2022-02-18 06:47:30.013221979 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A deep dive with five Technical Program Managers (TPM) on what the role is, how it evolved, and how engineers and managers can benefit from working with TPMs.
+			
+				(Open <a href="https://newsletter.pragmaticengineer.com/p/what-tpms-do" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="391136C2-FBE9-4E59-864E-C07E8F6CFEAA"><a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html">Yann Herklotz - Introduction to Luhmann&#39;s Zettelkasten</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html">https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html</a></span><br />
+			<span class="d">Added: 2020-12-22 18:34:28.277521133 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to my blog! I am a final year student studying Electronic and Information Engineering at Imperial 
+			
+				(Open <a href="https://yannherklotz.com/blog/2020-12-21-introduction-to-luhmanns-zettelkasten.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F03A6943-3161-48A5-B1CF-3414B76490C6"><a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/">Fairness in multi-tenant systems</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/">https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:29:26.916128158 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Building fairness into multitenant systems to provide predictable performance and availability
+			
+				(Open <a href="https://aws.amazon.com/builders-library/fairness-in-multi-tenant-systems/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D1EBDE68-DFE3-4116-BCDD-51C0188E30E3"><a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/">On Call Shouldn’t Suck: A Guide For Managers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/">https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/</a></span><br />
+			<span class="d">Added: 2020-10-05 02:45:04.299745082 &#43;0000 UTC</span>
+		</div>
+		<p class="p">https://twitter.com/mipsytipsy/status/1309604622554640384 There are few engineering topics that provoke as much heated commentary as oncall. Everybody has a strong opinion. So let me say straight up that there are few if
+			
+				(Open <a href="https://charity.wtf/2020/10/03/on-call-shouldnt-suck-a-guide-for-managers/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="63C585E3-7B53-425E-8794-0B9E7539D549"><a href="https://mitchellh.com/writing/contributing-to-complex-projects">Contributing to Complex Projects – Mitchell Hashimoto</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://mitchellh.com/writing/contributing-to-complex-projects">https://mitchellh.com/writing/contributing-to-complex-projects</a></span><br />
+			<span class="d">Added: 2022-03-15 10:30:26.706400871 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Table of ContentsStep 1: Become a UserStep 2: Build the ProjectStep 3: Learn the Hot-Path InternalsTrace DownLearn UpExperiment and Break ThingsSupplement with MediaStep 4: Read and Reimplement Recent CommitsStep 5: Make
+			
+				(Open <a href="https://mitchellh.com/writing/contributing-to-complex-projects" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8D47E7AE-E2D1-4F5E-ADA2-D5C5AE91FCD6"><a href="https://www.defmacro.org/2015/02/25/startup-ideas.html">How to pick startup ideas</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.defmacro.org/2015/02/25/startup-ideas.html">https://www.defmacro.org/2015/02/25/startup-ideas.html</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:12.827280998 &#43;0000 UTC</span>
+		</div>
+		<p class="p">One of the most important things I learned from running a startup is that on a macro scale the innovation market is efficient. If the market conditions allow for a startup to arise, it’s overwhelmingly probable that mult
+			
+				(Open <a href="https://www.defmacro.org/2015/02/25/startup-ideas.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D2659AD7-1452-45F7-B2F0-074737CE8D7A"><a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/">CRISP: Critical Path Analysis for Microservice Architectures</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/">https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/</a></span><br />
+			<span class="d">Added: 2022-01-17 21:33:09.414513111 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Uber’s backend is an exemplar of microservice architecture. Each microservice is a small, individually deployable program performing a specific business logic (operation). The microservice architecture is a type of distr
+			
+				(Open <a href="https://eng.uber.com/crisp-critical-path-analysis-for-microservice-architectures/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="16A89C55-2E46-46B7-9186-8DFB400E402C"><a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints">Overview ¶</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints">https://pkg.go.dev/cmd/go#hdr-Build_constraints</a></span><br />
+			<span class="d">Added: 2022-03-01 15:15:14.106298923 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Go is a tool for managing Go source code.
+			
+				(Open <a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2183E3CB-5AD3-4D96-95E5-6A57D58BAC2D"><a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/">A categorized list of all Java and JVM features since JDK 8 to 16 - Advanced Web Machinery</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/">https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:11.951596021 &#43;0000 UTC</span>
+		</div>
+		<p class="p">From Java 8 to 17
+			
+				(Open <a href="https://advancedweb.hu/a-categorized-list-of-all-java-and-jvm-features-since-jdk-8-to-16/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9782E34D-D67B-4446-8904-A043590EBF92"><a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32">https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32">https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32</a></span><br />
+			<span class="d">Added: 2021-03-07 04:00:02.018476009 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Troubleshooting in Kubernetes can be a daunting task. In this article you will learn how to diagnose issues in Pods, Services and Ingress.
+			
+				(Open <a href="https://programmerweekly.us2.list-manage.com/track/click?u=72f68dcee17c92724bc7822fb&amp;id=a355d55ec5&amp;e=d7c3968f32" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ACC6DB41-087D-41C5-B177-EA627EA5ACCD"><a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/">Don&#39;t make yourself redundant</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/">https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/</a></span><br />
+			<span class="d">Added: 2020-10-05 02:44:52.821810007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">When splitting big teams into two smaller teams, don&#39;t make yourself redundant. Instead, try this advice to remain impactful.
+			
+				(Open <a href="https://www.theengineeringmanager.com/managing-managers/dont-make-yourself-redundant/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B1366A5D-4A71-4FFB-A922-4668D7DCA093"><a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg">Our Journey with Quarkus</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg">https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg</a></span><br />
+			<span class="d">Added: 2022-02-16 11:32:36.351290941 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Quarkus truly appears to be the smartest possible solution, in our experience.
+			
+				(Open <a href="https://www.ibm.com/cloud/blog/our-journey-with-quarkus?mkt_tok=NDI2LVFWRC0xMTQAAAGCU7WGMtAMySugVU5_SeLDGFXTTdy61jYz219zdTyut-EzdPsC5paaDqUOsCoQMxxhHaVGWN1YYV5QqSKxL-z10ezh5mIU-hPo-ByT0NUqLI_bkg" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="A056BB4B-676A-464C-82E6-9AFFB7ED9023"><a href="https://zhenzhongxu.com/the-four-innovation-phases-of-netflixs-trillions-scale-real-time-data-infrastructure-2370938d7f01">The Four Innovation Phases of Netflix’s Trillions Scale Real-time Data Infrastructure | by Zhenzhong Xu | Feb, 2022 | Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://zhenzhongxu.com/the-four-innovation-phases-of-netflixs-trillions-scale-real-time-data-infrastructure-2370938d7f01">https://zhenzhongxu.com/the-four-innovation-phases-of-netflixs-trillions-scale-real-time-data-infrastructure-2370938d7f01</a></span><br />
+			<span class="d">Added: 2022-03-11 22:31:04.65281701 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The blog post will share the four phases of Real-time Data Infrastructure’s iterative journey in Netflix (2015-2021). For each phase, we will go over the evolving business motivations, the team’s unique challenges, the 
+			
+				(Open <a href="https://zhenzhongxu.com/the-four-innovation-phases-of-netflixs-trillions-scale-real-time-data-infrastructure-2370938d7f01" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="0005A9E5-FB73-4470-89CF-362DD0D1D1AC"><a href="https://convey.earth/conversation?id=48">Convey</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://convey.earth/conversation?id=48">https://convey.earth/conversation?id=48</a></span><br />
+			<span class="d">Added: 2022-02-04 18:50:33.62513113 &#43;0000 UTC</span>
+		</div>
+		<p class="p">2022 February 01 16:21 stuartscott 1473754¤ 1240149¤ You may have noticed that the January edition of the Convey Digest looks a little different from the previous ones - the color scheme is now based on the dominant
+			
+				(Open <a href="https://convey.earth/conversation?id=48" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4287DD39-F68F-4AFE-A728-00534EB7B5AD"><a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/">VPE and CTO - the first 90 days –</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/">https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/</a></span><br />
+			<span class="d">Added: 2020-11-16 02:47:12.523211002 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I put this mind map together a few years ago after a discussion about what a new VP of Engineering or CTO should think about in their first 90 days in a new role. It’s a map of the areas I believe every new technical le
+			
+				(Open <a href="https://www.kartar.net/2020/07/vpe-and-cto-the-first-90-days/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5A02A461-03F0-4D93-8258-0A95A98CA773"><a href="https://arxiv.org/pdf/2104.00087.pdf"></a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://arxiv.org/pdf/2104.00087.pdf">https://arxiv.org/pdf/2104.00087.pdf</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:56.06173706 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://arxiv.org/pdf/2104.00087.pdf" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5F308D40-0FB6-4409-AAF0-868CA46D76FE"><a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/">Analyzing data stored in Amazon DocumentDB (with MongoDB compatibility) using Amazon Sagemaker | AWS Machine Learning Blog</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/">https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:46:07.911393165 &#43;0000 UTC</span>
+		</div>
+		<p class="p">{ &#34;id&#34;: &#34;13469392114&#34;, &#34;type&#34;: &#34;PullRequestEvent&#34;, &#34;actor&#34;: { &#34;id&#34;: 33526713, &#34;login&#34;: &#34;arjkesh&#34;, &#34;display_login&#34;: &#34;arjkesh&#34;, &#34;gravatar_id&#34;: &#34;&#34;, &#34;url&#34;: &#34;https://api.github.com/users/arjkesh&#34;, 
+			
+				(Open <a href="https://aws.amazon.com/blogs/machine-learning/analyzing-data-stored-in-amazon-documentdb-with-mongodb-compatibility-using-amazon-sagemaker/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="51CBA16F-BF3D-4093-874C-C8439FE0B7F3"><a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team">How to Handle a Disagreement on Your Team</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team">https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team</a></span><br />
+			<span class="d">Added: 2021-06-20 02:47:40.929359912 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Rely on your mediation skills, not your authority.
+			
+				(Open <a href="https://hbr.org/2017/07/how-to-handle-a-disagreement-on-your-team" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="247F00C1-71D9-49B2-AB91-47B4F826AF14"><a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/">What does it mean to listen on a port?</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/">https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/</a></span><br />
+			<span class="d">Added: 2022-02-14 08:25:41.701181888 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This story explores some concepts in computer networking, inspired by Michael Nielsen’s idea of discovery fiction. Code samples can also be found in this repo. Excerpts use openbsd-flavoured netcat on Debian Linux; behvi
+			
+				(Open <a href="https://paulbutler.org/2022/what-does-it-mean-to-listen-on-a-port/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D473BC81-57FE-451F-BB84-6DAF4A34B7F5"><a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1">Testing in Production, the safe way</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1">https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1</a></span><br />
+			<span class="d">Added: 2020-01-25 21:07:09.173211097 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this post, I hope to explore different forms of “testing in production”, when each form of testing is the most beneficial as well as how to test services in production in a safe way. However…
+			
+				(Open <a href="https://medium.com/@copyconstruct/testing-in-production-the-safe-way-18ca102d0ef1" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5DD11538-E58D-4C23-BFF0-3214A458CD8D"><a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/">A Complete Guide To Mechanical Keyboards</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/">https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:42.818650007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this article, we dive into the possibilities of mechanical keyboards. The different layouts, switch types and even keycap material. Strap yourself in — this will be a deep dive!
+			
+				(Open <a href="https://www.smashingmagazine.com/2020/05/complete-guide-mechanical-keyboards/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="ECFE519B-F709-4FDC-98D0-E0F643810B47"><a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea">Production Oriented Development - Paul Osman - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea">https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea</a></span><br />
+			<span class="d">Added: 2020-01-30 02:45:22.718299865 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Code working in production is the only thing that matters. Teams should optimize for delivering code to production as quickly as possible.
+			
+				(Open <a href="https://medium.com/@paulosman/production-oriented-development-8ae05f8cc7ea" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4B341D85-649C-4D5A-8551-31BDE28AC022"><a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5">Failure Modes and Continuous Resilience - adrian cockcroft - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5">https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5</a></span><br />
+			<span class="d">Added: 2020-01-19 05:29:02.044257164 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A resilient system continues to operate successfully in the presence of failures. There are many possible failure modes, and each exercises a different aspect of resilience. The system needs to…
+			
+				(Open <a href="https://medium.com/@adrianco/failure-modes-and-continuous-resilience-6553078caad5" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="35BF825E-8A1E-4AFD-8277-ECAE794900FC"><a href="https://danluu.com/cache-incidents/">A decade of major cache incidents at Twitter</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://danluu.com/cache-incidents/">https://danluu.com/cache-incidents/</a></span><br />
+			<span class="d">Added: 2022-02-12 22:04:41.532500028 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I&#39;m trying some experimental tiers on Patreon to see if I can get to substack-like levels of financial support for this blog without moving to substack! A decade of major cache incidents at Twitter This was co-authored 
+			
+				(Open <a href="https://danluu.com/cache-incidents/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5BE3BDE4-6B27-4A2A-8384-233AC1C72BCF"><a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/">Reddit - Dive into anything</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/">https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/</a></span><br />
+			<span class="d">Added: 2022-03-06 18:19:36.222723007 &#43;0000 UTC</span>
+		</div>
+		<p class="p">3.9m members in the programming community. Computer Programming
+			
+				(Open <a href="https://www.reddit.com/r/programming/comments/t7gl4e/paper_notes_scaling_memcache_at_facebook/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="22C9D369-7D87-417E-8241-0FF77B96719B"><a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c">Health, Availability, Debuggability - Observability&#43; - Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c">https://medium.com/observability/health-availability-debuggability-5b0ab300b35c</a></span><br />
+			<span class="d">Added: 2020-01-19 20:02:51.116274833 &#43;0000 UTC</span>
+		</div>
+		<p class="p">As we collect various observability signals from systems, it fosters a new conversation around the classification of the signals. There is a significant discussion on observability signals and even…
+			
+				(Open <a href="https://medium.com/observability/health-availability-debuggability-5b0ab300b35c" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="973CCA37-0F8A-4370-B2D7-A2670EB77CCA"><a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e">Immutable Collections in Java using Sealed Types</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e">https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e</a></span><br />
+			<span class="d">Added: 2020-11-22 19:50:09.498816967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">JDK 15 was released on September 15, 2020. JEP 360 Sealed Types was included as a preview feature in this release. Sealed Types is part of Project Amber. Sealed classes or interfaces can be used to…
+			
+				(Open <a href="https://medium.com/javarevisited/immutable-collections-in-java-using-sealed-types-ae8eb580fc1e" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9E769276-C043-4327-BD56-16F07A66B4E4"><a href="https://en.wikipedia.org/wiki/User_space">User space</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://en.wikipedia.org/wiki/User_space">https://en.wikipedia.org/wiki/User_space</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.471538066 &#43;0000 UTC</span>
+		</div>
+		<p class="p">For the term &#34;user space&#34; as used in Wikipedia, see Wikipedia:User pages. &#34;Kernel space&#34; redirects here. For the mathematical definition, see Null space. This article needs additional citations for verification. Please h
+			
+				(Open <a href="https://en.wikipedia.org/wiki/User_space" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="71A6CC9C-0133-45CF-BBBF-5E2288680954"><a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming">Beyond Microservices: Streams, State and Scalability</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming">https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming</a></span><br />
+			<span class="d">Added: 2022-01-29 21:51:51.795267105 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Gwen Shapira talks about how microservices evolved in the last few years, based on experience gained while working with companies using Apache Kafka to update their application architecture.
+			
+				(Open <a href="https://www.infoq.com/presentations/microservices-streams-state-scalability/?topicPageSponsorship=acd6ed41-4c47-46c4-b948-9c84b8b91073&amp;itm_source=presentations_about_Streaming&amp;itm_medium=link&amp;itm_campaign=Streaming" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4EAE9D5E-8762-44E9-B560-8FA66CB88E48"><a href="https://lena-voita.github.io/nlp_course/word_embeddings.html">Distributional Semantics</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://lena-voita.github.io/nlp_course/word_embeddings.html">https://lena-voita.github.io/nlp_course/word_embeddings.html</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.471920967 &#43;0000 UTC</span>
+		</div>
+		<p class="p">To capture meaning of words in their vectors, we first need to define the notion of meaning that can be used in practice. For this, let us try to understand how we, humans, get to know which w
+			
+				(Open <a href="https://lena-voita.github.io/nlp_course/word_embeddings.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="E4FE0219-C276-4423-8FAD-2FA657B9810F"><a href="https://learnwardleymapping.com/book/">The Book</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://learnwardleymapping.com/book/">https://learnwardleymapping.com/book/</a></span><br />
+			<span class="d">Added: 2022-02-25 15:09:41.99259901 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This is the story of Simon Wardley. Follow his journey from bumbling and confused CEO lost in the headlights of change to someone with a vague idea of what they&#39;re doing.
+			
+				(Open <a href="https://learnwardleymapping.com/book/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="8E8307BD-6D30-437E-8F22-D01A691B58B6"><a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6">https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6">https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6</a></span><br />
+			<span class="d">Added: 2021-02-16 03:18:15.004760026 &#43;0000 UTC</span>
+		</div>
+		<p class="p">
+			
+				(Open <a href="https://link.oreilly.com/Uptq0HS0WM0FrR00JQ000L6" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="772B3693-3D94-48A4-BB74-9A7F81FA0B09"><a href="https://twitter.com/9to5mac/status/1499129510238822400">Tweet from @9to5mac</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://twitter.com/9to5mac/status/1499129510238822400">https://twitter.com/9to5mac/status/1499129510238822400</a></span><br />
+			<span class="d">Added: 2022-03-02 22:32:45.797072887 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Don’t miss what’s happening People on Twitter are the first to know. Log in Sign up Did someone say … cookies? Twitter and its partners use cookies to provide you with a better, safer and faster service and to support ou
+			
+				(Open <a href="https://twitter.com/9to5mac/status/1499129510238822400" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="67794E53-71A0-40A7-AA58-B74BBEDC96C1"><a href="https://www.defmacro.org/2014/10/03/engman.html">44 engineering management lessons</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.defmacro.org/2014/10/03/engman.html">https://www.defmacro.org/2014/10/03/engman.html</a></span><br />
+			<span class="d">Added: 2020-10-25 06:35:17.431499004 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to engineering management. It’s fun, it’s exhausting, it’s rewarding — but most importantly it’s new! What worked for you before won’t work now. You’ll have to acquire a new set of skills, and shed some bad habit
+			
+				(Open <a href="https://www.defmacro.org/2014/10/03/engman.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F83B3D52-4909-4EF8-937B-23C9D6A73ADD"><a href="https://news.ycombinator.com/item?id=24814687">7 days ago</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://news.ycombinator.com/item?id=24814687">https://news.ycombinator.com/item?id=24814687</a></span><br />
+			<span class="d">Added: 2020-10-25 06:28:36.088758945 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This article has a large gap in the story: it ignores sensor data sources, which are both the highest velocity and highest volume data models by multiple orders of magnitude. They have become ubiquitous in diverse, mediu
+			
+				(Open <a href="https://news.ycombinator.com/item?id=24814687" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="92BC21DB-94BA-41EA-AA2C-EB25CF574795"><a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter">“A damn stupid thing to do”—the origins of C</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter">https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter</a></span><br />
+			<span class="d">Added: 2020-12-14 01:06:14.395256996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Today, C may be a lingua franca among programmers. This is its (abridged) history.
+			
+				(Open <a href="https://arstechnica.com/features/2020/12/a-damn-stupid-thing-to-do-the-origins-of-c/?utm_brand=ars&amp;utm_medium=social&amp;utm_social-type=owned&amp;utm_source=twitter" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="88E9BAF9-01A6-4774-BE3E-EE928BAD13B0"><a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector">How to choose the best Java garbage collector</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector">https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector</a></span><br />
+			<span class="d">Added: 2022-02-14 08:25:45.931617021 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Improve Java application performance by choosing the best garbage collector for your application&#39;s throughput, latency, and footprint requirements.
+			
+				(Open <a href="https://developers.redhat.com/articles/2021/11/02/how-choose-best-java-garbage-collector" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="9ADC0870-B6F9-4DC0-B898-CB7A43899238"><a href="https://johnnyrodgers.is/building-a-modern-home">building a modern home - Johnny Rodgers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://johnnyrodgers.is/building-a-modern-home">https://johnnyrodgers.is/building-a-modern-home</a></span><br />
+			<span class="d">Added: 2022-02-03 19:47:25.927577018 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Personal site of Johnny Rodgers, technology designer from Vancouver.
+			
+				(Open <a href="https://johnnyrodgers.is/building-a-modern-home" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="C5840C97-8A47-412B-9619-757E22D1F358"><a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md">resilience-engineering/intro.md at master · lorin/resilience-engineering · GitHub</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md">https://github.com/lorin/resilience-engineering/blob/master/intro.md</a></span><br />
+			<span class="d">Added: 2021-02-14 06:48:24.060963153 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Resilience engineering papers. Contribute to lorin/resilience-engineering development by creating an account on GitHub.
+			
+				(Open <a href="https://github.com/lorin/resilience-engineering/blob/master/intro.md" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5E528535-D488-45A0-B0D7-5C7EE9F45269"><a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/">Emerging Architectures for Modern Data Infrastructure</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/">https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:28:58.590971946 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Software systems are increasingly based on data, rather than code. And a new class of tools and technologies have emerged to process data for both analytics and operational AI/ ML.
+			
+				(Open <a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="371B741A-360B-457A-8E22-8714499A4D51"><a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/">A Short, Simple Introduction to Information Theory – Ryan Moulton&#39;s Articles</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/">https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/</a></span><br />
+			<span class="d">Added: 2020-11-16 03:28:49.101143836 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Information Theory is one of the most useful things for Computer Scientists to understand about statistics, and it&#39;s deeply related to things we do every day. If you are comfortable writing code but sometimes intimidated
+			
+				(Open <a href="https://moultano.wordpress.com/2010/10/23/a-short-simple-introduction-to-3kbzhsxyg4467-7/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F36CF381-606E-45C7-9147-C680660ADD3C"><a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html">How to Read a Wine Label, in 12 Easy Lessons - The New York Times</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html">https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html</a></span><br />
+			<span class="d">Added: 2020-10-03 22:10:30.001008987 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The wine shop can be intimidating, with so many different styles of labeling. Here’s help in decoding a dozen basic types.
+			
+				(Open <a href="https://www.nytimes.com/2020/09/28/dining/drinks/read-wine-label.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3E615600-2B6D-426F-AC56-F9BFB4D9D251"><a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5">Failure Modes and Continuous Resilience</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5">https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:51.419013977 &#43;0000 UTC</span>
+		</div>
+		<p class="p">A resilient system continues to operate successfully in the presence of failures. There are many possible failure modes, and each exercises a different aspect of resilience. The system needs to…
+			
+				(Open <a href="https://adrianco.medium.com/failure-modes-and-continuous-resilience-6553078caad5" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="907C0700-41D9-4113-A04C-AE82EAB79A78"><a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/">How to Get Into SRE – Alice Goldfuss</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/">https://blog.alicegoldfuss.com/how-to-get-into-sre/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:57:27.926506996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">My personal guide.
+			
+				(Open <a href="https://blog.alicegoldfuss.com/how-to-get-into-sre/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="A2C05C7C-A5E7-46B1-B47A-1D5BD53DF6FE"><a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/">Partitioning GitHub’s relational databases to handle scale</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/">https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/</a></span><br />
+			<span class="d">Added: 2021-09-28 19:04:08.894801139 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In 2019, to meet growth and availability challenges, we set a plan in motion to improve our tooling and ability to partition relational databases.
+			
+				(Open <a href="https://github.blog/2021-09-27-partitioning-githubs-relational-databases-scale/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="1803FA34-0EF0-4D37-9429-A2738C72A3AF"><a href="https://iximiuz.com/en/posts/computer-networking-101/">Computer Networking Basics For Developers</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://iximiuz.com/en/posts/computer-networking-101/">https://iximiuz.com/en/posts/computer-networking-101/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.473012924 &#43;0000 UTC</span>
+		</div>
+		<p class="p">What is a LAN? What is a network segment? Ethernet collision domains vs broadcast domains. How network switches work? How to send IP packets? VLAN vs VXLAN.
+			
+				(Open <a href="https://iximiuz.com/en/posts/computer-networking-101/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="E48D0031-178B-4DF4-B201-DD97C41FEF33"><a href="https://blog.close.com/subject-lines/">Sales email subject lines: 50&#43; tips, examples, and biggest mistakes</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://blog.close.com/subject-lines/">https://blog.close.com/subject-lines/</a></span><br />
+			<span class="d">Added: 2021-06-20 02:56:34.453863143 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Find out about the best ways to write subject lines for your cold sales emails to improve your open and response rates! This post is here to help you craft a subject line that appeals to your customers &amp; is relevant to y
+			
+				(Open <a href="https://blog.close.com/subject-lines/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="59872DBD-46DE-4E72-B527-A2F8EB3AA488"><a href="https://saucecode.bar/posts/06-using-www-authenticate.html">using www-authenticate for user authentication</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://saucecode.bar/posts/06-using-www-authenticate.html">https://saucecode.bar/posts/06-using-www-authenticate.html</a></span><br />
+			<span class="d">Added: 2022-03-04 13:14:28.720092058 &#43;0000 UTC</span>
+		</div>
+		<p class="p">This article explains how to use the www-authenticate header to handle user authentication without any client side code.
+			
+				(Open <a href="https://saucecode.bar/posts/06-using-www-authenticate.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="94E868CC-FAF2-4068-B1AF-FB2A8134350B"><a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/">Stay Interviews (the opposite of Exit Interviews) – Mike Crittenden</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/">https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/</a></span><br />
+			<span class="d">Added: 2021-06-14 02:24:17.310279846 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Exit Interviews ask why people are leaving, and Stay Interviews ask why they keep working here.
+			
+				(Open <a href="https://critter.blog/2021/06/02/stay-interviews-the-opposite-of-exit-interviews/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="A9B0816E-8809-4588-A4FD-F484F9AFD28B"><a href="https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/">What is Developer Experience? a roundup of links and goodness</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/">https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/</a></span><br />
+			<span class="d">Added: 2022-03-04 13:03:31.506291866 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I recently contributed to a series of fireside chats hosted by LaunchDarkly. One of the themes that we discussed was Developer Experience, and how to improve it. I was asked by one of the attendees at the EMEA event (vid
+			
+				(Open <a href="https://redmonk.com/jgovernor/2022/02/21/what-is-developer-experience-a-roundup-of-links-and-goodness/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2E46DBFF-90BB-4B14-9DF6-C0388D62032A"><a href="https://www.theobservereffect.org/tobi.html">The Observer Effect – Tobi Lütke</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.theobservereffect.org/tobi.html">https://www.theobservereffect.org/tobi.html</a></span><br />
+			<span class="d">Added: 2020-12-19 19:09:05.707730054 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Welcome to the third interview on &#39;The Observer Effect&#39;. We are lucky to have one of the most interesting founders in technology and commerce - Tobi Lütke, Founder and CEO of Shopify. This interview was
+			
+				(Open <a href="https://www.theobservereffect.org/tobi.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="243783C4-C897-490D-80E6-182A4DC7ACE6"><a href="https://opensource.com/article/21/11/cluster-logging-kubernetes">What you need to know about cluster logging in Kubernetes</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://opensource.com/article/21/11/cluster-logging-kubernetes">https://opensource.com/article/21/11/cluster-logging-kubernetes</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.47310996 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Explore how different container logging patterns in Kubernetes work.
+			
+				(Open <a href="https://opensource.com/article/21/11/cluster-logging-kubernetes" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="63ED09BD-BE6F-4FFA-A955-002EAED9172F"><a href="https://queue.acm.org/detail.cfm?id=3415014">Data on the Outside vs. Data on the Inside - ACM Queue</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://queue.acm.org/detail.cfm?id=3415014">https://queue.acm.org/detail.cfm?id=3415014</a></span><br />
+			<span class="d">Added: 2020-11-16 03:29:09.615636825 &#43;0000 UTC</span>
+		</div>
+		<p class="p">August 2, 2020 Pat Helland Recently, there has been a lot of interest in services. These can be microservices or just services. In each case, the service provides a function with its own code and data, and opera
+			
+				(Open <a href="https://queue.acm.org/detail.cfm?id=3415014" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B5E085CD-4922-4DC1-A965-78EC343CD945"><a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/">How to Talk about Consistency and Isolation in Distributed DBs</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/">https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/</a></span><br />
+			<span class="d">Added: 2022-02-15 11:04:48.938548088 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The SQL standard defines isolation levels, but we don&#39;t have a great vocabulary for talking about consistency levels, and how these two things interact.
+			
+				(Open <a href="https://www.cockroachlabs.com/blog/db-consistency-isolation-terminology/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="D0EF149F-0350-4016-8C7B-C7A62E82732E"><a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/">How to put machine learning models into production</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/">https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/</a></span><br />
+			<span class="d">Added: 2020-10-25 06:32:53.718122005 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Data scientists excel at creating models that represent and predict real-world data, but effectively deploying machine learning models is more of an art than science. Deployment requires skills more commonly found in sof
+			
+				(Open <a href="https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B2CCAF5A-EEB8-4EDC-8899-08081B84FA71"><a href="http://akkartik.name/post/literate-programming">Literate programming: Knuth is doing it wrong</a></h3>
+		<div class="byline">
+			<span class="u"><a href="http://akkartik.name/post/literate-programming">http://akkartik.name/post/literate-programming</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472525119 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Oct 3, 2014 Literate programming: Knuth is doing it wrong Literate programming advocates this: Order your code for others to read, not for the compiler. Beautifully typeset your code so one can curl up in bed to read it
+			
+				(Open <a href="http://akkartik.name/post/literate-programming" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="B894AE2E-3C5E-4941-A8C5-769BD2531CB5"><a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained">DataHub: Popular metadata architectures explained | LinkedIn Engineering</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained">https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained</a></span><br />
+			<span class="d">Added: 2020-12-19 19:18:08.410096168 &#43;0000 UTC</span>
+		</div>
+		<p class="p">When I started my journey at LinkedIn ten years ago, the company was just beginning to experience extreme growth in the volume, variety, and velocity of our data. Over the next few years, my colleagues and I in LinkedIn’
+			
+				(Open <a href="https://engineering.linkedin.com/blog/2020/datahub-popular-metadata-architectures-explained" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="4104A599-BB8C-4079-8C3A-12D8CE067A5F"><a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337">Why it’s difficult to build teams in high growth organisations | by Jason Yip | Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337">https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337</a></span><br />
+			<span class="d">Added: 2021-06-14 02:39:32.210827827 &#43;0000 UTC</span>
+		</div>
+		<p class="p">By “high growth”, I mean in terms of employee count and roughly doubling or more every year. Even at slower growth rates, some of the phenomena I’ll describe may be relevant. The only option where…
+			
+				(Open <a href="https://jchyip.medium.com/why-its-difficult-to-build-teams-in-high-growth-organisations-e1aee8446337" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="152B5455-0C2E-4CE5-BEF5-3FB5BD06D088"><a href="https://cate.blog/2021/08/09/on-being-strategic/">On Being “Strategic”</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://cate.blog/2021/08/09/on-being-strategic/">https://cate.blog/2021/08/09/on-being-strategic/</a></span><br />
+			<span class="d">Added: 2022-01-30 22:06:09.864347934 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Ages ago, a work colleague / friend offered me the following piece of advice: “We need to make sure you’re seen as strategic”. I’ve thought about it a lot ever since. It was the first time I realised I was on the edge
+			
+				(Open <a href="https://cate.blog/2021/08/09/on-being-strategic/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="AB81D5DF-D925-4E10-AACF-204FEC720356"><a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html">Introduction to AWS Lake Formation - Build a Secure Data Lake in Days | AWS Online Tech Talks</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html">https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html</a></span><br />
+			<span class="d">Added: 2021-06-20 02:48:37.371964931 &#43;0000 UTC</span>
+		</div>
+		<p class="p">AWS Lake Formation (coming soon) will make it easy to set up a secure data lake in days. With AWS Lake Formation, you will be able to ingest, catalog, clean, transform, and secure your data, and make it available for ana
+			
+				(Open <a href="https://pages.awscloud.com/Introduction-to-AWS-Lake-Formation-Build-a-Secure-Data-Lake-in-Days_1202-ABD_OD.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="34BB5A22-51FE-4F9A-92EA-E765615BFF5A"><a href="https://orionmagazine.org/article/on-memory-and-survival/">Orion Magazine - On Memory and Survival</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://orionmagazine.org/article/on-memory-and-survival/">https://orionmagazine.org/article/on-memory-and-survival/</a></span><br />
+			<span class="d">Added: 2022-03-01 16:53:36.376021862 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I could blame it on a lot of things. On my education, or lack thereof, on the reasons why I still can’t spell worth a damn.
+			
+				(Open <a href="https://orionmagazine.org/article/on-memory-and-survival/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="2734B0B4-57F1-4687-AEB9-4D99A82A7E10"><a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b">Optimizing Distributed Joins: The Case of Google Cloud Spanner and DataStax Astra DB | by DataStax | Building the Open Data Stack | Medium</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b">https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b</a></span><br />
+			<span class="d">Added: 2022-01-30 07:55:11.117269992 &#43;0000 UTC</span>
+		</div>
+		<p class="p">In this post, learn how relational and NoSQL databases, Google Cloud Spanner and DataStax Astra DB, optimize distributed joins for real-time applications. Distributed joins are commonly considered to…
+			
+				(Open <a href="https://medium.com/building-the-open-data-stack/optimizing-distributed-joins-the-case-of-google-cloud-spanner-and-datastax-astra-db-fbdaecc2863b" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="F2F1740F-A682-49BD-A7CE-106B9CF488BF"><a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/">https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/">https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/</a></span><br />
+			<span class="d">Added: 2022-02-27 21:14:32.595848083 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Basically, sake comprises rice, water, and the fermenting agent called koji, resulting in an alcoholic level that usually sits between 13 and 16 percent. And you might be interested to know that the rice used is differen
+			
+				(Open <a href="https://quillandpad.com/2022/02/26/for-the-sake-of-sake-a-primer-with-tasting-notes-reprise/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="546C87AF-7B7A-4689-A830-C7B9A7294144"><a href="https://joelhooks.com/digital-garden">🌱 My blog is a digital garden, not a blog</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://joelhooks.com/digital-garden">https://joelhooks.com/digital-garden</a></span><br />
+			<span class="d">Added: 2022-03-02 13:59:56.193624973 &#43;0000 UTC</span>
+		</div>
+		<p class="p">The phrase &#34;digital garden&#34; is a metaphor for thinking about writing and creating that focuses less on the resulting &#34;showpiece&#34; and more on the process, care, and craft it takes to get there. While not everybody has or 
+			
+				(Open <a href="https://joelhooks.com/digital-garden" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="6FDB0B3D-9B1A-44C9-B337-58081D1DC392"><a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html">Journey into Observability: Reading material | Mads Hartmann</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html">https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html</a></span><br />
+			<span class="d">Added: 2020-01-19 20:02:56.259206056 &#43;0000 UTC</span>
+		</div>
+		<p class="p">I’ve been reading up on observability over the last three months. In this post I have organized the material into a sort of recommended reading order. It doesn’t reflect the order in which I read it, but I think this ord
+			
+				(Open <a href="https://mads-hartmann.com/sre/2019/08/04/journey-into-observability-reading-material.html" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="5E2F906D-29F5-4863-8F9F-1A8B82E40BBC"><a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/">Data Caching Across Microservices in a Serverless Architecture</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/">https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/</a></span><br />
+			<span class="d">Added: 2022-01-15 23:37:05.472444057 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Organizations are re-architecting their traditional monolithic applications to incorporate microservices. This helps them gain agility and scalability and accelerate time-to-market for new features. Each microser
+			
+				(Open <a href="https://aws.amazon.com/blogs/architecture/data-caching-across-microservices-in-a-serverless-architecture/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+<li>
+	<article>
+		<h3 id="3A96B38D-9B04-467E-B292-D0FA97557140"><a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/">The 40 Best Questions to Ask in an Interview — How to Go Deeper Than “What’s the Culture Like?”</a></h3>
+		<div class="byline">
+			<span class="u"><a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/">https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/</a></span><br />
+			<span class="d">Added: 2020-10-25 06:33:15.182893991 &#43;0000 UTC</span>
+		</div>
+		<p class="p">Candidates need to sidestep common interview questions. Here are the best questions to ask in an interview.
+			
+				(Open <a href="https://firstround.com/review/the-40-best-questions-to-ask-in-an-interview-how-to-go-deeper-than-whats-the-culture-like/" target="_blank">link</a>)
+			 
+		</p>
+		
+	</article>
+</li>
+
+</ol>
+</section>
+
+</body>
+</html>
