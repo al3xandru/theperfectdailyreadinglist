@@ -53,8 +53,11 @@ function formatDate(date) {
   if (date.getMonth() < 9) {
     fmtDate += "0";
   }
-  fmtDate += "" + (1 + date.getMonth());
-  fmtDate += "." + date.getDate();
+  fmtDate += "" + (1 + date.getMonth()) + ".";
+  if (date.getDate() < 10) {
+    fmtDate += "0"
+  }
+  fmtDate += "" + date.getDate();
   return fmtDate;
 }
 </script>
